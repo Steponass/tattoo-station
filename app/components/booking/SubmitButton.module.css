@@ -1,0 +1,8 @@
+.root {
+  align-self: flex-start;
+  padding: 10px 20px;
+}
+
+.root[data-submitting] {
+  opacity: 0.7;
+}

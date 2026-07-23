@@ -1,0 +1,76 @@
+@font-face {
+  font-family: 'Hepta Slab';
+  font-style: normal;
+  font-display: swap;
+  src: url('/app/fonts/HeptaSlab-VF-subset.woff2') format('woff2-variations');
+  font-feature-settings: "tnum" 1;
+}
+
+@font-face {
+    font-family: 'Adjusted Heading Fallback';
+    src: local(Verdana);
+    size-adjust: 100%;
+    ascent-override: 97%;
+    descent-override: 27%;
+    line-gap-override: normal;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next VF';
+  font-style: normal;
+  font-display: swap;
+  src: url('/app/fonts/AtkinsonHyperlegibleNextVF-Variable.woff2') format('woff2-variations');
+}
+
+@font-face {
+    font-family: 'Adjusted Body Fallback';
+    src: local(Arial);
+    size-adjust: 99%;
+    ascent-override: 84%;
+    descent-override: normal;
+    line-gap-override: 15%;
+}
+
+:root {
+  /* Smaller typescale might have to be reduced (1.33 -> 1.25) */
+  /* https://www.fluid-type-scale.com/calculate?minFontSize=16&minWidth=360&minRatio=1.33&maxFontSize=18&maxWidth=1440&maxRatio=1.414&steps=body-s%2C+body%2C+h6%2C+h5%2C+h4%2C+h3%2C+h2%2C+h1&baseStep=body&prefix=fontsize&useContainerWidth=false&includeFallbacks=false&useRems=true&remValue=16&decimals=2&previewFont=Hepta+Slab&previewText=Almost+before+we+knew+it%2C+we+had+left+the+ground&previewWidth=1280 */
+
+  --fontsize-body-s: clamp(0.75rem, 0.06vi + 0.74rem, 0.8rem);
+  --fontsize-body: clamp(1rem, 0.19vi + 0.96rem, 1.13rem);
+  --fontsize-h6: clamp(1.33rem, 0.39vi + 1.24rem, 1.59rem);
+  --fontsize-h5: clamp(1.77rem, 0.71vi + 1.61rem, 2.25rem);
+  --fontsize-h4: clamp(2.35rem, 1.23vi + 2.08rem, 3.18rem);
+  --fontsize-h3: clamp(3.13rem, 2.03vi + 2.67rem, 4.5rem);
+  --fontsize-h2: clamp(4.16rem, 3.26vi + 3.43rem, 6.36rem);
+  --fontsize-h1: clamp(5.53rem, 5.12vi + 4.38rem, 8.99rem);
+}
+
+:where(span) {font-size: var(--fontsize-body-s)}
+:where(p)  {font-size: var(--fontsize-body)}
+:where(h6) {font-size: var(--fontsize-h6)}
+:where(h5) {font-size: var(--fontsize-h5)}
+:where(h4) {font-size: var(--fontsize-h4)}
+:where(h3) {font-size: var(--fontsize-h3)}
+:where(h2) {font-size: var(--fontsize-h2)}
+:where(h1) {font-size: var(--fontsize-h1)}
+
+:where(h6, h5, h4, h3, h2, h1) {
+  font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+:where(p, ul, ol, li, a, th, td, button, label, legend, input, textarea) {
+  font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
+  font-weight: 450;
+  letter-spacing: 0.15px;
+  color: var(--color-text-strong);
+}
+
+:where(h6, h5, h4, h3, h2, h1, button, input, label) {
+  line-height: 1.2;
+}
+
+:where(p, li, a, td, th, input, textarea) {
+  line-height: 1.5;
+}

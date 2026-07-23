@@ -7,15 +7,30 @@
 	"name": "tattoo-station",
 	"compatibility_date": "2026-07-21",
 	"main": "./workers/app.ts",
-	"vars": {
-		"VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
-	},
 	"observability": {
 		"enabled": true
 	},
 	"upload_source_maps": true,
 	"compatibility_flags": [
 		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "tattoo-station-db",
+			"database_id": "e657146a-ccae-4d0a-b613-4e298a92e996",
+			"migrations_dir": "migrations"
+		},
+	],
+	"images": {
+		"binding": "IMAGES",
+		"remote": true
+	},
+	"r2_buckets": [
+		{
+			"bucket_name": "tattoo-station-media",
+			"binding": "MEDIA"
+		}
 	]
 	/**
 	 * Smart Placement

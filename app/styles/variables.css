@@ -1,0 +1,57 @@
+:root {
+
+  /* FONTS ARE IN FONTS.CSS */
+  --font-heading: 'Cormorant SC Medium', 'Adjusted Heading Fallback', sans-serif;
+  --font-body: 'DM Sans Variable', 'Adjusted Body Fallback', sans-serif;
+
+  --color-bg: hsla(143, 30%, 6%, 100%);
+  --color-bg2: hsla(143, 20%, 3%, 90%);
+  --color-bg-3: hsl(143, 5%, 14%);
+  --color-accent-1: hsl(346, 60%, 35%);
+  --color-accent-2: hsl(340, 59%, 30%);
+  --color-accent-3: hsl(356, 69%, 37%);
+  --color-secondary-1: hsl(201, 43%, 25%);
+  --color-stroke-weak: hsl(143, 5%, 20%);
+
+
+  /* SPACING - FLUID */
+  /* https://utopia.fyi/space/calculator?c=360,16,1.333,1440,18,1.414,6,1,&s=0.75|0.5|0.25,1.5|2|3|4|6,&g=s,l,xl,12 */
+
+  --space-3xs-2xs: clamp(4px, 2.3333px + 0.463vw, 9px);
+  --space-2xs-xs: clamp(8px, 6px + 0.5556vw, 14px);
+  --space-xs-s: clamp(12px, 10px + 0.5556vw, 18px);
+  --space-s-m: clamp(16px, 12.3333px + 1.0185vw, 27px);
+  --space-m-l: clamp(24px, 20px + 1.1111vw, 36px);
+  --space-l-xl: clamp(32px, 24.6667px + 2.037vw, 54px);
+  --space-xl-2xl: clamp(48px, 40px + 2.2222vw, 72px);
+  --space-2xl-3xl: clamp(64px, 49.3333px + 4.0741vw, 108px);
+
+/* SPACING - FIXED */
+
+  --space-2px: 2px;
+  --space-4px: 4px;
+  --space-8px: 8px;
+  --space-12px: 12px;
+  --space-16px: 16px;
+  --space-24px: 24px;
+  --space-32px: 32px;
+  --space-48px: 48px;
+  --space-64px: 64px;
+  --space-96px: 96px;
+  --space-128px: 128px;
+
+
+  /* SHADOWS */
+
+
+
+  /* TRANSITIONS */
+
+
+
+  /* KEYFRAMES */
+
+
+
+
+}

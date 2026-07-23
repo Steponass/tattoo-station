@@ -1,7 +1,6 @@
 import { env } from "cloudflare:workers";
 
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,10 +9,9 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export function loader() {
-  return { message: env.VALUE_FROM_CLOUDFLARE };
-}
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+  return <>
+  <h1>Heinus anus</h1>
+  </>;
 }

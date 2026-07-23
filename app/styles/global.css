@@ -1,0 +1,19 @@
+.chamfer-xl {
+  /* Corner Shape NOT baseline, need workaround (clip-path) */
+  --c: 15px; /* chamfer size */
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}
+
+/* Possibly not working? fix tbd */
+a {
+  text-decoration: underline;
+}
