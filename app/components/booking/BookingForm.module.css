@@ -1,0 +1,117 @@
+.booking_form {
+  width: min(768px, 98%);
+  margin-inline: auto;
+  margin-block: var(--space-xl-2xl);
+  padding: var(--space-2xs-xs);
+  border: 1px solid green;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-m-l);
+  align-items: start;
+  @media (max-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+  };
+  @media (max-width: 400px) {
+    grid-template-columns: 1fr;
+  };
+}
+
+.full_width {
+  grid-column: 1 / -1;
+}
+
+.section {
+  display: contents;
+}
+
+.heading {
+  grid-column: 1 / -1;
+  font-size: var(--fontsize-h6)
+}
+
+.style_guide_link {
+  grid-column: 1 / -1;
+}
+
+/* Field primitives (formerly app/components/form/*.module.css) */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4px);
+  & label {
+    padding-inline: var(--space-4px);
+  }
+  & input {
+    padding-block: var(--space-4px);
+    padding-inline: var(--space-4px);
+  }
+  & select {
+    padding-block: var(--space-8px);
+    padding-inline: var(--space-4px);
+  }
+  & textarea {
+    padding-block: var(--space-8px);
+    padding-inline: var(--space-4px);
+  }
+}
+
+.radio_group {
+  display: flex;
+  gap: var(--space-8px);
+  align-content: flex-start;
+  border: none;
+  grid-column: 0 / 3;
+}
+
+.radio_group [data-radio-group] {
+  margin-top: var(--space-8px);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: var(--space-8px);
+}
+
+.radio_group [data-radio-option] {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8px);
+}
+
+.checkbox_field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  grid-column: 1 / -1;
+}
+
+.artist_and_times {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16px);
+  @media ( 400px <=width <= 700px) {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    & > * {
+      flex: 1;
+      min-width: 0;
+    }
+  };
+}
+
+p[data-field-hint] {
+  font-size: var(--fontsize-body-s);
+  padding-inline: var(--space-4px);
+}
+
+ul[data-photo-list] {
+  display: flex;
+  gap: var(--space-2xs-xs);
+  flex-wrap: wrap;
+   & img {
+    max-width: 150px;
+   }
+}
+
