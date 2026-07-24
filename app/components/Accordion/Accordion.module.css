@@ -1,0 +1,88 @@
+.accordion_item {
+  background-color: var(--color-bg2);
+  padding-block: 8px;
+  padding-inline: 6px;
+  max-width: 45ch;
+    --c: 5px; /* chamfer size */
+  margin-block-end: 6px;
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}
+
+.accordion_summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  cursor: pointer;
+}
+
+/* Chrome/Firefox marker */
+.accordion_summary::marker {
+  content: '';
+}
+
+/* Safari marker */
+.accordion_summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Rail-signal marker: square with an empty circle inside */
+.accordion_marker {
+  flex: 0 0 auto;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  background-color: var(--color-secondary-1);
+    --c: 3px; /* chamfer size */
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}
+
+.accordion_marker::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background-color: transparent;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.accordion_item[open] .accordion_marker::after {
+  background-color: var(--color-accent-3);
+  box-shadow: 0 0 6px var(--color-accent-3);
+}
+
+.accordion_answer_wrapper {
+  overflow: hidden;
+
+  /* If padding is set on the element directly under details, 
+  the behavior becomes unstable, so do not set it here */
+}
+
+.accordion_answer {
+  padding: 12px 30px;
+}
+

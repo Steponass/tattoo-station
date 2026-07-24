@@ -1,4 +1,6 @@
 import {
+  data,
+  useLoaderData,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -13,17 +15,44 @@ import './styles/fonts.css'
 import './styles/variables.css'
 import './styles/global.css'
 
-export function Layout({ children }: { children: React.ReactNode }) {
+import { getLocaleFromPath } from "intlayer";
+import { IntlayerProvider } from "react-intlayer";
+import { useI18nHTMLAttributes } from "./hooks/intlayer/usei18nHTMLAttributes";
+import Header from "./layout/Header/Header";
+import Footer from "./layout/Footer/Footer";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const locale = getLocaleFromPath(request.url);
+
+  if (!locale) {
+    throw data("Language not supported", { status: 404 });
+  }
+
+  return { locale };
+}
+
+
+export function Layout({
+  children,
+}: { children: React.ReactNode } & Route.ComponentProps) {
+  const data = useLoaderData<typeof loader>();
+  const { locale } = data ?? {};
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <IntlayerProvider 
+          locale={locale}>
+            <Header />
+            {children}
+            <Footer />
+          </IntlayerProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -32,6 +61,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useI18nHTMLAttributes();
   return <Outlet />;
 }
 
