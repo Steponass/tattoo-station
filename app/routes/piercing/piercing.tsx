@@ -1,15 +1,36 @@
+import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer, useLocale } from "react-intlayer";
+import { data } from "react-router";
+import type { Route } from "./+types/piercing";
 import styles from "./piercing.module.css";
 import { mockRosterArtists } from "~/data/roster.mock";
-import { resolveLocalizedContent } from "~/components/intlayer/formatProfile";
 import Accordion from "~/components/Accordion/Accordion";
+
+export const loader = ({ params }: Route.LoaderArgs) => {
+  const { lang } = params;
+
+  const { isValid } = validatePrefix(lang);
+
+  if (!isValid) {
+    throw data("Locale not supported", { status: 404 });
+  }
+};
+
+export const meta: Route.MetaFunction = ({ params }) => {
+  const content = getIntlayer("piercing", params.lang);
+
+  return [
+    { title: content.title },
+    { content: content.description, name: "description" },
+  ];
+};
+
 
 export default function piercing() {
   const content = useIntlayer("piercing");
   const { locale } = useLocale();
   const artist = mockRosterArtists.find((a) => a.slug === "joana")!;
-  const bio = resolveLocalizedContent(artist.bio, locale);
-  const bioParagraphs = bio.split("\n\n");
+  const bioParagraphs = artist.bio[locale].split("\n\n");
 
   const rows = [
     [content.piercingService1, content.piercingPrice1],
@@ -93,8 +114,9 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
         <h1>{content.galleryHeading}</h1>
         <div className={styles.piercing_gallery_grid}>
           {piercingPhotos.map((photo) => (
-            <div key={photo.id} className={styles.artist_image_wrapper}>
+            <div className={styles.artist_image_wrapper}>
               <img
+                key={photo.id}
                 src={photo.url}
                 alt={photo.alt}
                 width={photo.width}
