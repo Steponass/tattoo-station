@@ -1,58 +1,116 @@
-#main_piercing {
-  margin-block: 120px;
-  width: min(1024px, 98%);
-  margin-inline: auto;
+.page_heading {
+  font-size: var(--fontsize-h2);
+  text-align: center;
+  margin-block-end: var(--space-l-xl);
 }
 
 .piercing_table_and_profile {
-  display: flex;
-  gap: 24px;
-  margin-block: 48px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "price artist"
+    "text  text";
+  column-gap: var(--space-m-l);
+  row-gap: var(--space-l-xl);
+  margin-block-end: var(--space-l-xl);
+
+  @container (width < 768px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "price"
+      "artist"
+      "text";
+    justify-items: center;
+    justify-content: center;
+  }
 }
 
-#piercing_table {
-  /* background-color: blue; */
-  --c: 15px; /* chamfer size */
-  clip-path: polygon(
-    var(--c) 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c)),
-    0 var(--c)
-  );
+.section_price {
+  grid-area: price;
 }
 
-#piercing_table th {
+.section_artist {
+  grid-area: artist;
+  justify-content: center;
+}
+
+.artist_text {
+  margin-block: var(--space-m-l);
+  grid-area: text;
+  column-width: 40ch;
+  min-width: 0;
+  column-gap: var(--space-l-xl);
+  column-fill: balance;
+}
+
+.piercing_table {
+  border-spacing: 0;
+}
+
+.piercing_table th {
   font-weight: 500;
-  background-color: var(--color-accent-3);
+  background-color: var(--color-secondary);
   text-align: start;
 }
 
-#piercing_table th, #piercing_table td {
-  padding-inline: 18px;
-  padding-block: 8px;
+.piercing_table th, 
+.piercing_table td {
+  padding-inline: var(--space-16px);
+  padding-block: var(--space-12px);
 }
 
-#piercing_table tr {
-  background-color: var(--color-bg-3);
+.piercing_table tr {
+  background-color: var(--color-bg-raised);
 }
 
-#piercing_table tr:not(:last-child) {
+.piercing_table tr:not(:last-child) th,
+.piercing_table tr:not(:last-child) td {
   border-bottom: 1px solid var(--color-stroke-weak);
 }
 
-.artist_details img {
-  float: left;
-  margin-inline-end: 24px;
-  width: 240px;
+.artist_photo_and_name {
+  display: flex;
+  align-items: center;
+  /* align-content: center; */
+  gap: var(--space-xs-s);
+  @container (width < 1000px) {
+    flex-direction: column;
+  } 
+}
+
+.artist_photo {
+  padding-block-start: var(--space-4px);
+  width: auto;
+  max-width: 340px;
+  height: auto;
+}
+
+
+.artist_photo_and_name h2 {
+  /* text-align: center; */
+  @container (width < 1040px) {
+    text-align: center;
+  }
+}
+.artist_photo_and_name h2,
+.section_piercing_gallery h2
+{
+  font-size: var(--fontsize-h3);
 }
 
 .artist_bio_paragraph {
-  max-width: 60ch;
   text-indent: 1.5em;
+  break-inside: avoid;
+  orphans: 3;
+  widows: 3;
+}
+
+.artist_bio_paragraph:not(:last-child) {
+  margin-block-end: var(--space-3xs-2xs);
+}
+
+.section_piercing_gallery h2{
+  margin-block-end: var(--space-xs-s);
 }
 
 .piercing_gallery_grid {
@@ -65,7 +123,7 @@
 
 .artist_image_wrapper {
   position: relative;
-  background-color: var(--color-accent-3);
+  background-color: var(--color-accent);
   clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
   transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --chamfer: 16px;
@@ -102,10 +160,10 @@
 }
 
 .section_piercing_faq {
-  margin-block: 48px;
+  margin-block: var(--space-xl-2xl);
   display: flex;
-  justify-content: center;
-  gap: 23px;
+  /* justify-content: center; */
+  gap: var(--space-m-l);
   @media (max-width: 860px) {
     flex-direction: column;
     align-items: center;

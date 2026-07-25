@@ -1,5 +1,8 @@
-.chamfer-xl {
-  /* Corner Shape NOT baseline, need workaround (clip-path) */
+/* UTILITY CLASSES TO REDUCE D.R.Y. */
+
+.chamfer-l {
+  /* Since sorner-shape property is NOT baseline, 
+  clip-path is the workaround */
   --c: 15px; /* chamfer size */
   clip-path: polygon(
     var(--c) 0,
@@ -13,7 +16,36 @@
   );
 }
 
+.chamfer-s {
+  --c: 8px; /* chamfer size */
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}
+
+body {
+  background-color: var(--color-bg-base)
+}
+
+main {
+  margin-block: var(--space-xl-2xl);
+  width: min(1280px, 90%);
+  margin-inline: auto;
+  container-type: inline-size;
+  @media (width < 780px) {
+    margin-block-start: 0;
+  }
+}
+
+
 /* Possibly not working? fix tbd */
-a {
+:where(a) {
   text-decoration: underline;
 }

@@ -4,14 +4,18 @@
   --font-heading: 'Cormorant SC Medium', 'Adjusted Heading Fallback', sans-serif;
   --font-body: 'DM Sans Variable', 'Adjusted Body Fallback', sans-serif;
 
-  --color-bg: hsla(143, 30%, 6%, 100%);
-  --color-bg2: hsla(143, 20%, 3%, 90%);
-  --color-bg-3: hsl(143, 5%, 14%);
-  --color-accent-1: hsl(346, 60%, 35%);
-  --color-accent-2: hsl(340, 59%, 30%);
-  --color-accent-3: hsl(356, 69%, 37%);
-  --color-secondary-1: hsl(201, 43%, 25%);
-  --color-stroke-weak: hsl(143, 5%, 20%);
+  --color-bg-base:    hsl(143, 30%, 6%);
+  --color-bg2:        hsl(143, 20%, 3%);
+  --color-bg-accordion:hsl(143, 8%, 4%);
+  --color-bg-raised:   hsl(143, 5%, 12%);
+  --color-accent:      hsl(356, 69%, 37%);
+  --color-accent-hover: hsl(356, 79%, 27%);
+  --color-accent-disabled: hsl(357, 9%, 30%);
+  --color-secondary:   hsl(201, 43%, 25%);
+  --color-text-strong: hsl(143, 3%, 97%);
+  --color-text-weak:   hsl(143, 5%, 80%);
+  --color-stroke-strong: hsl(143, 5%, 30%);
+  --color-stroke-weak:  hsl(143, 5%, 20%);
 
 
   /* SPACING - FLUID */

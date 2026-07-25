@@ -70,10 +70,11 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
   );
 
   return (
-    <main id={styles.main_piercing}>
+    <main>
+      <h1 className={styles.page_heading}>Piercing</h1>
       <div className={styles.piercing_table_and_profile}>
         <section className={styles.section_price}>
-          <table id={styles.piercing_table}>
+          <table className={`${styles.piercing_table} chamfer-l`}>
             <thead>
               <tr>
                 <th>{content.tableHeaderType}</th>
@@ -90,28 +91,26 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
             </tbody>
           </table>
         </section>
-        <section className={styles.section_artist}>
-          <article className={styles.artist_details}>
+          <div className={styles.artist_photo_and_name}>
             <img
-              src={artist.avatar.url}
+              src='/Joana_Piercing_logo_transparent_bg_cropped.png'
               alt=""
               width={artist.avatar.width}
               height={artist.avatar.height}
               className={styles.artist_photo}
             />
-            <div className={styles.artist_text}>
-              <h1>{artist.name}</h1>
-              {bioParagraphs.map((paragraph, index) => (
-                <p key={index} className={styles.artist_bio_paragraph}>
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </article>
-        </section>
+            <h2>{artist.name}</h2>
+          </div>
+        <article className={styles.artist_text}>
+          {bioParagraphs.map((paragraph, index) => (
+            <p key={index} className={styles.artist_bio_paragraph}>
+              {paragraph}
+            </p>
+          ))}
+        </article>
       </div>
       <section className={styles.section_piercing_gallery}>
-        <h1>{content.galleryHeading}</h1>
+        <h2>{content.galleryHeading}</h2>
         <div className={styles.piercing_gallery_grid}>
           {piercingPhotos.map((photo) => (
             <div className={styles.artist_image_wrapper}>

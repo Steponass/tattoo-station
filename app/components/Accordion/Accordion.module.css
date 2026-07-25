@@ -1,60 +1,40 @@
+.accordion_wrapper {
+  width: min(65ch, 100%);
+}
+
 .accordion_item {
-  background-color: var(--color-bg2);
+  background-color: var(--color-bg-accordion);
   padding-block: 8px;
   padding-inline: 6px;
-  max-width: 45ch;
-    --c: 5px; /* chamfer size */
-  margin-block-end: 6px;
-  clip-path: polygon(
-    var(--c) 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c)),
-    0 var(--c)
-  );
+  width: 100%;
+}
+
+.accordion_item:not(:last-child) {
+  margin-block-end: var(--space-2px);
 }
 
 .accordion_summary {
+  padding-block: var(--space-8px);
+  padding-inline: var(--space-12px);
   display: flex;
   align-items: center;
-  gap: 12px;
-  list-style: none;
+  gap: var(--space-4px);
   cursor: pointer;
 }
 
-/* Chrome/Firefox marker */
 .accordion_summary::marker {
   content: '';
 }
-
 /* Safari marker */
 .accordion_summary::-webkit-details-marker {
   display: none;
 }
 
-/* Rail-signal marker: square with an empty circle inside */
 .accordion_marker {
   flex: 0 0 auto;
   position: relative;
   width: 18px;
   height: 18px;
-  box-sizing: border-box;
-  border: 1px solid transparent;
-  background-color: var(--color-secondary-1);
-    --c: 3px; /* chamfer size */
-  clip-path: polygon(
-    var(--c) 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c)),
-    0 var(--c)
-  );
 }
 
 .accordion_marker::after {
@@ -65,14 +45,12 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 1px solid currentColor;
-  background-color: transparent;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: var(--color-secondary);
+  transition: background-color 0.2s ease-in;
 }
 
 .accordion_item[open] .accordion_marker::after {
-  background-color: var(--color-accent-3);
-  box-shadow: 0 0 6px var(--color-accent-3);
+  background-color: var(--color-accent);
 }
 
 .accordion_answer_wrapper {
@@ -83,6 +61,8 @@
 }
 
 .accordion_answer {
-  padding: 12px 30px;
+  padding-block: var(--space-8px);
+  padding-inline-start: var(--space-32px);
+  padding-inline-end: var(--space-12px);
 }
 

@@ -1,5 +1,5 @@
 import AccordionItem from './AccordionItem'
-
+import styles from './Accordion.module.css'
 type AccordionProps = {
   items: {
     question: string
@@ -9,7 +9,7 @@ type AccordionProps = {
 
 export default function Accordion({ items }: AccordionProps) {
   return (
-    <div className="accordion-wrapper">
+    <div className={`${styles.accordion_wrapper} chamfer-s`}>
       {items.map((accordionItem, index) => (
         <AccordionItem
           key={index}

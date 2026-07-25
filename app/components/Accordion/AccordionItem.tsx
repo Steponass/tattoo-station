@@ -32,10 +32,10 @@ export default function AccordionItem({
         onClick={handleSummaryClick}
       >
         <span className={styles.accordion_marker} aria-hidden="true" />
-        {question}
+        <p>{question}</p>
       </summary>
       <div className={styles.accordion_answer_wrapper} ref={contentRef}>
-        <div className={styles.accordion_answer}>{answer}</div>
+        <div className={styles.accordion_answer}><p>{answer}</p></div>
       </div>
     </details>
   );

@@ -14,7 +14,7 @@ export default function Header() {
     tattoostyles,
     aftercare,
     faq,
-    coupon
+    coupon,
   } = useIntlayer("header");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,7 +38,8 @@ export default function Header() {
         <div className={styles.logo}>
           <LocalizedLink to="/" viewTransition>
             <img src="/public/TEMP-Logo-from-photo.webp" />
-          </LocalizedLink>        </div>
+          </LocalizedLink>
+        </div>
         <nav className={styles.nav}>
           <LocalizedLink to="/Artists" viewTransition>
             {artists}
@@ -103,10 +104,10 @@ export default function Header() {
           <LocalizedLink to="/faq" viewTransition onClick={closeMenu}>
             {flashdesigns}
           </LocalizedLink>
-          <LocalizedLink to="/coupon" viewTransition>
+          <LocalizedLink to="/coupon" viewTransition onClick={closeMenu}>
             {coupon}
           </LocalizedLink>
-           <LocalizedLink to="/booking" viewTransition>
+          <LocalizedLink to="/booking" viewTransition onClick={closeMenu}>
             {booking}
           </LocalizedLink>
           <LocaleSwitcher />

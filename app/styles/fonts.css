@@ -60,15 +60,16 @@
   color: var(--color-text-strong);
 }
 
-:where(p, ul, ol, li, a, th, td, button, label, legend, input, textarea) {
+:where(p, ul, ol, li, a, th, td, summary, details,
+button, label, legend, input, textarea) {
   font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
   font-weight: 450;
-  letter-spacing: 0.15px;
+  letter-spacing: 0.25px;
   color: var(--color-text-strong);
 }
 
-:where(h6, h5, h4, h3, h2, h1, button, input, label) {
-  line-height: 1.2;
+:where(h6, h5, h4, h3, h2, h1) {
+  line-height: 1.1;
 }
 
 :where(p, li, a, td, th, input, textarea) {

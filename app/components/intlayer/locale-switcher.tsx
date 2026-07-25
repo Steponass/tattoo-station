@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import styles from './locale-switcher.module.css'
 
 import {
   getLocaleName,
@@ -17,7 +18,7 @@ export const LocaleSwitcher: FC = () => {
   const pathWithoutLocale = getPathWithoutLocale(pathname);
 
   return (
-    <ol>
+    <ol className={styles.locale_switcher}>
       {availableLocales.map((localeItem) => (
         <li key={localeItem}>
           <Link

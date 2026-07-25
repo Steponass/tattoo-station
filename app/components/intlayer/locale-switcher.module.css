@@ -1,0 +1,22 @@
+.locale_switcher {
+  display: flex;
+  gap: var(--space-12px);
+}
+
+.locale_switcher li {
+    background-color: var(--color-accent);
+    /* padding-block: var(--space-4px);z */
+    /* padding-inline: var(--space-12px); */
+    width: 1.5em;
+    height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      background-color: var(--color-accent-hover);
+    }
+}
+
+li {
+  text-transform: uppercase;
+}
