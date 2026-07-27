@@ -20,6 +20,7 @@ import { IntlayerProvider } from "react-intlayer";
 import { useI18nHTMLAttributes } from "./hooks/intlayer/usei18nHTMLAttributes";
 import Header from "./layout/Header/Header";
 import Footer from "./layout/Footer/Footer";
+import { PageTitleBoard } from "./components/layout/PageTitleBoard";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const locale = getLocaleFromPath(request.url);
@@ -62,7 +63,12 @@ export function Layout({
 
 export default function App() {
   useI18nHTMLAttributes();
-  return <Outlet />;
+  return (
+    <>
+      <PageTitleBoard />
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

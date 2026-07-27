@@ -1,0 +1,72 @@
+.section_aftercare_links {
+  width: min(480px, 96%);
+  margin-inline: auto;
+  display: flex;
+  gap: var(--space-32px);
+  margin-block: var(--space-2xl-3xl);
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.tattoo_aftercare_wrapper,
+.piercing_aftercare_wrapper,
+.tattoo_aftercare_backdrop,
+.piercing_aftercare_backdrop {
+  --c: 64px;
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}
+
+.tattoo_aftercare_wrapper, .piercing_aftercare_wrapper {
+  width: 240px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  & p {
+      font-size: var(--fontsize-h5);
+      text-align: center;
+  }
+}
+
+.tattoo_aftercare_wrapper {
+  background-color: var(--color-accent);
+}
+
+.piercing_aftercare_wrapper {
+  background-color: var(--color-secondary);
+}
+
+
+.tattoo_aftercare_card, .piercing_aftercare_card {
+  --backdrop-offset: 6px;
+  width: 240px;
+  aspect-ratio: 1;
+  position: relative;
+  transition: all 0.5s ease-in;
+  &:hover {
+    transform: rotateY(360deg);
+  }
+}
+
+.tattoo_aftercare_backdrop, .piercing_aftercare_backdrop {
+  position: absolute;
+  z-index: 0;
+  aspect-ratio: 1;
+  inset: calc(-1 * var(--backdrop-offset));
+  background-color: white;
+  --c: calc(64px + var(--backdrop-offset));
+}

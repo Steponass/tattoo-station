@@ -1,0 +1,6 @@
+.hero {
+  display: grid;
+  justify-items: center;
+  gap: 1.5rem;
+  margin-block: 32px;
+}

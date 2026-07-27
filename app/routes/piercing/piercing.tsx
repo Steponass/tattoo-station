@@ -25,6 +25,10 @@ export const meta: Route.MetaFunction = ({ params }) => {
   ];
 };
 
+export const handle = {
+  titleBoard: { show: true, labelKey: "piercing" },
+};
+
 
 export default function piercing() {
   const content = useIntlayer("piercing");
@@ -71,7 +75,6 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
 
   return (
     <main>
-      <h1 className={styles.page_heading}>Piercing</h1>
       <div className={styles.piercing_table_and_profile}>
         <section className={styles.section_price}>
           <table className={`${styles.piercing_table} chamfer-l`}>
@@ -102,10 +105,20 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
             <h2>{artist.name}</h2>
           </div>
         <article className={styles.artist_text}>
+          <img className={styles.piercing_jewelry_1} src="/Piercing_jewelry_1.webp">
+            </img>
           {bioParagraphs.map((paragraph, index) => (
-            <p key={index} className={styles.artist_bio_paragraph}>
-              {paragraph}
-            </p>
+            <>
+              {index === bioParagraphs.length - 1 && (
+                <img
+                  className={styles.piercing_jewelry_2}
+                  src="/Piercing_jewelry_2.webp"
+                />
+              )}
+              <p key={index} className={styles.artist_bio_paragraph}>
+                {paragraph}
+              </p>
+            </>
           ))}
         </article>
       </div>

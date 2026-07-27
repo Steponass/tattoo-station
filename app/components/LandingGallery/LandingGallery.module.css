@@ -1,0 +1,20 @@
+.landing_gallery_container {
+  height: 60dvh;
+  margin-block: 300px;
+}
+
+.landing_gallery_top, .landing_gallery_bottom {
+  display: flex;
+  width: max-content;
+}
+
+
+.placeholder {
+  width: 280px;
+  aspect-ratio: 0.8;
+  background-color: grey;
+  border: 2px solid white;
+  @media (max-width: 768px) {
+    min-width: 100px;
+  }
+}

@@ -7,11 +7,17 @@ import {
 
 export default [
  ...prefix("/:lang?", [
-    index("routes/home.tsx"),
+    index("routes/home/home.tsx"),
     route("artists", "routes/artists.tsx"),
     route("media/*", "routes/media.$.tsx"),
     route("booking", "routes/booking.tsx"),
     route("api/booking-photos", "routes/api.booking-photos.ts"),
     route("piercing", "routes/piercing/piercing.tsx"),
+    route("aftercare", "routes/aftercare/aftercare.tsx"),
+    route("aftercare/aftercarePiercing", "routes/aftercare/aftercarePiercing/aftercarePiercing.tsx"),
+    route("aftercare/aftercareTattoo", "routes/aftercare/aftercareTattoo/aftercareTattoo.tsx"),
+    route("tattoostyles", "routes/tattoostyles/tattoostyles.tsx"),
+    route("coupon", "routes/coupon/coupon.tsx")
+
   ]),
 ] satisfies RouteConfig;

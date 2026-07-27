@@ -1,0 +1,38 @@
+.tattoostyle_article {
+  padding-inline: var(--space-24px);
+  margin-inline: auto;
+  & h2 {
+    font-size: var(--fontsize-h4);
+    margin-block-end: var(--space-16px);
+  }
+}
+
+.description_and_gallery_container {
+  display: flex;
+  flex-direction: row;
+  @media (max-width: 720px) {
+    flex-direction: column;
+  }
+}
+
+
+.tattoostyle_description {
+  height: 100%;
+  min-width: 340px;
+}
+
+.tattoostyle_description p {
+  max-width: 28ch;
+  text-align: end;
+  margin-left: -6px;
+}
+
+.tattoostyle_description img {
+  max-width: 180px;
+  height: auto;
+  float: left;
+  position: relative;
+  transform: translateY(10%);
+  shape-outside: url(/illustrations/Neo_traditional_swallow.webp);
+  shape-margin: 5px;
+}

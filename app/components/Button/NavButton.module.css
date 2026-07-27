@@ -1,0 +1,112 @@
+.nav_button {
+  /* padding-block-start: 11px; */
+  /* padding-block-end: 10px; */
+  padding-block: var(--space-8px);
+  padding-inline: var(--space-16px);
+
+  min-width: 136px;
+  max-width: max-content;
+  text-align: center;
+  background-color: var(--color-accent);
+  /* border: 1px solid; */
+    /* Chamfered corners  */
+    --c: 8px; /* chamfer size */
+  /* clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  ); */
+
+  /* Scoop 
+    --scoop: 6px;
+    clip-path: polygon(
+
+      var(--scoop) 0,
+      calc(100% - var(--scoop)) 0,
+
+      calc(100% - 0.92 * var(--scoop)) calc(0.38 * var(--scoop)),
+      calc(100% - 0.71 * var(--scoop)) calc(0.71 * var(--scoop)),
+      calc(100% - 0.38 * var(--scoop)) calc(0.92 * var(--scoop)),
+      100% var(--scoop),
+
+      100% calc(100% - var(--scoop)),
+
+      calc(100% - 0.38 * var(--scoop)) calc(100% - 0.92 * var(--scoop)),
+      calc(100% - 0.71 * var(--scoop)) calc(100% - 0.71 * var(--scoop)),
+      calc(100% - 0.92 * var(--scoop)) calc(100% - 0.38 * var(--scoop)),
+      calc(100% - var(--scoop)) 100%,
+      var(--scoop) 100%,
+
+      calc(0.92 * var(--scoop)) calc(100% - 0.38 * var(--scoop)),
+      calc(0.71 * var(--scoop)) calc(100% - 0.71 * var(--scoop)),
+      calc(0.38 * var(--scoop)) calc(100% - 0.92 * var(--scoop)),
+      0 calc(100% - var(--scoop)),
+
+      0 var(--scoop),
+
+      calc(0.38 * var(--scoop)) calc(0.92 * var(--scoop)),
+      calc(0.71 * var(--scoop)) calc(0.71 * var(--scoop)),
+      calc(0.92 * var(--scoop)) calc(0.38 * var(--scoop))
+    );
+    */
+
+    /* Side Punch */
+    /* --punch: 4px;
+    clip-path: polygon(
+      0 0,
+      100% 0,
+
+      100% calc(50% - var(--punch)),
+      calc(100% - 0.5 * var(--punch)) calc(50% - 0.87 * var(--punch)),
+      calc(100% - 0.87 * var(--punch)) calc(50% - 0.5 * var(--punch)),
+      calc(100% - var(--punch)) 50%,
+      calc(100% - 0.87 * var(--punch)) calc(50% + 0.5 * var(--punch)),
+      calc(100% - 0.5 * var(--punch)) calc(50% + 0.87 * var(--punch)),
+      100% calc(50% + var(--punch)),
+      100% 100%,
+      0 100%,
+
+      0 calc(50% + var(--punch)),
+      calc(0.5 * var(--punch)) calc(50% + 0.87 * var(--punch)),
+      calc(0.87 * var(--punch)) calc(50% + 0.5 * var(--punch)),
+      var(--punch) 50%,
+      calc(0.87 * var(--punch)) calc(50% - 0.5 * var(--punch)),
+      calc(0.5 * var(--punch)) calc(50% - 0.87 * var(--punch)),
+      0 calc(50% - var(--punch))
+    ); */
+
+    /* Side Punch + Chamfer */
+    --chamfer: 3px;
+    --punch: 4px;
+    clip-path: polygon(
+      var(--chamfer) 0,
+      calc(100% - var(--chamfer)) 0,
+      100% var(--chamfer),
+      /* right-edge notch, top to bottom */
+      100% calc(50% - var(--punch)),
+      calc(100% - 0.5 * var(--punch)) calc(50% - 0.87 * var(--punch)),
+      calc(100% - 0.87 * var(--punch)) calc(50% - 0.5 * var(--punch)),
+      calc(100% - var(--punch)) 50%,
+      calc(100% - 0.87 * var(--punch)) calc(50% + 0.5 * var(--punch)),
+      calc(100% - 0.5 * var(--punch)) calc(50% + 0.87 * var(--punch)),
+      100% calc(50% + var(--punch)),
+      100% calc(100% - var(--chamfer)),
+      calc(100% - var(--chamfer)) 100%,
+      var(--chamfer) 100%,
+      0 calc(100% - var(--chamfer)),
+      /* left-edge notch, bottom to top */
+      0 calc(50% + var(--punch)),
+      calc(0.5 * var(--punch)) calc(50% + 0.87 * var(--punch)),
+      calc(0.87 * var(--punch)) calc(50% + 0.5 * var(--punch)),
+      var(--punch) 50%,
+      calc(0.87 * var(--punch)) calc(50% - 0.5 * var(--punch)),
+      calc(0.5 * var(--punch)) calc(50% - 0.87 * var(--punch)),
+      0 calc(50% - var(--punch)),
+      0 var(--chamfer)
+    );
+  }

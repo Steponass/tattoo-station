@@ -1,0 +1,56 @@
+#piercing_aftercare_main {
+  margin-inline: auto;
+  margin-block: var(--space-xl-2xl);
+  width: min(800px, 90%);
+  margin-inline: auto;
+}
+
+.aftercare_heading {
+  font-size: var(--fontsize-h3)
+}
+
+.aftercare_list {
+  list-style: decimal;
+  max-width: 65ch;
+  list-style-position: inside;
+}
+
+.aftercare_list svg {
+    animation: rotateY linear 1s;
+    animation-timeline: view();
+    animation-range-start: cover 0%;
+    animation-range-end: cover 30%;
+}
+
+@keyframes rotateY {
+  0% {
+    transform: rotateY(120deg);
+  }
+
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+.aftercare_list li {
+}
+
+#no_swimming_icon, #no_hot {
+  float: right;
+  max-width: 100px;
+  shape-outside: circle(45%);
+  shape-margin: 4px;
+}
+
+#toothbrush, #cotton_swab {
+  float: left;
+  margin-right: var(--space-12px);
+}
+
+#cotton_swab {
+  transition: 0.35s all ease-in;
+  transform: rotateY(0deg);
+  @starting-style {
+  transform: rotateY(120deg);
+  }
+}

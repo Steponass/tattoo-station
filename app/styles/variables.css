@@ -16,7 +16,7 @@
   --color-text-weak:   hsl(143, 5%, 80%);
   --color-stroke-strong: hsl(143, 5%, 30%);
   --color-stroke-weak:  hsl(143, 5%, 20%);
-
+  
 
   /* SPACING - FLUID */
   /* https://utopia.fyi/space/calculator?c=360,16,1.333,1440,18,1.414,6,1,&s=0.75|0.5|0.25,1.5|2|3|4|6,&g=s,l,xl,12 */
@@ -43,6 +43,10 @@
   --space-64px: 64px;
   --space-96px: 96px;
   --space-128px: 128px;
+
+
+  /* SPLIT FLAP INTRO */
+
 
 
   /* SHADOWS */

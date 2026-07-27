@@ -4,6 +4,7 @@
   align-items: center;
   gap: var(--space-12px);
   padding-inline: var(--space-s-m);
+  background-color: var(--color-bg2);
 }
 
 .logo img {
@@ -33,6 +34,10 @@
   isolation: isolate;
   z-index: 10;
   backdrop-filter: blur(10px);
+  background-color: var(--color-bg2);
+  background-image: url(/Grey-Grid-Edited.svg);
+  background-repeat: repeat;
+  background-blend-mode: soft-light;
 }
 
 
@@ -50,19 +55,6 @@
     pointer-events: none;
     isolation: isolate;
     z-index: 10;
-  }
-
-  .header::before,
-  .burger_wrapper, 
-  .logo {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-color: var(--color-bg2);
-  background-image: url(/Grey-Grid-Edited.svg);
-  background-repeat: repeat;
-  background-blend-mode: soft-light;
   }
 
   /* Curtain panels: grow inward from each edge and meet in the center */
