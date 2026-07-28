@@ -58,7 +58,7 @@ export default function RosterItem({
           />
 
           <span className={styles.roster_identity}>
-            <h3 className={styles.roster_name}>{artist.name}</h3>
+            <h4 className={styles.roster_name}>{artist.name}</h4>
             <span className={styles.roster_styles}>{stylesLabel}</span>
           </span>
         </summary>

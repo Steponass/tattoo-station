@@ -33,6 +33,9 @@
 body {
   background-color: var(--color-bg-base);
   overflow-x: hidden;
+  &::selection {
+    background-color: var(--color-secondary);
+  }
 }
 
 main {
@@ -45,6 +48,10 @@ main {
   }
 }
 
+button {
+  background: transparent;
+  border: none;
+}
 
 /* Possibly not working? fix tbd */
 :where(a) {

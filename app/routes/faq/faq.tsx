@@ -1,14 +1,14 @@
-// Intlayer start
 import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
-import type { Route } from "./+types/page";
-import styles from './faq.module.css'
-import Accordion from "~/components/Accordion/Accordion"
+import type { Route } from "./+types/faq";
+import styles from "./faq.module.css";
+import Accordion from "~/components/Accordion/Accordion";
 import NavButton from "~/components/Button/NavButton";
 
+// Intlayer start
 export const loader = ({ params }: Route.LoaderArgs) => {
-const { lang: locale } = params;
+  const { lang: locale } = params;
 
   const { isValid } = validatePrefix(locale);
 
@@ -18,7 +18,7 @@ const { lang: locale } = params;
 };
 
 export const meta: Route.MetaFunction = ({ params }) => {
-  const content = getIntlayer("faq", params.locale);
+  const content = getIntlayer("faq", params.lang);
 
   return [
     { title: content.title },
@@ -28,32 +28,45 @@ export const meta: Route.MetaFunction = ({ params }) => {
 // Intlayer end
 
 export const handle = {
-  titleBoard: { 
-    show: true, 
+  titleBoard: {
+    show: true,
     labelKey: "faq",
     timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
- },
+  },
 };
 
 export default function faq() {
-const { aftercare_directions, buttonTextAftercare } = getIntlayer("faq");
-const { items: before } = useIntlayer("faq-before");
-const { items: design } = useIntlayer("faq-design");
-const { items: booking } = useIntlayer("faq-booking");
+  const { aftercare_directions, piercing_directions, buttonTextAftercare, buttonTextPiercing, beforeHeading, designHeading, bookingHeading } = useIntlayer("faq");
+  const { items: before } = useIntlayer("faq-before");
+  const { items: design } = useIntlayer("faq-design");
+  const { items: booking } = useIntlayer("faq-booking");
 
   return (
     <main>
-        <section className={styles.section_faq}>
-        <div>
+      <section className={styles.section_faq}>
+        <div className={styles.directions_container}>
+          <div className={styles.directions_wrapper}>
           <h6>{aftercare_directions}</h6>
-          <NavButton 
-          buttonText={buttonTextAftercare}
-          to={"/aftercare"}/>
+          <NavButton buttonText={buttonTextAftercare} to={"/aftercare"} />
+          </div>
+          <div className={styles.directions_wrapper}>
+          <h6>{piercing_directions}</h6>
+          <NavButton buttonText={buttonTextPiercing} to={"/piercing"} />
+          </div>
         </div>
-        <Accordion items={before} />
-        <Accordion items={design} />
-        <Accordion items={booking} />
-        </section>
+        <div className={styles.accordion_wrapper}>
+          <h2>{beforeHeading}</h2>
+          <Accordion items={before} />
+        </div>
+        <div className={styles.accordion_wrapper}>
+          <h2>{designHeading}</h2>
+          <Accordion items={design} />
+        </div>
+        <div className={styles.accordion_wrapper}>
+          <h2>{bookingHeading}</h2>
+          <Accordion items={booking} />
+        </div>
+      </section>
     </main>
-  )
+  );
 }

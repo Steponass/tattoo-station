@@ -41,7 +41,6 @@ export default function Home() {
 
       <h2>One stop. Countless directions</h2>
       <NavButton
-          className={styles.nav_button}
           buttonText={buttonTextArtists}
           to={"/artists"}/>
       </section>

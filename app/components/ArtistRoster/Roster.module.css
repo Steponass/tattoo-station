@@ -95,7 +95,7 @@
 
 .preview_grid_wrapper {
   max-width: 100%;
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
 }
 
 .preview_grid {

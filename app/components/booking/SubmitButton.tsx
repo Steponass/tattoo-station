@@ -17,7 +17,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={isDisabled || isSubmitting}
-      className={styles.root}
+      className={styles.submit_button}
       data-submit-button
       data-submitting={isSubmitting || undefined}
     >

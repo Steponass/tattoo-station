@@ -1,8 +1,10 @@
-.root {
+.submit_button {
   align-self: flex-start;
   padding: 10px 20px;
+  border: none;
+  background-color: var(--color-accent);
 }
 
-.root[data-submitting] {
+.submit_button[data-submitting] {
   opacity: 0.7;
 }

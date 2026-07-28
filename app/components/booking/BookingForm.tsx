@@ -30,6 +30,7 @@ import { SpamGuardFields } from "./SpamGuardFields";
 import { SubmitButton } from "./SubmitButton";
 import { TurnstileWidget } from "./TurnstileWidget";
 import styles from "./BookingForm.module.css";
+import { LocalizedLink } from "../intlayer/LocalizedLink";
 
 const SERVICE_CATEGORY_LABELS: Record<ServiceCategory, string> = {
   tattoo: "Tattoo",
@@ -482,10 +483,12 @@ export function BookingForm({
                 data-invalid={
                   fieldErrors.preferredStyle !== undefined || undefined
                 }
-              >
+              > <div>
                 <label htmlFor="preferredStyle" data-field-label>
                   Preferred style
                 </label>
+                <LocalizedLink className={styles.guide_link} to="/tattoostyles">Gidas</LocalizedLink>
+                </div>
                 <select
                   id="preferredStyle"
                   name="preferredStyle"

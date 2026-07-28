@@ -8,7 +8,7 @@
 }
 
 .artist_details {
-  display: flex;
+  display: grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: auto;
   justify-content: center;
@@ -21,11 +21,14 @@
 
 .artist_text {
   margin-top: 32px;
+  & h1 {
+    font-size: var(--fontsize-h2);
+  }
 }
 
 .bottom_nav {
-  margin-top: 32px;
+  margin-top: var(--space-m-l);
   display: flex;
-  gap: 16px;
+  gap: var(--space-16px);
   justify-content: center;
 }

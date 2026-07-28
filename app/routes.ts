@@ -17,6 +17,7 @@ export default [
     route("aftercare", "routes/aftercare/aftercare.tsx"),
     route("aftercare/aftercarePiercing", "routes/aftercare/aftercarePiercing/aftercarePiercing.tsx"),
     route("aftercare/aftercareTattoo", "routes/aftercare/aftercareTattoo/aftercareTattoo.tsx"),
+    route("flashdesigns", "./routes/flashdesigns/flashdesigns.tsx"),
     route("tattoostyles", "routes/tattoostyles/tattoostyles.tsx"),
     route("faq", "routes/faq/faq.tsx"),
     route("coupon", "routes/coupon/coupon.tsx")
