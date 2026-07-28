@@ -14,6 +14,56 @@ const faqBookingContent = {
           en: "[Placeholder] Answer to be added later.",
         }),
       },
+      {
+        question: t({
+          lt: "[Placeholder] Kaip užsiregistruoti seansui?",
+          en: "[Placeholder] How do I book a session?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
+        question: t({
+          lt: "[Placeholder] Kaip užsiregistruoti seansui?",
+          en: "[Placeholder] How do I book a session?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
+        question: t({
+          lt: "[Placeholder] Kaip užsiregistruoti seansui?",
+          en: "[Placeholder] How do I book a session?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
+        question: t({
+          lt: "[Placeholder] Kaip užsiregistruoti seansui?",
+          en: "[Placeholder] How do I book a session?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
+        question: t({
+          lt: "[Placeholder] Kaip užsiregistruoti seansui?",
+          en: "[Placeholder] How do I book a session?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
     ],
   },
 } satisfies Dictionary;

@@ -28,7 +28,11 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 
 export const handle = {
-  titleBoard: { show: true, labelKey: "aftercare" },
+  titleBoard: { 
+    show: true, 
+    labelKey: "aftercare",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+  },
 };
 // Intlayer end
 

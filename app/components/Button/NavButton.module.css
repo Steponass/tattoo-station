@@ -1,12 +1,10 @@
 .nav_button {
-  /* padding-block-start: 11px; */
-  /* padding-block-end: 10px; */
-  padding-block: var(--space-8px);
-  padding-inline: var(--space-16px);
-
+  padding-block-start: 9px;
+  padding-block-end: 8px;
   min-width: 136px;
-  max-width: max-content;
+  max-width: 144px;
   text-align: center;
+  display: block;
   background-color: var(--color-accent);
   /* border: 1px solid; */
     /* Chamfered corners  */

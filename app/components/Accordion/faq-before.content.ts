@@ -14,7 +14,37 @@ const faqBeforeContent = {
           en: "[Placeholder] Answer to be added later.",
         }),
       },
-            {
+      {
+        question: t({
+          lt: "[Placeholder] Ką reikia žinoti prieš tatuiruotę?",
+          en: "[Placeholder] What should I know before getting a tattoo?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
+        question: t({
+          lt: "[Placeholder] Ką reikia žinoti prieš tatuiruotę?",
+          en: "[Placeholder] What should I know before getting a tattoo?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
+        question: t({
+          lt: "[Placeholder] Ką reikia žinoti prieš tatuiruotę?",
+          en: "[Placeholder] What should I know before getting a tattoo?",
+        }),
+        answer: t({
+          lt: "[Placeholder] Atsakymas bus pridėtas vėliau.",
+          en: "[Placeholder] Answer to be added later.",
+        }),
+      },
+      {
         question: t({
           lt: "[Placeholder] Ką reikia žinoti prieš tatuiruotę?",
           en: "[Placeholder] What should I know before getting a tattoo?",

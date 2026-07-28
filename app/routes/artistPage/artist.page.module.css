@@ -1,0 +1,31 @@
+.artist_section {
+  width: min(1440px, 96%);
+  margin-block: 24px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.artist_details {
+  display: flex;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: auto;
+  justify-content: center;
+}
+
+.artist_photo {
+  min-width: 300px;
+  aspect-ratio: 0.7;
+}
+
+.artist_text {
+  margin-top: 32px;
+}
+
+.bottom_nav {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}

@@ -9,3 +9,9 @@
     font-size: var(--fontsize-h5);
   }
 }
+
+/* Page-level override layered on top of NavButton's base styles */
+.nav_button {
+  min-width: 200px;
+  margin-block-start: var(--space-8px);
+}

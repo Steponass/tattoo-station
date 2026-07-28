@@ -1,0 +1,139 @@
+.roster {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.roster_item_wrapper {
+  transition: 0.2s all ease-in;
+  @media (hover: hover) {
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 4px 4px 0px black, 0.5px 0.5px 5px -1px black ;
+  }
+  }
+}
+
+.roster_summary {
+  padding-inline: var(--space-xs-s);
+  padding-block: var(--space-s-m);
+  display: flex;
+  align-items: center;
+  gap: var(--space-12px);
+  cursor: pointer;
+}
+
+/* 16.7.2026 Safari supports only color & font-size on ::marker */
+.roster_summary::marker {
+  color: transparent;
+}
+
+.roster_summary::-webkit-details-marker {
+  display: none;
+}
+
+.roster_summary:hover .roster_number span,
+.roster_item[open] .roster_number span {
+  background-color: var(--color-accent);
+}
+
+.roster_number {
+  margin: 0;
+  font-family: "Hepta Slab";
+}
+
+.roster_number span {
+  background-color: var(--color-stroke-weak);
+  padding: 3px;
+  font-size: 32px;
+  --c: 2px;
+  position: relative;
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}
+
+/* .roster_number span::before {
+  width: 100px;
+  top: 50%;
+  right: 0%;
+  position: absolute;
+  content: '';
+  height: 1px;
+  background-color: black;
+  border: 0.5px solid black;
+} */
+
+.roster_number span:nth-child(1) {
+  margin-right: 2px;
+}
+
+.roster_styles {
+  color: darkgrey;
+}
+
+/* Animated element. No padding here — padding on the direct child of
+   <details> makes the height measurement unstable. */
+.roster_panel_wrapper {
+  overflow: hidden;
+}
+
+.roster_panel {
+  padding-inline: var(--space-xs-s);
+  padding-block-end: var(--space-m-l);
+  display: grid;
+  gap: var(--space-m-l);
+  justify-items: start;
+}
+
+.preview_grid_wrapper {
+  max-width: 100%;
+  overflow-x: scroll;
+}
+
+.preview_grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-8px);
+}
+
+.preview_item:nth-child(n + 5) {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .preview_grid {  grid-template-columns: repeat(2, 1fr);
+
+  }
+
+  .preview_item:nth-child(n + 5) {
+    display: revert;
+  }
+}
+
+.preview_image {
+  /* inline-size: 100%; */
+  max-width: 300px;
+  object-fit: cover;
+  --c: 3px;
+  clip-path: polygon(
+    var(--c) 0,
+    calc(100% - var(--c)) 0,
+    100% var(--c),
+    100% calc(100% - var(--c)),
+    calc(100% - var(--c)) 100%,
+    var(--c) 100%,
+    0 calc(100% - var(--c)),
+    0 var(--c)
+  );
+}

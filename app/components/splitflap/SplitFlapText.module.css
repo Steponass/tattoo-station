@@ -6,14 +6,11 @@
   --split-flap-cell-gap: calc(var(--split-flap-glyph-font-size) * 0.02);
 
   --split-flap-word-gap: calc(var(--split-flap-cell-width) * 0.6);
-  --split-flap-surface: #0e0d0d;
-  --split-flap-surface-deep: #0d0d0d;
+  --split-flap-surface: black;
+  --split-flap-surface-deep: black;
   --split-flap-ink: var(--color-text-strong);
-  --split-flap-chamfer: 12px;
+  --split-flap-chamfer: 4px;
   --split-flap-font: ui-monospace, "JetBrains Mono", "Roboto Mono", monospace;
-
-  display: grid;
-  justify-items: center;
 }
 
 /**
@@ -75,16 +72,12 @@
 
 .halfTop {
   top: 0;
-  background: linear-gradient(180deg, #222 0%, var(--split-flap-surface) 90%);
+  /* background: linear-gradient(180deg, #222 0%, var(--split-flap-surface) 90%); */
 }
 
 .halfBottom {
   bottom: 0;
-  background: linear-gradient(
-    180deg,
-    var(--split-flap-surface) 0%,
-    var(--split-flap-surface-deep) 100%
-  );
+  background: var(--color-flap-bottom);
 }
 
 .glyph {
@@ -125,18 +118,15 @@
 }
 
 .faceFront {
-  background: linear-gradient(180deg, #222 0%, var(--split-flap-surface) 90%);
+  background: var(--color-flap-top);
+  /* background-color: red; */
 }
 
 .faceBack {
   transform: rotateX(180deg);
   opacity: 0;
   visibility: hidden;
-  background: linear-gradient(
-    180deg,
-    var(--split-flap-surface) 0%,
-    var(--split-flap-surface-deep) 100%
-  );
+  background: var(--color-flap-bottom);
 }
 
 .faceBack .glyph {
@@ -148,8 +138,28 @@
   top: 50%;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 1px;
   z-index: 3;
-  background: black;
+  background: var(--color-bg-base);
   transform: translateY(-50%);
+}
+
+.right_hinge, .left_hinge {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 12px;
+  width: 2px;
+  z-index: 4;
+  background: var(--color-flap-hinge);
+}
+
+.right_hinge {
+  right: 0;
+  border-radius: 2px 0 0 2px;
+}
+
+.left_hinge {
+  left: 0;
+  border-radius: 0 2px 2px 0;
 }

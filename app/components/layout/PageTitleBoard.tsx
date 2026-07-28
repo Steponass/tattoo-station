@@ -1,6 +1,9 @@
 import { useMatches } from "react-router";
 import { useIntlayer } from "react-intlayer";
-import { SplitFlapText } from "~/components/splitflap/SplitFlapText";
+import {
+  SplitFlapText,
+  type SplitFlapTimingOverrides,
+} from "~/components/splitflap/SplitFlapText";
 import pageTitleBoardContent from "./PageTitleBoard.content";
 import styles from "./PageTitleBoard.module.css";
 
@@ -10,6 +13,11 @@ interface TitleBoardHandle {
   show?: boolean;
   labelKey?: PageTitleBoardLabelKey;
   label?: string;
+  /**
+   * Per-page flip cadence. Omit to inherit `SplitFlapText`'s tuned
+   * defaults; set only the fields this page wants to differ.
+   */
+  timing?: SplitFlapTimingOverrides;
 }
 
 interface RouteHandle {
@@ -19,14 +27,15 @@ interface RouteHandle {
 interface BoardLabel {
   shouldShow: boolean;
   label: string;
+  timing?: SplitFlapTimingOverrides;
 }
 
 const NO_LABEL: BoardLabel = { shouldShow: false, label: "" };
 
 /**
  * Resolves what the page-title board should display for the
- * currently active route: whether it should render at all, and the
- * label text to flip to.
+ * currently active route: whether it should render at all, the label
+ * text to flip to, and how fast it should flip.
  *
  * Reads `handle.titleBoard` off the deepest matching route. A route
  * can either name a static `labelKey` (resolved through Intlayer, so
@@ -50,12 +59,20 @@ const useBoardLabel = (): BoardLabel => {
   }
 
   if (titleBoard.label) {
-    return { shouldShow: true, label: titleBoard.label };
+    return {
+      shouldShow: true,
+      label: titleBoard.label,
+      timing: titleBoard.timing,
+    };
   }
 
   if (titleBoard.labelKey) {
     const resolvedLabel = content[titleBoard.labelKey];
-    return { shouldShow: true, label: String(resolvedLabel) };
+    return {
+      shouldShow: true,
+      label: String(resolvedLabel),
+      timing: titleBoard.timing,
+    };
   }
 
   return NO_LABEL;
@@ -73,7 +90,7 @@ const useBoardLabel = (): BoardLabel => {
  * look the same, which is intended.
  */
 export function PageTitleBoard() {
-  const { shouldShow, label } = useBoardLabel();
+  const { shouldShow, label, timing } = useBoardLabel();
 
   if (!shouldShow) {
     return null;
@@ -81,7 +98,7 @@ export function PageTitleBoard() {
 
   return (
     <h1 className={styles.heading}>
-      <SplitFlapText target={label} />
+      <SplitFlapText target={label} timing={timing} />
     </h1>
   );
 }

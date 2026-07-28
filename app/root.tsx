@@ -1,6 +1,7 @@
 import {
   data,
   useLoaderData,
+  useLocation,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -37,7 +38,12 @@ export function Layout({
   children,
 }: { children: React.ReactNode } & Route.ComponentProps) {
   const data = useLoaderData<typeof loader>();
-  const { locale } = data ?? {};
+  const { pathname } = useLocation();
+
+  // The root loader only re-runs on a document request, so its locale goes stale
+  // on client-side navigation between locales. Derive it from the current path
+  // instead, falling back to the loader value for the initial server render.
+  const locale = getLocaleFromPath(pathname) ?? data?.locale;
 
   return (
     <html lang={locale}>

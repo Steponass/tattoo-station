@@ -8,7 +8,8 @@ import {
 export default [
  ...prefix("/:lang?", [
     index("routes/home/home.tsx"),
-    route("artists", "routes/artists.tsx"),
+    route("artists", "routes/artists/artists.tsx"),
+    route("artists/:slug", "routes/artistPage/artists.$slug.tsx"),
     route("media/*", "routes/media.$.tsx"),
     route("booking", "routes/booking.tsx"),
     route("api/booking-photos", "routes/api.booking-photos.ts"),
@@ -17,6 +18,7 @@ export default [
     route("aftercare/aftercarePiercing", "routes/aftercare/aftercarePiercing/aftercarePiercing.tsx"),
     route("aftercare/aftercareTattoo", "routes/aftercare/aftercareTattoo/aftercareTattoo.tsx"),
     route("tattoostyles", "routes/tattoostyles/tattoostyles.tsx"),
+    route("faq", "routes/faq/faq.tsx"),
     route("coupon", "routes/coupon/coupon.tsx")
 
   ]),

@@ -67,9 +67,25 @@ interface SplitFlapTiming {
   minimumFlapCount: number;
 }
 
-const FLAP_DURATION_SECONDS = 0.04;
-const CHARACTER_STAGGER_SECONDS = 0.3;
-const MINIMUM_FLAP_COUNT = 25;
+/**
+ * Per-call timing overrides. Every field is optional: a caller that
+ * only wants a slower stagger says so and inherits the rest of the
+ * defaults.
+ */
+export type SplitFlapTimingOverrides = Partial<SplitFlapTiming>;
+
+const DEFAULT_TIMING: SplitFlapTiming = {
+  flapDurationSeconds: 0.04,
+  characterStaggerSeconds: 0.3,
+  minimumFlapCount: 25,
+};
+
+/**
+ * The word length the default `minimumFlapCount` is tuned for. Longer
+ * targets get proportionally more flaps (see below); this is the
+ * baseline they are measured against.
+ */
+const BASELINE_WORD_LENGTH = 7;
 
 /**
  * Timing budget (per word), worst case at the last character (index = i):
@@ -81,12 +97,25 @@ const MINIMUM_FLAP_COUNT = 25;
  * with the longest word rather than staying fixed — this keeps the
  * per-character cadence constant while the overall settle time scales
  * with how much text is actually on the board.
+ *
+ * `overrides` replace the tuned defaults per call site, so a page can
+ * dial in its own cadence without every other board changing. The
+ * length-based growth still applies on top of whatever
+ * `minimumFlapCount` ends up being.
  */
-const getSplitFlapTiming = (longestWordLength: number): SplitFlapTiming => ({
-  flapDurationSeconds: FLAP_DURATION_SECONDS,
-  characterStaggerSeconds: CHARACTER_STAGGER_SECONDS,
-  minimumFlapCount: MINIMUM_FLAP_COUNT + Math.max(0, longestWordLength - 7),
-});
+const getSplitFlapTiming = (
+  longestWordLength: number,
+  overrides: SplitFlapTimingOverrides = {},
+): SplitFlapTiming => {
+  const timing = { ...DEFAULT_TIMING, ...overrides };
+
+  return {
+    ...timing,
+    minimumFlapCount:
+      timing.minimumFlapCount +
+      Math.max(0, longestWordLength - BASELINE_WORD_LENGTH),
+  };
+};
 
 /* ============================================================
  * Types
@@ -115,6 +144,8 @@ interface CellParts {
 
 export interface SplitFlapTextProps {
   target: string;
+  /** Per-page cadence overrides; omitted fields keep the tuned defaults. */
+  timing?: SplitFlapTimingOverrides;
   onSettled?: () => void;
 }
 
@@ -387,6 +418,8 @@ function SplitFlapCell({ cell }: { cell: CellDescriptor }) {
       </span>
 
       <span className={styles.hinge} />
+      <span className={styles.right_hinge} />
+      <span className={styles.left_hinge} />
     </span>
   );
 }
@@ -419,10 +452,17 @@ function SplitFlapWord({ word }: { word: WordDescriptor }) {
  * Under `prefers-reduced-motion: reduce` the cells snap straight to
  * their final state with no flip.
  */
-export function SplitFlapText({ target, onSettled }: SplitFlapTextProps) {
+export function SplitFlapText({
+  target,
+  timing: timingOverrides,
+  onSettled,
+}: SplitFlapTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const wordDescriptors = buildWordDescriptors(target);
-  const timing = getSplitFlapTiming(getLongestWordLength(target));
+  const timing = getSplitFlapTiming(
+    getLongestWordLength(target),
+    timingOverrides,
+  );
 
   useGSAP(
     () => {
@@ -448,7 +488,21 @@ export function SplitFlapText({ target, onSettled }: SplitFlapTextProps) {
     // `target` starts its own: without it @gsap/react defers cleanup
     // to unmount, and two timelines would write textContent into the
     // same cells at once (e.g. a locale switch mid-flip).
-    { scope: containerRef, dependencies: [target], revertOnUpdate: true },
+    //
+    // The resolved timing is spread into primitive dependencies rather
+    // than passed as an object: callers hand in fresh `timing` literals
+    // every render, so a reference dependency would restart the flip on
+    // each parent render.
+    {
+      scope: containerRef,
+      dependencies: [
+        target,
+        timing.flapDurationSeconds,
+        timing.characterStaggerSeconds,
+        timing.minimumFlapCount,
+      ],
+      revertOnUpdate: true,
+    },
   );
 
   return (

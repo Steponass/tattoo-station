@@ -3,14 +3,17 @@ import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 
 interface NavButtonProps {
   to: string;
-  buttonText: string;
+  buttonText: React.ReactNode;
 }
 
 export default function NavButton(
-  { to, buttonText }: NavButtonProps) 
+  { to, buttonText }: NavButtonProps)
 {
   return (
-    <LocalizedLink to={to} className={styles.nav_button} viewTransition>
+    <LocalizedLink
+      to={to}
+      className={styles.nav_button}
+      viewTransition>
       {buttonText}
     </LocalizedLink>
   )

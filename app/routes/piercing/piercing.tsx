@@ -26,7 +26,11 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 
 export const handle = {
-  titleBoard: { show: true, labelKey: "piercing" },
+  titleBoard: { 
+    show: true, 
+    labelKey: "piercing",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+ },
 };
 
 

@@ -2,7 +2,6 @@ import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/home";
-import { SplitFlapIntro } from "~/components/SplitFlapIntro/SplitFlapIntro";
 import LandingGallery from "~/components/LandingGallery/LandingGallery";
 import Process from "~/components/Process/Process";
 import NavButton from "~/components/Button/NavButton";
@@ -29,15 +28,20 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 // Intlayer end
 
+export const handle = {
+  titleBoard: { show: true, labelKey: "home" },
+};
+
 export default function Home() {
-  const { buttonTextArtists} = useIntlayer("home")
+  const { buttonTextArtists } = useIntlayer("home")
   
   return (
     <>
       <section className={styles.hero_section}>
-      <SplitFlapIntro />
+
       <h2>One stop. Countless directions</h2>
       <NavButton
+          className={styles.nav_button}
           buttonText={buttonTextArtists}
           to={"/artists"}/>
       </section>

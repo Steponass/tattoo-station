@@ -1,0 +1,91 @@
+/* --- Tab inputs (visually hidden, but focusable) --- */
+.tab_input {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* ---- Tab labels ---- */
+.tabs {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+.tab_label {
+  cursor: pointer;
+  padding: 16px;
+}
+
+/* ---- Active tab label ---- */
+.tab_input:checked + .tab_label {
+  color: var(--color-accent-3);
+}
+
+.tab_panels {
+  display: grid;
+}
+
+.tab_panel {
+  grid-area: 1 / 1;
+  padding: 24px;
+  margin-inline: auto;
+/* inactive by default */
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* ---- Active panel ---- */
+
+#tattoos_tab:checked ~ .tab_panels #tattoo_panel,
+#flashdesigns_tab:checked ~ .tab_panels #flashdesign_panel {
+  visibility: visible;
+  opacity: 1;
+}
+
+#tattoo_panel, #flashdesign_panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  /* grid-auto-rows: auto; */
+  column-gap: 16px;
+  row-gap: 32px;
+}
+
+.artist_image_wrapper {
+  position: relative;
+  background-color: var(--color-accent-3);
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --chamfer: 16px;
+
+  @media (hover: hover) {
+    &:hover {
+      clip-path: polygon(
+        0 0,
+        calc(100% - var(--chamfer)) 0,
+        100% var(--chamfer),
+        100% 100%,
+        0 100%
+      );
+
+      .artist_image {
+        clip-path: polygon(
+          0 0,
+          calc(100% - var(--chamfer) - 6px) 0,
+          100% calc(var(--chamfer) + 6px),
+          100% 100%,
+          0 100%
+        );
+      }
+    }
+  }
+}
+
+.artist_image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
