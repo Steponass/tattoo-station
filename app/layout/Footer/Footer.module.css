@@ -34,10 +34,17 @@
 
 }
 
+.social_container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12px);
+}
+
 .footer_policy_container {
-  padding-block: var(--space-s-m);
+  padding-block: var(--space-xs-s);
   display: flex;
   justify-content: space-between;
+  align-items: center;
   row-gap: var(--space-24px);
   @media (max-width: 768px) {
     flex-direction: column;

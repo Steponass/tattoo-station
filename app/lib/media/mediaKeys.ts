@@ -35,3 +35,19 @@ export function buildPortfolioMasterKey({
 }): string {
   return `${PORTFOLIO_MASTER_PREFIX}/${artistSlug}/${imageId}.${NORMALIZED_FILE_EXTENSION}`;
 }
+
+/**
+ * An artist's single avatar. Uses a fresh UUID per upload rather than a stable
+ * "avatar" name, so the delivery route's immutable, year-long cache stays
+ * correct: a re-uploaded avatar is a new key, not changed bytes at an old URL.
+ * The previous object is deleted after a successful replace.
+ */
+export function buildArtistAvatarKey({
+  artistSlug,
+  imageId,
+}: {
+  artistSlug: string;
+  imageId: string;
+}): string {
+  return `${PORTFOLIO_MASTER_PREFIX}/${artistSlug}/avatar-${imageId}.${NORMALIZED_FILE_EXTENSION}`;
+}

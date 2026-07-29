@@ -31,7 +31,10 @@
 			"bucket_name": "tattoo-station-media",
 			"binding": "MEDIA"
 		}
-	]
+	],
+	  "vars": {
+    "TEAM_DOMAIN": "https://tattoo-station.cloudflareaccess.com"
+  }
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

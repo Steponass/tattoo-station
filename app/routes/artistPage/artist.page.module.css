@@ -15,8 +15,9 @@
 }
 
 .artist_photo {
-  min-width: 300px;
-  aspect-ratio: 0.7;
+  max-width: 500px;
+  /* aspect-ratio: 0.7; */
+  height: auto;
 }
 
 .artist_text {

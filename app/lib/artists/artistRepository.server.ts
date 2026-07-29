@@ -5,6 +5,8 @@ import {
   FALLBACK_LOCALE,
   type ArtistRosterEntry,
   type ArtistRosterRow,
+  type ArtistProfile, 
+  type ArtistProfileRow,
   type SupportedLocale,
   type ArtistRole
 } from "./artistTypes";
@@ -20,6 +22,29 @@ export type BookableArtist = {
   displayName: string;
   role: ArtistRole;
 };
+
+/**
+ * Parses the stored styles JSON into a clean string array. Returns an empty
+ * array for null or anything malformed, rather than throwing — a bad value in
+ * one row should degrade to "no styles", not break the page.
+ */
+function parseArtistStyles(rawStyles: string | null): string[] {
+  if (rawStyles === null) {
+    return [];
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(rawStyles);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter((value): value is string => typeof value === "string");
+  } catch {
+    return [];
+  }
+}
 
 /**
  * Selects active artists for the booking form's artist dropdown.
@@ -168,4 +193,130 @@ export async function findArtistContactById({
     role: row.role,
     email: row.email,
   };
+}
+
+const SELECT_ARTIST_PROFILE_SQL = `
+  SELECT
+    artists.id,
+    artists.slug,
+    artists.display_name,
+    artists.role,
+    artists.instagram_handle,
+    artists.profile_image_key,
+    artists.profile_image_width,
+    artists.profile_image_height,
+    artists.styles,
+    COALESCE(requested.bio, fallback.bio)                 AS bio,
+    COALESCE(requested.bio_excerpt, fallback.bio_excerpt) AS bio_excerpt
+  FROM artists
+  LEFT JOIN artist_translations AS requested
+    ON requested.artist_id = artists.id AND requested.locale = ?
+  LEFT JOIN artist_translations AS fallback
+    ON fallback.artist_id = artists.id AND fallback.locale = ?
+  WHERE artists.slug = ? AND artists.is_active = 1
+`;
+
+/**
+ * Resolves a single artist's profile by slug, with bio in the requested locale
+ * falling back to the default. Returns null when the artist does not exist, is
+ * inactive, or has no bio in any locale.
+ */
+export async function findArtistProfileBySlug({
+  database,
+  slug,
+  locale,
+}: {
+  database: D1Database;
+  slug: string;
+  locale: SupportedLocale;
+}): Promise<ArtistProfile | null> {
+  const row = await database
+    .prepare(SELECT_ARTIST_PROFILE_SQL)
+    .bind(locale, FALLBACK_LOCALE, slug)
+    .first<ArtistProfileRow>();
+
+  if (row === null || row.bio === null) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    displayName: row.display_name,
+    role: row.role,
+    instagramHandle: row.instagram_handle,
+    profileImageKey: row.profile_image_key,
+    profileImageWidth: row.profile_image_width,
+    profileImageHeight: row.profile_image_height,
+    styles: parseArtistStyles(row.styles),
+    bio: row.bio,
+    bioExcerpt: row.bio_excerpt ?? buildBioExcerpt(row.bio),
+  };
+}
+
+export type ArtistAvatarTarget = {
+  id: number;
+  slug: string;
+  currentAvatarKey: string | null;
+};
+
+const SELECT_ARTIST_AVATAR_TARGET_SQL = `
+  SELECT id, slug, profile_image_key
+  FROM artists
+  WHERE id = ?
+`;
+
+/**
+ * Resolves the slug (for the new object key) and the current avatar key (to
+ * delete after a successful replace) for an artist, or null if none exists.
+ */
+export async function findArtistForAvatarUpdate({
+  database,
+  artistId,
+}: {
+  database: D1Database;
+  artistId: number;
+}): Promise<ArtistAvatarTarget | null> {
+  const row = await database
+    .prepare(SELECT_ARTIST_AVATAR_TARGET_SQL)
+    .bind(artistId)
+    .first<{ id: number; slug: string; profile_image_key: string | null }>();
+
+  if (row === null) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    currentAvatarKey: row.profile_image_key,
+  };
+}
+
+const UPDATE_ARTIST_AVATAR_SQL = `
+  UPDATE artists
+  SET
+    profile_image_key    = ?,
+    profile_image_width  = ?,
+    profile_image_height = ?
+  WHERE id = ?
+`;
+
+export async function updateArtistAvatar({
+  database,
+  artistId,
+  objectKey,
+  width,
+  height,
+}: {
+  database: D1Database;
+  artistId: number;
+  objectKey: string;
+  width: number;
+  height: number;
+}): Promise<void> {
+  await database
+    .prepare(UPDATE_ARTIST_AVATAR_SQL)
+    .bind(objectKey, width, height, artistId)
+    .run();
 }

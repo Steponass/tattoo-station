@@ -20,7 +20,9 @@ export default [
     route("flashdesigns", "./routes/flashdesigns/flashdesigns.tsx"),
     route("tattoostyles", "routes/tattoostyles/tattoostyles.tsx"),
     route("faq", "routes/faq/faq.tsx"),
-    route("coupon", "routes/coupon/coupon.tsx")
-
+    route("coupon", "routes/coupon/coupon.tsx"),
+    route("api/artist-photos", "routes/api.artist-photos.ts"),
+    route("portfolio-image/*", "routes/portfolio-image.$.tsx"),
+    route("api/artist-avatar", "routes/api.artist-avatar.ts"),
   ]),
 ] satisfies RouteConfig;
