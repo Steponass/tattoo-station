@@ -1,7 +1,7 @@
 // app/routes/api.artist-avatar.ts
 
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { requireAdmin } from "~/lib/admin/server/requireAdmin.server";
+import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
 import {
   storeArtistAvatar,
   type StoreArtistAvatarFailureCode,
@@ -20,46 +20,85 @@ const FAILURE_STATUS: Record<StoreArtistAvatarFailureCode, number> = {
   persist_failed: 500,
 };
 
+type ArtistIdParseResult =
+  | { ok: true; artistId: number }
+  | { ok: false };
+
 function reject(failureCode: string, detail: string, status: number): Response {
   const outcome: ArtistAvatarUploadOutcome = { ok: false, failureCode, detail };
 
   return Response.json(outcome, { status });
 }
 
-function parseArtistId(rawValue: FormDataEntryValue | null): number | null {
+function parseArtistId(rawValue: FormDataEntryValue | null): ArtistIdParseResult {
   if (typeof rawValue !== "string") {
-    return null;
+    return { ok: false };
   }
 
   const parsed = Number(rawValue);
 
   if (!Number.isInteger(parsed) || parsed <= 0) {
-    return null;
+    return { ok: false };
   }
 
-  return parsed;
+  return { ok: true, artistId: parsed };
+}
+
+/**
+ * Same actor-pinning invariant as the portfolio upload — see the extended
+ * comment on `resolveTargetArtistId` in api.artist-photos.ts. Duplicated here
+ * rather than shared because the two endpoints are the only current callers
+ * and premature extraction would ossify a shape that step 2's new endpoints
+ * (reorder-photos, delete-photo, patch-artist-profile) will refine.
+ */
+type ResolveTargetArtistIdResult =
+  | { ok: true; artistId: number }
+  | { ok: false; failureCode: "invalid_artist_id" };
+
+function resolveTargetArtistId({
+  actor,
+  formData,
+}: {
+  actor: Exclude<Actor, { kind: "unknown" }>;
+  formData: FormData;
+}): ResolveTargetArtistIdResult {
+  if (actor.kind === "artist") {
+    return { ok: true, artistId: actor.artistId };
+  }
+
+  const parseResult = parseArtistId(formData.get("artistId"));
+
+  if (!parseResult.ok) {
+    return { ok: false, failureCode: "invalid_artist_id" };
+  }
+
+  return { ok: true, artistId: parseResult.artistId };
 }
 
 /**
  * Replaces an artist's avatar: authenticate, validate, normalize, store in R2,
- * repoint the artist row, delete the previous avatar. Admin-only (stubbed in
- * dev, see requireAdmin).
+ * repoint the artist row, delete the previous avatar. Reachable to both admins
+ * (targeting any artist) and artists (pinned to themselves).
  */
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
 
-  const adminOutcome = await requireAdmin(request, env);
+  const actor = await resolveActor(request, env);
 
-  if (!adminOutcome.ok) {
-    return reject(adminOutcome.failureCode, "Admin authentication required.", 403);
+  if (actor.kind === "unknown") {
+    return reject("forbidden", "Authentication required.", 403);
   }
 
   const formData = await request.formData();
 
-  const artistId = parseArtistId(formData.get("artistId"));
+  const targetArtistIdResult = resolveTargetArtistId({ actor, formData });
 
-  if (artistId === null) {
-    return reject("invalid_artist_id", "Missing or malformed artist id.", 400);
+  if (!targetArtistIdResult.ok) {
+    return reject(
+      targetArtistIdResult.failureCode,
+      "Missing or malformed artist id.",
+      400,
+    );
   }
 
   const uploadedFile = formData.get("photo");
@@ -82,7 +121,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     images: env.IMAGES,
     mediaBucket: env.MEDIA,
     database: env.DB,
-    artistId,
+    artistId: targetArtistIdResult.artistId,
     sourceBytes,
   });
 

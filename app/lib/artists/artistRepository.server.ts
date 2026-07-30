@@ -320,3 +320,204 @@ export async function updateArtistAvatar({
     .bind(objectKey, width, height, artistId)
     .run();
 }
+
+const SELECT_ARTIST_ID_BY_EMAIL_SQL = `
+  SELECT id
+  FROM artists
+  WHERE LOWER(email) = LOWER(?)
+`;
+
+/**
+ * Resolves an artist's id from their email address, case-insensitively. Used by
+ * the actor resolver: when the Access JWT's email isn't in the admin allowlist,
+ * we fall through to this lookup to see if it belongs to a known artist.
+ *
+ * Deliberately not filtered by `is_active`. An artist who has toggled themselves
+ * inactive should still be able to log in and manage their own profile — for
+ * example, to reactivate or correct something before returning. The `is_active`
+ * flag governs public visibility on the roster, not access to the admin. This
+ * matches §3 of the build handoff: "look up artists by email (active or not)".
+ *
+ * The `LOWER(...) = LOWER(?)` comparison sidesteps any case mismatch between the
+ * hand-entered D1 row and the hand-entered Cloudflare Access policy entry — a
+ * class of "why can't Ada log in when her email is right there" bug at basically
+ * zero cost given the ~10-row table. ASCII-only, which matches every real-world
+ * email address at this studio.
+ *
+ * Returns only `id`. The resolver builds the full actor union from the id plus
+ * the JWT-supplied email; it never needs anything else from this row.
+ */
+export async function findArtistIdByEmail({
+  database,
+  email,
+}: {
+  database: D1Database;
+  email: string;
+}): Promise<number | null> {
+  const row = await database
+    .prepare(SELECT_ARTIST_ID_BY_EMAIL_SQL)
+    .bind(email)
+    .first<{ id: number }>();
+
+  if (row === null) {
+    return null;
+  }
+
+  return row.id;
+}
+
+/**
+ * The full editable state of an artist, as needed by the /admin/me and
+ * /admin/artists/:id form loaders.
+ *
+ * Distinct from `ArtistProfile` (the public read): translations are returned
+ * per-locale rather than COALESCE'd, is_active is included, and the row is
+ * not filtered by is_active.
+ *
+ * `translations` is keyed by locale; a locale may be absent (the row does not
+ * exist yet) or present with a null bio (row exists but was blanked). The
+ * editor treats both as "empty" — the distinction only matters at write time,
+ * where the patch endpoint decides insert vs. update.
+ */
+export type ArtistProfileForEditing = {
+  id: number;
+  slug: string;
+  displayName: string;
+  role: ArtistRole;
+  email: string;
+  instagramHandle: string | null;
+  isActive: boolean;
+  styles: string[];
+  profileImageKey: string | null;
+  profileImageWidth: number | null;
+  profileImageHeight: number | null;
+  translations: Record<SupportedLocale, ArtistTranslationForEditing | null>;
+};
+
+export type ArtistTranslationForEditing = {
+  bio: string | null;
+  bioExcerpt: string | null;
+};
+
+type ArtistProfileEditRow = {
+  id: number;
+  slug: string;
+  display_name: string;
+  role: ArtistRole;
+  email: string;
+  instagram_handle: string | null;
+  is_active: number;
+  styles: string | null;
+  profile_image_key: string | null;
+  profile_image_width: number | null;
+  profile_image_height: number | null;
+};
+
+type ArtistTranslationEditRow = {
+  locale: SupportedLocale;
+  bio: string | null;
+  bio_excerpt: string | null;
+};
+
+const SELECT_ARTIST_FOR_EDITING_SQL = `
+  SELECT
+    id,
+    slug,
+    display_name,
+    role,
+    email,
+    instagram_handle,
+    is_active,
+    styles,
+    profile_image_key,
+    profile_image_width,
+    profile_image_height
+  FROM artists
+  WHERE id = ?
+`;
+
+const SELECT_ARTIST_TRANSLATIONS_FOR_EDITING_SQL = `
+  SELECT locale, bio, bio_excerpt
+  FROM artist_translations
+  WHERE artist_id = ?
+`;
+
+/**
+ * Loads an artist's full editable state — the profile row and every locale of
+ * their translations, returned side-by-side rather than merged.
+ *
+ * Returns null only when the artist row does not exist. Missing translations
+ * for a locale surface as `translations[locale] === null`, not as an error:
+ * the editor renders empty fields and the patch endpoint decides insert vs.
+ * update at save time.
+ *
+ * Two queries rather than a JOIN. A JOIN with two locale rows fans the artist
+ * columns across two result rows; either the caller de-duplicates them or the
+ * SQL aggregates per-locale into named columns (bio_en, bio_lt, ...). Both
+ * options are more code than "one row for the artist, one query for the
+ * translations, zip them client-side." At two locales and a per-request cost
+ * of ~1ms on D1, this is not the query to optimize.
+ */
+export async function findArtistProfileForEditing({
+  database,
+  artistId,
+}: {
+  database: D1Database;
+  artistId: number;
+}): Promise<ArtistProfileForEditing | null> {
+  const artistRow = await database
+    .prepare(SELECT_ARTIST_FOR_EDITING_SQL)
+    .bind(artistId)
+    .first<ArtistProfileEditRow>();
+
+  if (artistRow === null) {
+    return null;
+  }
+
+  const translationsResult = await database
+    .prepare(SELECT_ARTIST_TRANSLATIONS_FOR_EDITING_SQL)
+    .bind(artistId)
+    .all<ArtistTranslationEditRow>();
+
+  const translationsByLocale = buildTranslationsByLocale(
+    translationsResult.results,
+  );
+
+  return {
+    id: artistRow.id,
+    slug: artistRow.slug,
+    displayName: artistRow.display_name,
+    role: artistRow.role,
+    email: artistRow.email,
+    instagramHandle: artistRow.instagram_handle,
+    isActive: artistRow.is_active === 1,
+    styles: parseArtistStyles(artistRow.styles),
+    profileImageKey: artistRow.profile_image_key,
+    profileImageWidth: artistRow.profile_image_width,
+    profileImageHeight: artistRow.profile_image_height,
+    translations: translationsByLocale,
+  };
+}
+
+/**
+ * Reshapes the flat list of translation rows into a locale-keyed record. The
+ * record has an entry for every supported locale — locales without a row are
+ * explicitly null, so the editor never confuses "not loaded" with "empty."
+ */
+function buildTranslationsByLocale(
+  rows: ArtistTranslationEditRow[],
+): Record<SupportedLocale, ArtistTranslationForEditing | null> {
+  const translationsByLocale: Record<SupportedLocale, ArtistTranslationForEditing | null> = {
+    en: null,
+    lt: null,
+  };
+
+  for (const row of rows) {
+    translationsByLocale[row.locale] = {
+      bio: row.bio,
+      bioExcerpt: row.bio_excerpt,
+    };
+  }
+
+  return translationsByLocale;
+}

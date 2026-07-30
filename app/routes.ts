@@ -25,4 +25,7 @@ export default [
     route("portfolio-image/*", "routes/portfolio-image.$.tsx"),
     route("api/artist-avatar", "routes/api.artist-avatar.ts"),
   ]),
+    route("admin", "routes/admin.tsx", [
+    route("me", "routes/admin.me.tsx"),
+  ]),
 ] satisfies RouteConfig;

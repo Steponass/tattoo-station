@@ -1,0 +1,209 @@
+// app/lib/admin/server/resolveActor.server.ts
+
+import { jwtVerify, createRemoteJWKSet, type JWTPayload } from "jose";
+import { isAdminEmail } from "./adminAllowlist.server";
+import { findArtistIdByEmail } from "~/lib/artists/artistRepository.server";
+
+/**
+ * The resolved caller of an admin-area request. The three variants are the
+ * terminal states described in §3 of the handoff: admin (email in the
+ * allowlist), artist (email matches a D1 row, active or not), or unknown
+ * (nobody recognized).
+ *
+ * `unknown` deliberately collapses several failure modes — missing Access JWT,
+ * invalid JWT, valid JWT with an email in neither list — into one shape. The
+ * caller only ever wants to answer "is this a recognized actor?", and every
+ * negative answer becomes a 403 at the layout gate. Distinguishing failure
+ * modes at the type level would leak verification internals into route code
+ * that shouldn't care; distinguishing them for observability happens inside
+ * this module via server-side logs.
+ */
+export type Actor =
+  | { kind: "admin"; email: string }
+  | { kind: "artist"; artistId: number; email: string }
+  | { kind: "unknown" };
+
+type ResolveActorEnv = {
+  POLICY_AUD: string;
+  TEAM_DOMAIN: string;
+  ADMIN_EMAILS?: string;
+  DEV_ACTOR: string;
+  DB: D1Database;
+};
+
+/**
+ * Cloudflare Access injects the token on the request header (preferred over
+ * the CF_Authorization cookie, which is not guaranteed to be sent on every
+ * navigation).
+ */
+const ACCESS_JWT_HEADER = "cf-access-jwt-assertion";
+
+
+/**
+ * In local development there is no Access layer in front of `wrangler dev`, so
+ * no JWT and no meaningful email exist. The stub returns a synthesized actor so
+ * the dev loop is unblocked; the whole branch is compiled out of the production
+ * build because Vite statically replaces `import.meta.env.DEV` with `false`.
+ *
+ * The choice of actor is driven by the DEV_ACTOR variable in .dev.vars:
+ *   DEV_ACTOR=admin          → { kind: "admin", email: "dev@localhost" }
+ *   DEV_ACTOR=artist:3       → { kind: "artist", artistId: 3, email: "dev@localhost" }
+ *   (unset or empty)         → admin (matches the previous unconditional stub)
+ *
+ * Anything malformed logs a warning and falls back to admin. The stub never
+ * returns `unknown`: dev should not exercise the 403 path, since Access is what
+ * puts you there and Access isn't running here. Testing the 403 path is a job
+ * for the deployed preview, not the local loop.
+ *
+ * A future extension could read a header or cookie for mid-session switching,
+ * but the security-critical shape of `resolveActor` benefits from one source
+ * of truth per session. Restarting the dev server to change actors is cheap.
+ */
+const DEV_ACTOR_EMAIL = "dev@localhost";
+
+function parseDevActor(rawDevActor: string | undefined): Actor {
+  if (typeof rawDevActor !== "string" || rawDevActor.trim() === "") {
+    return { kind: "admin", email: DEV_ACTOR_EMAIL };
+  }
+
+  const trimmed = rawDevActor.trim();
+
+  if (trimmed === "admin") {
+    return { kind: "admin", email: DEV_ACTOR_EMAIL };
+  }
+
+  if (trimmed.startsWith("artist:")) {
+    const rawId = trimmed.slice("artist:".length);
+    const parsedId = Number(rawId);
+
+    if (!Number.isInteger(parsedId) || parsedId <= 0) {
+      console.warn(
+        `[resolveActor] DEV_ACTOR="${rawDevActor}" — malformed artist id, ` +
+          `falling back to admin.`,
+      );
+      return { kind: "admin", email: DEV_ACTOR_EMAIL };
+    }
+
+    return { kind: "artist", artistId: parsedId, email: DEV_ACTOR_EMAIL };
+  }
+
+  console.warn(
+    `[resolveActor] DEV_ACTOR="${rawDevActor}" — unrecognized value, ` +
+      `expected "admin" or "artist:<id>". Falling back to admin.`,
+  );
+  return { kind: "admin", email: DEV_ACTOR_EMAIL };
+}
+
+/**
+ * Built once at module scope, not per request. `createRemoteJWKSet` caches the
+ * fetched keys and only re-fetches when it sees an unknown `kid`, which is how
+ * it absorbs Access's ~6-weekly key rotation without hard-coding a public key.
+ * Rebuilding it inside the resolver would throw that cache away on every hit.
+ */
+let cachedRemoteJwks: ReturnType<typeof createRemoteJWKSet> | null = null;
+
+function getRemoteJwks(teamDomain: string) {
+  if (cachedRemoteJwks === null) {
+    const certificatesUrl = new URL(`${teamDomain}/cdn-cgi/access/certs`);
+    cachedRemoteJwks = createRemoteJWKSet(certificatesUrl);
+  }
+
+  return cachedRemoteJwks;
+}
+
+/**
+ * Extracts the email claim from a verified Access JWT payload. A missing or
+ * malformed value returns null rather than a placeholder string, so that a
+ * misconfigured IdP cannot silently promote "authenticated user" through the
+ * resolver into the admin allowlist check.
+ */
+function extractEmail(payload: JWTPayload): string | null {
+  const email = payload.email;
+
+  if (typeof email !== "string" || email.length === 0) {
+    return null;
+  }
+
+  return email;
+}
+
+/**
+ * Resolves the caller of an admin-area request to one of three actor kinds.
+ * The single source of truth for admin-area authentication.
+ *
+ * Called by:
+ *   - the admin layout loader (once per page navigation), which turns `unknown`
+ *     into a 403 and passes the actor down to child routes;
+ *   - each admin API endpoint (once per HTTP request), because each endpoint
+ *     is fetched directly rather than reached through the layout loader.
+ *
+ * There is no downstream re-verification: every consumer trusts what this
+ * function returns.
+ *
+ * Resolution order (see §3 of the handoff):
+ *   1. Verify the Access JWT (signature, issuer, audience).
+ *   2. If the email is in ADMIN_EMAILS → admin.
+ *   3. Else look up `artists` by email (regardless of is_active) → artist.
+ *   4. Else → unknown.
+ */
+export async function resolveActor(
+  request: Request,
+  env: ResolveActorEnv,
+): Promise<Actor> {
+    if (import.meta.env.DEV) {
+  return parseDevActor(env.DEV_ACTOR);
+}
+
+  if (!env.POLICY_AUD || !env.TEAM_DOMAIN) {
+    console.error(
+      "[resolveActor] Missing POLICY_AUD or TEAM_DOMAIN — cannot verify Access JWT.",
+    );
+    return { kind: "unknown" };
+  }
+
+  const accessToken = request.headers.get(ACCESS_JWT_HEADER);
+
+  if (accessToken === null) {
+    return { kind: "unknown" };
+  }
+
+  let verifiedPayload: JWTPayload;
+
+  try {
+    const remoteJwks = getRemoteJwks(env.TEAM_DOMAIN);
+    const verificationResult = await jwtVerify(accessToken, remoteJwks, {
+      issuer: env.TEAM_DOMAIN,
+      audience: env.POLICY_AUD,
+    });
+
+    verifiedPayload = verificationResult.payload;
+  } catch (verificationError) {
+    console.warn(
+      "[resolveActor] Access JWT verification failed:",
+      verificationError,
+    );
+    return { kind: "unknown" };
+  }
+
+  const email = extractEmail(verifiedPayload);
+
+  if (email === null) {
+    console.warn("[resolveActor] Verified JWT had no usable email claim.");
+    return { kind: "unknown" };
+  }
+
+  if (isAdminEmail({ email, rawAllowlist: env.ADMIN_EMAILS })) {
+    return { kind: "admin", email };
+  }
+
+  const artistId = await findArtistIdByEmail({
+    database: env.DB,
+    email,
+  });
+
+  if (artistId !== null) {
+    return { kind: "artist", artistId, email };
+  }
+
+  return { kind: "unknown" };
+}

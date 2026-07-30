@@ -1,0 +1,111 @@
+/* -------------------------------------------------------------------------- */
+/* Shared                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hint {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.error {
+  font-size: 0.8125rem;
+  color: #b01e28;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* TextField control                                                          */
+/* -------------------------------------------------------------------------- */
+
+.control {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+}
+
+.control:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* TextAreaField                                                              */
+/* -------------------------------------------------------------------------- */
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.counter {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+.textAreaControl {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.textAreaControl:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* CheckboxField                                                              */
+/* -------------------------------------------------------------------------- */
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkboxControl {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* ReadOnlyField                                                              */
+/* -------------------------------------------------------------------------- */
+
+.readOnlyLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.readOnlyValue {
+  font-size: 1rem;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
