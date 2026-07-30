@@ -51,6 +51,7 @@ main {
 button {
   background: transparent;
   border: none;
+  letter-spacing: 0.4px;
 }
 
 /* Possibly not working? fix tbd */

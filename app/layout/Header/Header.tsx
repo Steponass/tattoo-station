@@ -82,26 +82,22 @@ export default function Header() {
           className={styles.mobile_nav}
           aria-hidden={!isMenuOpen}
         >
-          <LocalizedLink to="/Pimpi" viewTransition onClick={closeMenu}>
+          <LocalizedLink to="/artists" viewTransition onClick={closeMenu}>
             {artists}
           </LocalizedLink>
-          <LocalizedLink to="/Pimpi" viewTransition onClick={closeMenu}>
+          <LocalizedLink to="/piercing" viewTransition onClick={closeMenu}>
             {piercing}
           </LocalizedLink>
-          <LocalizedLink to="/Pimpi" viewTransition onClick={closeMenu}>
+          <LocalizedLink to="/faq" viewTransition onClick={closeMenu}>
             {faq}
           </LocalizedLink>
           <LocalizedLink to="/tattoostyles" viewTransition onClick={closeMenu}>
             {tattoostyles}
           </LocalizedLink>
-          <LocalizedLink
-            to="/TestViewTransition"
-            viewTransition
-            onClick={closeMenu}
-          >
+          <LocalizedLink to="/aftercare" viewTransition onClick={closeMenu}>
             {aftercare}
           </LocalizedLink>
-          <LocalizedLink to="/faq" viewTransition onClick={closeMenu}>
+          <LocalizedLink to="/flashdesigns" viewTransition onClick={closeMenu}>
             {flashdesigns}
           </LocalizedLink>
           <LocalizedLink to="/coupon" viewTransition onClick={closeMenu}>

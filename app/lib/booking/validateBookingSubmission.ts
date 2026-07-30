@@ -7,8 +7,8 @@ import {
   type BudgetRange,
   type ServiceCategory,
   type TattooStyle,
-} from "../bookingConstants";
-import { MAX_PHOTOS_PER_BOOKING } from "../photoConstraints";
+} from "./bookingConstants";
+import { MAX_PHOTOS_PER_BOOKING } from "./photoConstraints";
 import {
   isValidEmailShape,
   isValidHttpUrl,
@@ -16,18 +16,19 @@ import {
   readCheckbox,
   readOptionalText,
   readTextList,
-} from "../formDataReaders";
+} from "./formDataReaders";
 import {
   APPROX_SIZE_CM_RANGE,
   FIELD_MAX_LENGTHS,
+  FIELD_MIN_LENGTHS,
   isServiceCategory,
   type ArtistSelection,
   type BookingFieldErrorCodes,
   type BookingSubmission,
   type BookingValidationResult,
   type FieldErrorCode,
-} from "../bookingSubmissionTypes";
-import { DRAFT_ID_FIELD_NAME } from "../spamGuardConstants";
+} from "./bookingSubmissionTypes";
+import { DRAFT_ID_FIELD_NAME } from "./spamGuardConstants";
 
 /**
  * Collects field errors while validation proceeds, so a submission reports
@@ -295,6 +296,11 @@ function readPhotoKeys({
 /**
  * Validates a booking submission read from FormData.
  *
+ * Runs in both places deliberately: the browser calls it before submitting so
+ * the user sees problems without a round trip, and the action calls it again
+ * because nothing arriving from a browser can be trusted. Sharing one function
+ * is what keeps the two verdicts from drifting apart.
+ *
  * Reports error codes rather than messages: the action runs server-side where
  * no translation context is available, and messages must be resolvable in
  * either site language.
@@ -350,6 +356,13 @@ export function validateBookingSubmission(
     maxLength: FIELD_MAX_LENGTHS.description,
     errors,
   });
+
+  if (
+    description !== undefined &&
+    description.length < FIELD_MIN_LENGTHS.description
+  ) {
+    errors.record("description", "too_short");
+  }
 
   const preferredTimes = readOptionalBoundedText({
     formData,

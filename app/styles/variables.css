@@ -12,10 +12,14 @@
   --color-accent:      hsl(356, 69%, 37%);
   --color-accent-hover: hsl(356, 79%, 27%);
   --color-accent-disabled: hsl(357, 9%, 30%);
+  /* Lighter than --color-accent, which is the CTA colour and too dark to read
+     as text on --color-bg-base. */
+  --color-error:       hsl(356, 80%, 66%);
   --color-secondary:   hsl(201, 43%, 25%);
   --color-text-strong: hsl(143, 3%, 97%);
   --color-text-weak:   hsl(143, 5%, 80%);
-  --color-stroke-strong: hsl(143, 5%, 30%);
+  --color-text-weakest: hsl(143, 3%, 40%);
+  --color-stroke-strong: hsl(143, 10%, 30%);
   --color-stroke-weak:  hsl(143, 5%, 20%);
   --color-flap-top: hsl(143, 5%, 3%);
   --color-flap-bottom: hsl(143, 5%, 2%);

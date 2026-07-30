@@ -33,9 +33,9 @@ input, textarea, select, option {
   color: var(--color-text-strong);
   caret-color: var(--color-secondary);
   background-color: var(--color-bg-raised);
-  border: none;
+  border: 2px solid var(--color-stroke-strong);
   &::placeholder {
-    color: var(--color-text-weak);
+    color: var(--color-text-weakest);
   }
 }
 
@@ -62,7 +62,7 @@ input, textarea, select, option {
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4px);
+  gap: var(--space-8px);
   & label {
     padding-inline: var(--space-4px);
   }
@@ -130,6 +130,34 @@ p[data-field-hint] {
   padding-inline: var(--space-4px);
 }
 
+/* Validation */
+
+p[data-field-error] {
+  color: var(--color-error);
+  font-size: var(--fontsize-body-s);
+  padding-inline: var(--space-4px);
+}
+
+[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+/* Radio groups carry aria-invalid on the group rather than on any one input,
+   so the colour has to be pushed down to the controls themselves. */
+[data-radio-group][aria-invalid="true"] {
+  border-color: transparent;
+  & input[type=radio] {
+    color: var(--color-error);
+    border-color: var(--color-error);
+  }
+}
+
+.form_error {
+  color: var(--color-error);
+  margin-top: var(--space-8px);
+  font-size: var(--fontsize-body-s);
+}
+
 ul[data-photo-list] {
   display: flex;
   gap: var(--space-2xs-xs);
@@ -142,4 +170,47 @@ ul[data-photo-list] {
 .guide_link {
   color: var(--color-accent);
   font-size: var(--fontsize-body-s);
+}
+
+input[id=bodyPlacement],
+input[id=referenceLink],
+select[id=preferredStyle], 
+input[id=approxSizeCm],
+select[id=budgetRange],
+select[name=artistSelection],
+input[type=email],
+input[id=customerName],
+input[type=tel],
+input[type=file] {
+  min-height: 40px;
+}
+
+/* Sits above the header (z-index 10) so the stamp covers the whole page, and
+   swallows pointer events aimed at the form it is confirming. */
+.booking_confirmation_overlay {
+  margin-top: -300px;
+  display: grid;
+  place-items: center;
+}
+
+.booking_confirmation_container {
+  max-width: 300px;
+  aspect-ratio: 1;
+  padding: var(--space-16px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-radius: 50%;
+  border: 3px solid black;
+  background-color: hsl(10, 51%, 93%);
+  rotate: -10deg;
+  & p {
+    color: black;
+  }
+}
+
+.confirmation_heading {
+  color: black;
+  margin-block-end: 0.5em;
 }

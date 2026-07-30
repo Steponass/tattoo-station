@@ -41,11 +41,22 @@ export function isValidEmailShape(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
 }
 
+/**
+ * A Lithuanian mobile number is eight digits nationally (861234567) and eleven
+ * with the country code, so eight is the floor below which a number cannot be
+ * complete. The ceiling is the E.164 maximum.
+ */
+const PHONE_DIGIT_COUNT_RANGE = { minimum: 8, maximum: 15 } as const;
+
 export function isValidPhoneShape(value: string): boolean {
   const digitCount = value.replace(/\D/g, "").length;
   const hasOnlyAllowedCharacters = /^[+()\d\s./-]+$/.test(value);
 
-  return hasOnlyAllowedCharacters && digitCount >= 6 && digitCount <= 15;
+  return (
+    hasOnlyAllowedCharacters &&
+    digitCount >= PHONE_DIGIT_COUNT_RANGE.minimum &&
+    digitCount <= PHONE_DIGIT_COUNT_RANGE.maximum
+  );
 }
 
 export function isValidHttpUrl(value: string): boolean {

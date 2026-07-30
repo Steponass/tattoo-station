@@ -82,6 +82,6 @@ button, label, legend, input, textarea) {
   line-height: 1.1;
 }
 
-:where(p, li, a, td, th, input, textarea) {
+:where(p, li) {
   line-height: 1.5;
 }

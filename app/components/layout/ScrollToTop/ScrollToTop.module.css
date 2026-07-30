@@ -4,8 +4,8 @@
   transition: 0.2s all ease-in;
   transform: translateY(var(--space-8px));
   position: fixed;
-  right: calc(env(safe-area-inset-right) + 32px);
-  bottom: calc(env(safe-area-inset-bottom) + 32px);
+  right: calc(env(safe-area-inset-right) + var(--space-s-m));
+  bottom: calc(env(safe-area-inset-bottom) + var(--space-s-m));
   display: flex;
   align-items: center;
   justify-content: center;

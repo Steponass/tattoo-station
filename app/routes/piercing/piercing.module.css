@@ -51,6 +51,23 @@
   shape-margin: var(--space-4px);
 }
 
+
+.piercing_jewelry_1, .piercing_jewelry_2 {
+    animation: rotateY linear 1s;
+    animation-timeline: view();
+    animation-range-start: cover 0%;
+    animation-range-end: cover 25%;
+}
+
+@keyframes rotateY {
+  0% {
+    transform: rotateX(120deg);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
 .piercing_table {
   border-spacing: 0;
 }

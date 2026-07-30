@@ -1,5 +1,3 @@
-// app/routes/booking.tsx
-
 import { lazy, Suspense } from "react";
 import { useFetcher } from "react-router";
 
@@ -14,13 +12,12 @@ import { insertBooking } from "~/lib/booking/server/bookingRepository.server";
 import type { BookingAttribution } from "~/lib/booking/server/bookingRepository.server";
 import type {
   BookingFieldErrorCodes,
-  BookingFieldErrors,
   BookingSubmission,
 } from "~/lib/booking/bookingSubmissionTypes";
 import { readOptionalText } from "~/lib/booking/formDataReaders";
 import { generateBookingReference } from "~/lib/booking/generateBookingReference";
 import { sendBookingNotifications } from "~/lib/booking/server/notifications.server";
-import { validateBookingSubmission } from "~/lib/booking/server/validateBookingSubmission.server";
+import { validateBookingSubmission } from "~/lib/booking/validateBookingSubmission";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 
 import type { Route } from "./+types/booking";
@@ -37,22 +34,6 @@ const bookingConfirmationContent: BookingConfirmationContent = {
   referenceLabel: "Reference: ",
   stampText: "RECEIVED",
 };
-
-const GENERIC_FIELD_ERROR_MESSAGE = "Something went wrong. Please try again.";
-
-/**
- * Field-level error codes have no per-code copy yet, so every code resolves
- * to the generic message until dedicated strings are written.
- */
-function resolveFieldErrorMessages(
-  fieldErrorCodes: BookingFieldErrorCodes,
-): BookingFieldErrors {
-  const messages: BookingFieldErrors = {};
-  for (const field of Object.keys(fieldErrorCodes)) {
-    messages[field] = GENERIC_FIELD_ERROR_MESSAGE;
-  }
-  return messages;
-}
 
 export type BookingActionResult =
   | { ok: true; reference: string }
@@ -216,26 +197,36 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
 
   const submissionResult = fetcher.data;
 
-  if (submissionResult?.ok === true) {
-    return (
-      <Suspense fallback={null}>
-        <BookingConfirmation
-          reference={submissionResult.reference}
-          content={bookingConfirmationContent}
-        />
-      </Suspense>
-    );
-  }
-
-  const fieldErrorCodes =
+  // Codes rather than messages: the form resolves them to localized copy, which
+  // this action cannot do because it runs without a translation context.
+  const fieldErrorCodes: BookingFieldErrorCodes =
     submissionResult?.ok === false ? submissionResult.fieldErrors : {};
 
   return (
-    <BookingForm
-      artists={artists}
-      turnstileSiteKey={turnstileSiteKey}
-      fieldErrors={resolveFieldErrorMessages(fieldErrorCodes)}
-      fetcher={fetcher}
-    />
+    <>
+      {/*
+        The form stays mounted underneath the confirmation, so the stamp lands
+        on the request it confirms rather than on an empty page. It is inert
+        while confirmed: there is nothing left to edit, and nothing behind an
+        overlay should stay reachable by keyboard.
+      */}
+      <div inert={submissionResult?.ok === true}>
+        <BookingForm
+          artists={artists}
+          turnstileSiteKey={turnstileSiteKey}
+          serverFieldErrorCodes={fieldErrorCodes}
+          fetcher={fetcher}
+        />
+      </div>
+
+      {submissionResult?.ok === true && (
+        <Suspense fallback={null}>
+          <BookingConfirmation
+            reference={submissionResult.reference}
+            content={bookingConfirmationContent}
+          />
+        </Suspense>
+      )}
+    </>
   );
 }

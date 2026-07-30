@@ -6,6 +6,7 @@ import type {
 
 export type FieldErrorCode =
   | "required"
+  | "too_short"
   | "too_long"
   | "invalid_email"
   | "invalid_phone"
@@ -81,6 +82,14 @@ export const FIELD_MAX_LENGTHS = {
   bodyPlacement: 120,
   referenceLink: 500,
   approxSizeCm: 60,
+} as const satisfies Record<string, number>;
+
+/**
+ * Floors for fields where a technically non-empty answer still tells us
+ * nothing. Everything else only needs to be present.
+ */
+export const FIELD_MIN_LENGTHS = {
+  description: 5,
 } as const satisfies Record<string, number>;
 
 export const APPROX_SIZE_CM_RANGE = { minimum: 0.5, maximum: 200 } as const;

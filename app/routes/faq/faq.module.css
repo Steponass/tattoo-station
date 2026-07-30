@@ -25,6 +25,7 @@
   display: flex;
   text-align: center;
   gap: var(--space-24px);
+  margin-block: var(--space-l-xl);
 }
 
 .directions_wrapper {

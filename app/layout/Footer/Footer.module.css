@@ -6,11 +6,10 @@
 .footer-container {
   display: flex;
   justify-content: space-between;
-  /* grid-template-columns: 1fr 1fr 1fr; */
-  grid-auto-rows: auto;
-  padding-block: var(--space-24px);
+  padding-block: var(--space-m-l);
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    flex-direction: column;;
+
   }
 }
 
@@ -49,6 +48,7 @@
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
+  padding-block: var(--space-m-l);
   }
 
   background-image: radial-gradient(circle, #000000 2.5px, transparent 2.5px);

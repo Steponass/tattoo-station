@@ -57,8 +57,11 @@ export function PhotoUploadField({
   }
 
   return (
-    <div className={`${styles.field} ${styles.full_width}`}
->
+    <div
+      className={`${styles.field} ${styles.full_width}`}
+      data-field
+      data-invalid={field.errorMessage === undefined ? undefined : true}
+    >
       <label htmlFor={controlId} data-field-label>
         {field.label}
       </label>
@@ -78,8 +81,16 @@ export function PhotoUploadField({
         accept={PHOTO_INPUT_ACCEPT_ATTRIBUTE}
         disabled={!photos.canAddMorePhotos}
         onChange={handleFilesSelected}
+        aria-invalid={field.errorMessage === undefined ? undefined : true}
+        aria-describedby={describedByIds}
         data-photo-input
       />
+
+      {field.errorMessage !== undefined && (
+        <p id={errorId} data-field-error role="alert">
+          {field.errorMessage}
+        </p>
+      )}
 
       <PhotoPreviewList
         entries={photos.entries}

@@ -1,6 +1,7 @@
 // app/components/booking/BookingForm.tsx
 
 import { useReducer } from "react";
+import { useIntlayer } from "react-intlayer";
 import type { FetcherWithComponents } from "react-router";
 
 import type { BookableArtist } from "~/lib/artists/artistRepository.server";
@@ -20,10 +21,16 @@ import {
   initialBookingFormState,
   type BookingFormState,
 } from "~/lib/booking/bookingFormReducer";
-import type { BookingFieldErrors } from "~/lib/booking/bookingSubmissionTypes";
+import type {
+  BookingFieldErrorCodes,
+  BookingFieldErrors,
+  FieldErrorCode,
+} from "~/lib/booking/bookingSubmissionTypes";
 import { filterArtistsForCategory } from "~/lib/booking/filterArtistsForCategory";
+import { useBookingFormValidation } from "~/lib/booking/useBookingFormValidation";
 import { usePhotoSelection } from "~/lib/booking/usePhotoSelection";
 import type { PhotoEntry } from "~/lib/booking/usePhotoSelection";
+import { FieldError, fieldErrorElementId } from "./FieldError";
 import { PhotoUploadField } from "./photos/PhotoUploadField";
 import type { PhotoStatusMessages } from "./photos/PhotoPreviewItem";
 import { SpamGuardFields } from "./SpamGuardFields";
@@ -32,59 +39,101 @@ import { TurnstileWidget } from "./TurnstileWidget";
 import styles from "./BookingForm.module.css";
 import { LocalizedLink } from "../intlayer/LocalizedLink";
 
-const SERVICE_CATEGORY_LABELS: Record<ServiceCategory, string> = {
-  tattoo: "Tattoo",
-  piercing: "Piercing",
-  other: "Something else",
-};
+type BookingFormContent = ReturnType<typeof useIntlayer<"BookingForm">>;
 
-const SERVICE_TYPE_LABELS: Record<string, Record<string, string>> = {
+/**
+ * Option values are mapped to content keys rather than to display text, so the
+ * wording lives entirely in BookingForm.content.ts.
+ */
+const SERVICE_CATEGORY_CONTENT_KEYS = {
+  tattoo: "serviceCategoryTattoo",
+  piercing: "serviceCategoryPiercing",
+  other: "serviceCategoryOther",
+} as const satisfies Record<ServiceCategory, keyof BookingFormContent>;
+
+const SERVICE_TYPE_CONTENT_KEYS: Record<
+  string,
+  Record<string, keyof BookingFormContent>
+> = {
   tattoo: {
-    new: "New tattoo",
-    cover_up: "Cover-up",
-    touch_up: "Touch-up",
-    consultation: "Consultation",
+    new: "tattooTypeNew",
+    cover_up: "tattooTypeCoverUp",
+    touch_up: "tattooTypeTouchUp",
+    consultation: "tattooTypeConsultation",
   },
   piercing: {
-    new: "New piercing",
-    jewelry_change: "Jewelry change",
-    consultation: "Consultation",
+    new: "piercingTypeNew",
+    jewelry_change: "piercingTypeJewelryChange",
+    consultation: "piercingTypeConsultation",
   },
 };
 
-const FIRST_TIME_LABELS: Record<string, string> = {
-  tattoo: "This is my first tattoo",
-  piercing: "This is my first piercing",
+const FIRST_TIME_CONTENT_KEYS: Record<string, keyof BookingFormContent> = {
+  tattoo: "firstTimeTattoo",
+  piercing: "firstTimePiercing",
 };
 
-const PHOTO_STATUS_MESSAGES = {
-  uploading: "Uploading…",
-  uploaded: "Uploaded",
-  retryLabel: "Retry",
-  removeLabel: "Remove",
-  uploadFailed: "Upload failed. Please try again.",
-  rejectionMessages: {
-    too_many_photos: "You can upload up to 5 photos.",
-    file_too_large: "That file is too large (max 5MB).",
-    unsupported_file_type: "That file type isn't supported.",
+const PHOTO_REJECTION_CONTENT_KEYS = {
+  too_many_photos: "photoTooManyPhotos",
+  file_too_large: "photoFileTooLarge",
+  unsupported_file_type: "photoUnsupportedFileType",
+} as const satisfies Record<string, keyof BookingFormContent>;
+
+/**
+ * Fallback copy for each validation code, used where the code alone already
+ * says enough beside the field that produced it.
+ */
+const GENERIC_ERROR_CONTENT_KEYS = {
+  required: "errorRequired",
+  too_short: "errorTooShort",
+  too_long: "errorTooLong",
+  invalid_email: "errorEmailInvalid",
+  invalid_phone: "errorPhoneInvalid",
+  invalid_url: "errorReferenceLinkInvalid",
+  invalid_option: "errorInvalidOption",
+  invalid_number: "errorInvalidNumber",
+  number_out_of_range: "errorNumberOutOfRange",
+  too_many_photos: "errorPhotosTooMany",
+} as const satisfies Record<FieldErrorCode, keyof BookingFormContent>;
+
+/**
+ * Field-specific wording, preferred over the generic message for a code.
+ *
+ * Mostly covers 'required', which on its own ("This field is required") says
+ * less than naming what is missing.
+ */
+const FIELD_ERROR_CONTENT_KEYS: Partial<
+  Record<string, Partial<Record<FieldErrorCode, keyof BookingFormContent>>>
+> = {
+  customerName: { required: "errorNameRequired" },
+  customerEmail: { required: "errorEmailRequired" },
+  customerPhone: { required: "errorPhoneRequired" },
+  serviceCategory: { required: "errorServiceCategoryRequired" },
+  serviceType: { required: "errorServiceTypeRequired" },
+  artistSelection: { required: "errorArtistRequired" },
+  description: {
+    required: "errorDescriptionRequired",
+    too_short: "errorDescriptionTooShort",
   },
+  bodyPlacement: { required: "errorBodyPlacementRequired" },
+  privacyConsent: { required: "errorPrivacyConsentRequired" },
 };
 
 const BODY_PLACEMENT_SUGGESTIONS_ID = "body-placement-suggestions";
 
-const BODY_PLACEMENT_SUGGESTIONS = [
-  "Forearm",
-  "Upper arm",
-  "Shoulder",
-  "Chest",
-  "Back",
-  "Ribs",
-  "Thigh",
-  "Calf",
-  "Ankle",
-  "Hand",
-  "Neck",
-];
+const BODY_PLACEMENT_CONTENT_KEYS = [
+  "placementForearm",
+  "placementUpperArm",
+  "placementShoulder",
+  "placementChest",
+  "placementBack",
+  "placementRibs",
+  "placementThigh",
+  "placementCalf",
+  "placementAnkle",
+  "placementHand",
+  "placementNeck",
+] as const satisfies readonly (keyof BookingFormContent)[];
 
 /**
  * True once a service type is chosen, or immediately for categories (like
@@ -100,17 +149,87 @@ function hasSelectedServiceType(formState: BookingFormState): boolean {
   return options.length === 0 || formState.serviceType !== null;
 }
 
-function resolvePhotoMessages(entry: PhotoEntry): PhotoStatusMessages {
+/**
+ * Turns validation codes into display text.
+ *
+ * Codes stay codes until here, which is the first point that has a translation
+ * context — the validator runs in both the browser and the action, and the
+ * action has no way to pick a language.
+ */
+function resolveFieldErrorMessages(
+  fieldErrorCodes: BookingFieldErrorCodes,
+  content: BookingFormContent,
+): BookingFieldErrors {
+  const messages: BookingFieldErrors = {};
+
+  for (const [fieldName, code] of Object.entries(fieldErrorCodes)) {
+    if (code === undefined) {
+      continue;
+    }
+
+    const contentKey =
+      FIELD_ERROR_CONTENT_KEYS[fieldName]?.[code] ??
+      GENERIC_ERROR_CONTENT_KEYS[code];
+
+    messages[fieldName] = content[contentKey].value;
+  }
+
+  return messages;
+}
+
+/**
+ * The message under the submit button.
+ *
+ * A 'form' code means the submission was rejected as a whole rather than any
+ * one field being wrong, so pointing at the fields would send the customer
+ * looking for something that isn't there.
+ */
+function resolveFormErrorMessage(
+  fieldErrorCodes: BookingFieldErrorCodes,
+  content: BookingFormContent,
+): string | undefined {
+  if (fieldErrorCodes.form !== undefined) {
+    return content.errorFormGeneric.value;
+  }
+
+  if (Object.keys(fieldErrorCodes).length === 0) {
+    return undefined;
+  }
+
+  return content.errorFormIncomplete.value;
+}
+
+/**
+ * Ties a control to its own error message, so the relationship is spelled out
+ * once here rather than at all fourteen fields.
+ */
+function invalidFieldProps(fieldName: string, message: string | undefined) {
+  return message === undefined
+    ? {}
+    : {
+        "aria-invalid": true as const,
+        "aria-describedby": fieldErrorElementId(fieldName),
+      };
+}
+
+/**
+ * The photo components take plain strings, so localized nodes are unwrapped
+ * with `.value` at this boundary.
+ */
+function resolvePhotoMessages(
+  entry: PhotoEntry,
+  content: BookingFormContent,
+): PhotoStatusMessages {
   const problemMessage =
     entry.rejectionCode === null
-      ? PHOTO_STATUS_MESSAGES.uploadFailed
-      : PHOTO_STATUS_MESSAGES.rejectionMessages[entry.rejectionCode];
+      ? content.photoUploadFailed.value
+      : content[PHOTO_REJECTION_CONTENT_KEYS[entry.rejectionCode]].value;
 
   return {
-    uploading: PHOTO_STATUS_MESSAGES.uploading,
-    uploaded: PHOTO_STATUS_MESSAGES.uploaded,
-    retryLabel: PHOTO_STATUS_MESSAGES.retryLabel,
-    removeLabel: PHOTO_STATUS_MESSAGES.removeLabel,
+    uploading: content.photoUploading.value,
+    uploaded: content.photoUploaded.value,
+    retryLabel: content.photoRetryLabel.value,
+    removeLabel: content.photoRemoveLabel.value,
     problemMessage,
   };
 }
@@ -122,11 +241,15 @@ function resolvePhotoMessages(entry: PhotoEntry): PhotoStatusMessages {
 function ServiceTypeField({
   serviceCategory,
   selectedValue,
+  errorMessage,
   onValueChange,
+  content,
 }: {
   serviceCategory: ServiceCategory | null;
   selectedValue: ServiceType | null;
+  errorMessage: string | undefined;
   onValueChange: (serviceType: ServiceType) => void;
+  content: BookingFormContent;
 }) {
   if (serviceCategory === null) {
     return null;
@@ -139,14 +262,24 @@ function ServiceTypeField({
   }
 
   return (
-    <fieldset className={styles.radio_group}>
-      <legend data-field-label>Type*</legend>
+    <fieldset
+      className={styles.radio_group}
+      data-field
+      data-invalid={errorMessage !== undefined || undefined}
+    >
+      <legend data-field-label>{content.serviceTypeLegend}</legend>
 
-      <div role="radiogroup" data-radio-group>
+      <div
+        role="radiogroup"
+        data-radio-group
+        {...invalidFieldProps("serviceType", errorMessage)}
+      >
         {options.map((serviceType) => {
           const optionId = `serviceType-${serviceType}`;
+          const contentKey =
+            SERVICE_TYPE_CONTENT_KEYS[serviceCategory]?.[serviceType];
           const label =
-            SERVICE_TYPE_LABELS[serviceCategory]?.[serviceType] ?? serviceType;
+            contentKey === undefined ? serviceType : content[contentKey];
 
           return (
             <div
@@ -166,6 +299,8 @@ function ServiceTypeField({
             </div>
           );
         })}
+
+        <FieldError fieldName="serviceType" message={errorMessage} />
       </div>
     </fieldset>
   );
@@ -175,13 +310,16 @@ function ArtistField({
   serviceCategory,
   artists,
   selectedValue,
+  errorMessage,
   onValueChange,
+  content,
 }: {
   serviceCategory: ServiceCategory | null;
   artists: readonly BookableArtist[];
   selectedValue: string | null;
-  errorMessage?: string;
+  errorMessage: string | undefined;
   onValueChange: (artistSelection: string) => void;
+  content: BookingFormContent;
 }) {
   const eligibleArtists = filterArtistsForCategory({
     artists,
@@ -199,9 +337,14 @@ function ArtistField({
   const selectId = "artistSelection";
 
   return (
-    <div className={styles.field}>
+    <div
+      className={styles.field}
+      data-field
+      data-required
+      data-invalid={errorMessage !== undefined || undefined}
+    >
       <label htmlFor={selectId} data-field-label>
-        Artist*
+        {content.artistLabel}
       </label>
 
       <select
@@ -210,13 +353,16 @@ function ArtistField({
         required
         value={selectedValue ?? ""}
         onChange={(event) => onValueChange(event.currentTarget.value)}
+        {...invalidFieldProps("artistSelection", errorMessage)}
       >
         <option value="" disabled>
-          Select an artist
+          {content.artistPlaceholderOption}
         </option>
 
         {showNotSpecifiedOption && (
-          <option value={ARTIST_NOT_SPECIFIED}>No preference</option>
+          <option value={ARTIST_NOT_SPECIFIED}>
+            {content.artistNoPreference}
+          </option>
         )}
 
         {eligibleArtists.map((artist) => (
@@ -225,6 +371,8 @@ function ArtistField({
           </option>
         ))}
       </select>
+
+      <FieldError fieldName="artistSelection" message={errorMessage} />
     </div>
   );
 }
@@ -235,24 +383,25 @@ function ArtistField({
  */
 function FirstTimeCheckbox({
   serviceCategory,
+  content,
 }: {
   serviceCategory: ServiceCategory | null;
-  errorMessage?: string;
+  content: BookingFormContent;
 }) {
   if (serviceCategory === null) {
     return null;
   }
 
-  const label = FIRST_TIME_LABELS[serviceCategory];
+  const contentKey = FIRST_TIME_CONTENT_KEYS[serviceCategory];
 
-  if (label === undefined) {
+  if (contentKey === undefined) {
     return null;
   }
 
   return (
     <div className={styles.checkbox_field}>
       <input id="isFirstTime" type="checkbox" name="isFirstTime" value="on" />
-      <label htmlFor="isFirstTime">{label}</label>
+      <label htmlFor="isFirstTime">{content[contentKey]}</label>
     </div>
   );
 }
@@ -260,14 +409,16 @@ function FirstTimeCheckbox({
 export function BookingForm({
   artists,
   turnstileSiteKey,
-  fieldErrors,
+  serverFieldErrorCodes,
   fetcher,
 }: {
   artists: readonly BookableArtist[];
   turnstileSiteKey: string;
-  fieldErrors: BookingFieldErrors;
+  serverFieldErrorCodes: BookingFieldErrorCodes;
   fetcher: FetcherWithComponents<unknown>;
 }) {
+  const content = useIntlayer("BookingForm");
+
   const [formState, dispatchFormAction] = useReducer(
     bookingFormReducer,
     initialBookingFormState,
@@ -275,63 +426,119 @@ export function BookingForm({
 
   const photos = usePhotoSelection();
 
+  const validation = useBookingFormValidation({ serverFieldErrorCodes });
+
+  const fieldErrors = resolveFieldErrorMessages(
+    validation.fieldErrorCodes,
+    content,
+  );
+  const formErrorMessage = resolveFormErrorMessage(
+    validation.fieldErrorCodes,
+    content,
+  );
+
   const isSubmitting = fetcher.state !== "idle";
 
   return (
-    <fetcher.Form className={styles.booking_form} method="post" noValidate>
+    <fetcher.Form
+      className={styles.booking_form}
+      method="post"
+      noValidate
+      onSubmit={validation.handleSubmit}
+      onInput={validation.handleRevalidate}
+      onBlur={validation.handleRevalidate}
+    >
       <SpamGuardFields draftId={photos.draftId} />
 
       {/* Personal details */}
       <section className={styles.section}>
-        <h2 className={styles.heading}>Personal info</h2>
-        <div className={styles.field}>
-          <label htmlFor="customerName">Full name*</label>
+        <h2 className={styles.heading}>{content.personalInfoHeading}</h2>
+        <div
+          className={styles.field}
+          data-field
+          data-required
+          data-invalid={fieldErrors.customerName !== undefined || undefined}
+        >
+          <label htmlFor="customerName">{content.nameLabel}</label>
           <input
             id="customerName"
             name="customerName"
             required
-            placeholder="Lina"
+            placeholder={content.namePlaceholder.value}
             autoComplete="name"
             maxLength={35}
+            {...invalidFieldProps("customerName", fieldErrors.customerName)}
+          />
+          <FieldError
+            fieldName="customerName"
+            message={fieldErrors.customerName}
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="customerEmail">Email*</label>
+        <div
+          className={styles.field}
+          data-field
+          data-required
+          data-invalid={fieldErrors.customerEmail !== undefined || undefined}
+        >
+          <label htmlFor="customerEmail">{content.emailLabel}</label>
           <input
             id="customerEmail"
             name="customerEmail"
             type="email"
             inputMode="email"
             required
-            placeholder="youremail@domain.com"
+            placeholder={content.emailPlaceholder.value}
             autoComplete="email"
             maxLength={45}
+            {...invalidFieldProps("customerEmail", fieldErrors.customerEmail)}
+          />
+          <FieldError
+            fieldName="customerEmail"
+            message={fieldErrors.customerEmail}
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="customerPhone">Phone number*</label>
+        <div
+          className={styles.field}
+          data-field
+          data-required
+          data-invalid={fieldErrors.customerPhone !== undefined || undefined}
+        >
+          <label htmlFor="customerPhone">{content.phoneLabel}</label>
           <input
             id="customerPhone"
             name="customerPhone"
             type="tel"
             inputMode="tel"
             required
-            placeholder="+370 612 34567"
+            placeholder={content.phonePlaceholder.value}
             autoComplete="tel"
             maxLength={20}
+            {...invalidFieldProps("customerPhone", fieldErrors.customerPhone)}
+          />
+          <FieldError
+            fieldName="customerPhone"
+            message={fieldErrors.customerPhone}
           />
         </div>
       </section>
 
       {/* Appointment */}
       <section className={styles.section}>
-        <h2 className={styles.heading}>Appointment</h2>
-        <fieldset className={styles.radio_group}>
-          <legend>What are you booking for?*</legend>
+        <h2 className={styles.heading}>{content.appointmentHeading}</h2>
+        <fieldset
+          className={styles.radio_group}
+          data-field
+          data-invalid={fieldErrors.serviceCategory !== undefined || undefined}
+        >
+          <legend>{content.serviceCategoryLegend}</legend>
 
-          <div role="radiogroup" data-radio-group>
+          <div
+            role="radiogroup"
+            data-radio-group
+            {...invalidFieldProps("serviceCategory", fieldErrors.serviceCategory)}
+          >
             {SERVICE_CATEGORIES.map((serviceCategory) => {
               const optionId = `serviceCategory-${serviceCategory}`;
 
@@ -357,20 +564,27 @@ export function BookingForm({
                     }
                   />
                   <label htmlFor={optionId}>
-                    {SERVICE_CATEGORY_LABELS[serviceCategory]}
+                    {content[SERVICE_CATEGORY_CONTENT_KEYS[serviceCategory]]}
                   </label>
                 </div>
               );
             })}
+
+            <FieldError
+              fieldName="serviceCategory"
+              message={fieldErrors.serviceCategory}
+            />
           </div>
         </fieldset>
 
         <ServiceTypeField
           serviceCategory={formState.serviceCategory}
           selectedValue={formState.serviceType}
+          errorMessage={fieldErrors.serviceType}
           onValueChange={(serviceType) =>
             dispatchFormAction({ type: "serviceTypeSelected", serviceType })
           }
+          content={content}
         />
 
         <div className={styles.artist_and_times}>
@@ -378,18 +592,36 @@ export function BookingForm({
             serviceCategory={formState.serviceCategory}
             artists={artists}
             selectedValue={formState.artistSelection}
+            errorMessage={fieldErrors.artistSelection}
             onValueChange={(artistSelection) =>
               dispatchFormAction({ type: "artistSelected", artistSelection })
             }
+            content={content}
           />
           {hasSelectedServiceType(formState) && (
-            <div className={styles.field}>
-              <label htmlFor="preferredTimes">Preferred dates / times</label>
+            <div
+              className={styles.field}
+              data-field
+              data-invalid={
+                fieldErrors.preferredTimes !== undefined || undefined
+              }
+            >
+              <label htmlFor="preferredTimes">
+                {content.preferredTimesLabel}
+              </label>
               <input
                 id="preferredTimes"
                 name="preferredTimes"
-                placeholder="e.g. weekday evenings"
+                placeholder={content.preferredTimesPlaceholder.value}
                 maxLength={40}
+                {...invalidFieldProps(
+                  "preferredTimes",
+                  fieldErrors.preferredTimes,
+                )}
+              />
+              <FieldError
+                fieldName="preferredTimes"
+                message={fieldErrors.preferredTimes}
               />
             </div>
           )}
@@ -399,72 +631,90 @@ export function BookingForm({
       {/* Design details */}
       {formState.serviceCategory !== null && (
         <section className={styles.section}>
-          <h2 className={styles.heading}>Design details</h2>
+          <h2 className={styles.heading}>{content.designDetailsHeading}</h2>
 
           <div
             className={`${styles.field} ${styles.full_width}`}
             data-field
             data-required
+            data-invalid={fieldErrors.description !== undefined || undefined}
           >
             <label htmlFor="description" data-field-label>
-              What do you have in mind?*
+              {content.descriptionLabel}
             </label>
             <textarea
               id="description"
               name="description"
               required
               rows={4}
-              placeholder="Anything that helps us prepare"
+              placeholder={content.descriptionPlaceholder.value}
               maxLength={500}
+              {...invalidFieldProps("description", fieldErrors.description)}
             />
-                    {formState.serviceCategory !== "other" && (
+            <FieldError
+              fieldName="description"
+              message={fieldErrors.description}
+            />
+          </div>
+
+          {formState.serviceCategory !== "other" && (
             <>
               <div
                 className={styles.field}
                 data-field
                 data-required
+                data-invalid={
+                  fieldErrors.bodyPlacement !== undefined || undefined
+                }
               >
                 <label htmlFor="bodyPlacement" data-field-label>
-                  Placement*
+                  {content.bodyPlacementLabel}
                 </label>
                 <input
                   id="bodyPlacement"
                   name="bodyPlacement"
                   required
-                  placeholder="e.g. Forearm"
+                  placeholder={content.bodyPlacementPlaceholder.value}
                   maxLength={30}
                   list={BODY_PLACEMENT_SUGGESTIONS_ID}
+                  {...invalidFieldProps(
+                    "bodyPlacement",
+                    fieldErrors.bodyPlacement,
+                  )}
+                />
+                <FieldError
+                  fieldName="bodyPlacement"
+                  message={fieldErrors.bodyPlacement}
                 />
               </div>
 
               <datalist id={BODY_PLACEMENT_SUGGESTIONS_ID}>
-                {BODY_PLACEMENT_SUGGESTIONS.map((suggestion) => (
-                  <option key={suggestion} value={suggestion} />
+                {BODY_PLACEMENT_CONTENT_KEYS.map((contentKey) => (
+                  <option key={contentKey} value={content[contentKey].value} />
                 ))}
               </datalist>
             </>
           )}
-          </div>
 
           <PhotoUploadField
             field={{
               name: "photos",
-              label: "Any images or photos?",
-              hint: "Up to 5 photos, 5MB each.",
+              label: content.photosLabel.value,
+              hint: content.photosHint.value,
+              errorMessage: fieldErrors.photoKeys,
             }}
             photos={photos}
-            resolveMessages={resolvePhotoMessages}
-            chooseFilesLabel="Choose files"
+            resolveMessages={(entry) => resolvePhotoMessages(entry, content)}
+            chooseFilesLabel={content.chooseFilesLabel.value}
           />
 
           <div
             className={`${styles.field} ${styles.full_width}`}
             data-field
+            data-invalid={fieldErrors.referenceLink !== undefined || undefined}
           >
-            <label htmlFor="referenceLink">
-              Any links?
-            </label>
-            <p data-field-hint>Instagram post or similar.</p>
+            <label htmlFor="referenceLink">{content.referenceLinkLabel}</label>
+            <p data-field-hint>{content.referenceLinkHint}</p>
             <input
               id="referenceLink"
               name="referenceLink"
@@ -472,6 +722,11 @@ export function BookingForm({
               inputMode="url"
               placeholder="https://"
               maxLength={200}
+              {...invalidFieldProps("referenceLink", fieldErrors.referenceLink)}
+            />
+            <FieldError
+              fieldName="referenceLink"
+              message={fieldErrors.referenceLink}
             />
           </div>
 
@@ -483,22 +738,29 @@ export function BookingForm({
                 data-invalid={
                   fieldErrors.preferredStyle !== undefined || undefined
                 }
-              > <div>
-                <label htmlFor="preferredStyle" data-field-label>
-                  Preferred style
-                </label>
-                <LocalizedLink className={styles.guide_link} to="/tattoostyles">Gidas</LocalizedLink>
+              >
+                <div>
+                  <label htmlFor="preferredStyle" data-field-label>
+                    {content.preferredStyleLabel}
+                  </label>
+                  <LocalizedLink
+                    className={styles.guide_link}
+                    to={TATTOO_STYLES_PAGE_PATH}
+                  >
+                    {content.styleGuideLinkLabel}
+                  </LocalizedLink>
                 </div>
                 <select
                   id="preferredStyle"
                   name="preferredStyle"
                   defaultValue=""
-                  aria-invalid={
-                    fieldErrors.preferredStyle !== undefined || undefined
-                  }
+                  {...invalidFieldProps(
+                    "preferredStyle",
+                    fieldErrors.preferredStyle,
+                  )}
                 >
                   <option value="" disabled>
-                    Select a style
+                    {content.preferredStylePlaceholderOption}
                   </option>
                   {TATTOO_STYLES.map((style) => (
                     <option key={style.value} value={style.value}>
@@ -506,14 +768,11 @@ export function BookingForm({
                     </option>
                   ))}
                 </select>
-                {fieldErrors.preferredStyle !== undefined && (
-                  <p data-field-error role="alert">
-                    {fieldErrors.preferredStyle}
-                  </p>
-                )}
+                <FieldError
+                  fieldName="preferredStyle"
+                  message={fieldErrors.preferredStyle}
+                />
               </div>
-
-
 
               <div
                 className={styles.field}
@@ -523,23 +782,23 @@ export function BookingForm({
                 }
               >
                 <label htmlFor="approxSizeCm" data-field-label>
-                  Approximate size (cm)
+                  {content.approxSizeLabel}
                 </label>
                 <input
                   id="approxSizeCm"
                   name="approxSizeCm"
                   inputMode="decimal"
-                  placeholder="e.g. 10"
+                  placeholder={content.approxSizePlaceholder.value}
                   maxLength={60}
-                  aria-invalid={
-                    fieldErrors.approxSizeCm !== undefined || undefined
-                  }
+                  {...invalidFieldProps(
+                    "approxSizeCm",
+                    fieldErrors.approxSizeCm,
+                  )}
                 />
-                {fieldErrors.approxSizeCm !== undefined && (
-                  <p data-field-error role="alert">
-                    {fieldErrors.approxSizeCm}
-                  </p>
-                )}
+                <FieldError
+                  fieldName="approxSizeCm"
+                  message={fieldErrors.approxSizeCm}
+                />
               </div>
 
               <div
@@ -550,18 +809,16 @@ export function BookingForm({
                 }
               >
                 <label htmlFor="budgetRange" data-field-label>
-                  Budget
+                  {content.budgetLabel}
                 </label>
                 <select
                   id="budgetRange"
                   name="budgetRange"
                   defaultValue=""
-                  aria-invalid={
-                    fieldErrors.budgetRange !== undefined || undefined
-                  }
+                  {...invalidFieldProps("budgetRange", fieldErrors.budgetRange)}
                 >
                   <option value="" disabled>
-                    Select a budget
+                    {content.budgetPlaceholderOption}
                   </option>
                   {BUDGET_RANGES.map((budget) => (
                     <option key={budget.value} value={budget.value}>
@@ -569,11 +826,10 @@ export function BookingForm({
                     </option>
                   ))}
                 </select>
-                {fieldErrors.budgetRange !== undefined && (
-                  <p data-field-error role="alert">
-                    {fieldErrors.budgetRange}
-                  </p>
-                )}
+                <FieldError
+                  fieldName="budgetRange"
+                  message={fieldErrors.budgetRange}
+                />
               </div>
             </>
           )}
@@ -582,11 +838,11 @@ export function BookingForm({
 
       {/* Consent */}
       <section data-booking-section="consent" className={styles.section}>
-        <h2 className={styles.heading}>Before you go</h2>
+        <h2 className={styles.heading}>{content.consentHeading}</h2>
 
         <FirstTimeCheckbox
           serviceCategory={formState.serviceCategory}
-          errorMessage={fieldErrors.isFirstTime}
+          content={content}
         />
 
         <div
@@ -600,16 +856,19 @@ export function BookingForm({
             type="checkbox"
             name="marketingConsent"
             value="on"
+            {...invalidFieldProps(
+              "marketingConsent",
+              fieldErrors.marketingConsent,
+            )}
           />
           <label htmlFor="marketingConsent" data-field-label>
-            Keep me updated about news and offers
+            {content.marketingConsentLabel}
           </label>
-          <p data-field-hint>Optional — you can unsubscribe anytime.</p>
-          {fieldErrors.marketingConsent !== undefined && (
-            <p data-field-error role="alert">
-              {fieldErrors.marketingConsent}
-            </p>
-          )}
+          <p data-field-hint>{content.marketingConsentHint}</p>
+          <FieldError
+            fieldName="marketingConsent"
+            message={fieldErrors.marketingConsent}
+          />
         </div>
 
         <div
@@ -617,6 +876,7 @@ export function BookingForm({
           data-field
           data-field-checkbox
           data-required
+          data-invalid={fieldErrors.privacyConsent !== undefined || undefined}
         >
           <input
             id="privacyConsent"
@@ -624,10 +884,17 @@ export function BookingForm({
             name="privacyConsent"
             value="on"
             required
+            {...invalidFieldProps("privacyConsent", fieldErrors.privacyConsent)}
           />
           <label htmlFor="privacyConsent">
-            I agree to the <a href="#">privacy policy</a>*
+            {content.privacyConsentPrefix}
+            <a href="#">{content.privacyConsentLinkLabel}</a>
+            {content.privacyConsentSuffix}
           </label>
+          <FieldError
+            fieldName="privacyConsent"
+            message={fieldErrors.privacyConsent}
+          />
         </div>
       </section>
 
@@ -635,11 +902,17 @@ export function BookingForm({
 
       <div className={styles.full_width}>
         <SubmitButton
-          label="Send request"
-          submittingLabel="Sending…"
+          label={content.submitLabel.value}
+          submittingLabel={content.submittingLabel.value}
           isSubmitting={isSubmitting}
           isDisabled={photos.hasUploadInFlight}
         />
+
+        {formErrorMessage !== undefined && (
+          <p className={styles.form_error} role="alert">
+            {formErrorMessage}
+          </p>
+        )}
       </div>
     </fetcher.Form>
   );

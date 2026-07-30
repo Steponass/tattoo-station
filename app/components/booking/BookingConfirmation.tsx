@@ -1,5 +1,4 @@
-
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from './BookingForm.module.css'
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -11,7 +10,7 @@ export type BookingConfirmationContent = {
   stampText: string;
 };
 
-const STAMP_IMPACT_ROTATION_DEGREES = -8;
+const STAMP_IMPACT_ROTATION_DEGREES = -12;
 
 export function BookingConfirmation({
   reference,
@@ -22,6 +21,12 @@ export function BookingConfirmation({
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // The submit button the customer was on becomes inert the moment this
+  // renders, which would otherwise drop focus to the top of the document.
+  useEffect(() => {
+    containerRef.current?.focus();
+  }, []);
 
   useGSAP(
     () => {
@@ -54,7 +59,7 @@ export function BookingConfirmation({
           },
         )
         .to("[data-stamp]", {
-          scale: 1.06,
+          scale: 1.03,
           duration: 0.08,
           yoyo: true,
           repeat: 1,
@@ -62,8 +67,8 @@ export function BookingConfirmation({
         })
         .fromTo(
           "[data-confirmation-body]",
-          { autoAlpha: 0, y: 8 },
-          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
+          { autoAlpha: 0 },
+          { autoAlpha: 1, delay: 1, duration: 1, ease: "power2.out" },
           "-=0.1",
         );
     },
@@ -71,18 +76,24 @@ export function BookingConfirmation({
   );
 
   return (
-    <div ref={containerRef} className={styles.booking_confirmation_container} data-booking-confirmation>
-      <div data-stamp aria-hidden="true">
-        {content.stampText}
-      </div>
-
-      <div data-confirmation-body>
-        <h1 className={styles.heading}>{content.heading}</h1>
-        <p>{content.body}</p>
-        <p>
-          {content.referenceLabel}{"RECEIVED"}
-          <strong data-booking-reference>{reference}</strong>
-        </p>
+    <div
+      ref={containerRef}
+      className={styles.booking_confirmation_overlay}
+      role="status"
+      aria-live="polite"
+      tabIndex={-1}
+    >
+      {/* The circle is the stamp: it is what the timeline slams down, so the
+          animation hooks sit on it and on the text that follows it in. */}
+      <div className={styles.booking_confirmation_container} data-stamp>
+        <h5 className={styles.confirmation_heading}>{content.heading}</h5>
+        <div data-confirmation-body>
+          <p>{content.body}</p>
+          <p>
+            {content.referenceLabel}
+            <strong>{reference}</strong>
+          </p>
+        </div>
       </div>
     </div>
   );
