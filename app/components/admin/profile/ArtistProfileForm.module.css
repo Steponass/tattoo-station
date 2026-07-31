@@ -2,8 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  max-width: 48rem;
-  margin: 0 auto;
   padding: 2rem 1.5rem;
 }
 
@@ -84,4 +82,100 @@
 .submit:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
+}
+
+/* AvatarField component */
+
+.root {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.thumbnailArea {
+  flex-shrink: 0;
+  width: 8rem;
+  height: 8rem;
+  border: 1px solid currentColor;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbnailPlaceholder {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.uploadButton {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  font: inherit;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  background: transparent;
+  position: relative;
+}
+
+.uploadButton:has(input:disabled) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.uploadButton:focus-within {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/**
+ * The <input type="file"> is functionally reachable but visually gone. Wrapping
+ * it in a <label> gives us the styling we want while keeping keyboard access
+ * and native file-picker semantics — clicking anywhere on the label opens the
+ * picker, tab focuses the input.
+ */
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hint {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.error {
+  font-size: 0.8125rem;
+  color: #b01e28;
+  margin: 0;
 }

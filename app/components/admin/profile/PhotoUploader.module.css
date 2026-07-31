@@ -1,0 +1,84 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.controlRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.uploadButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  font: inherit;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  background: transparent;
+  position: relative;
+}
+
+.uploadButton[data-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.uploadButton:focus-within {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.counter {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  opacity: 0.7;
+}
+
+.progressText {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.failureList {
+  list-style: none;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  border: 1px solid #b01e28;
+  color: #b01e28;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.failureItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.failureFileName {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+  flex-shrink: 0;
+}

@@ -1,0 +1,10 @@
+.admin_main {
+  width: min(800px, 98%);
+}
+
+.photo_nav_buttons {
+    display: flex;
+    margin-block: var(--space-m-l);
+    gap: var(--space-s-m);
+    align-items: center;
+}

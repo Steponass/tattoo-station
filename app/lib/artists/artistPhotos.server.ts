@@ -10,6 +10,7 @@ import {
 } from "./artistPhotoRepository.server";
 import type { ArtistStyle } from "./artistStyles";
 import type { ArtistPhotoCategory } from "./artistPhotoCategories";
+
 /**
  * Per-artist portfolio cap. Bounds storage cost and forces curation — a wall of
  * 200 photos serves neither the artist nor the visitor. Raise deliberately.
@@ -32,6 +33,7 @@ export type StoreArtistPhotoFailureCode =
   | "persist_failed";
 
 export type StoredArtistPhoto = {
+  id: number;
   objectKey: string;
   width: number;
   height: number;
@@ -129,8 +131,10 @@ export async function storeArtistPhoto({
 
   const sortOrder = summary.maxSortOrder + SORT_ORDER_INCREMENT;
 
+  let insertedPhotoId: number;
+
   try {
-    await insertArtistPhoto({
+    const insertResult = await insertArtistPhoto({
       database,
       artistId,
       category,
@@ -141,9 +145,23 @@ export async function storeArtistPhoto({
       sortOrder,
       createdAt: new Date().toISOString(),
     });
+
+    insertedPhotoId = insertResult.id;
   } catch (error) {
     // Compensate for the orphaned master so a failed insert doesn't leak an
     // unreferenced object into R2. Cleanup failure must not mask the original.
+    //
+    // Two exception shapes reach here: a real D1 write failure (the row was
+    // never committed), and the "insert returned no last_row_id" throw from
+    // the repository (a driver-level anomaly — extremely unlikely for an
+    // INTEGER PRIMARY KEY table, but defended against). We treat both the
+    // same: delete R2, return persist_failed. In the anomaly case a D1 row
+    // may exist without a matching R2 object, which is a wedged state — but
+    // it's better than the reverse (R2 object with no D1 row), and the artist
+    // will see the failure and retry, at which point the wedged row
+    // resurfaces as a phantom photo in their grid to be manually cleaned up.
+    // Rare enough that we accept the sharp edge rather than build more
+    // recovery machinery.
     await mediaBucket.delete(objectKey).catch(() => {});
 
     return {
@@ -155,6 +173,13 @@ export async function storeArtistPhoto({
 
   return {
     ok: true,
-    photo: { objectKey, width, height, byteSize, sortOrder },
+    photo: {
+      id: insertedPhotoId,
+      objectKey,
+      width,
+      height,
+      byteSize,
+      sortOrder,
+    },
   };
 }

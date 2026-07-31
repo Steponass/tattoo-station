@@ -1,0 +1,31 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gridItem {
+  position: relative;
+  touch-action: none;
+  cursor: grab;
+}
+
+.gridItem[data-dragging="true"] {
+  z-index: 1;
+  cursor: grabbing;
+  opacity: 0.85;
+}
+
+.gridItem:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridItem {
+    transition: none !important;
+  }
+}

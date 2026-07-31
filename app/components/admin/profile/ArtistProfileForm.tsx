@@ -11,6 +11,7 @@ import {
   TextField,
 } from "~/components/admin/form/FormFields";
 import StylesPicker from "./StylesPicker";
+import AvatarField from "./AvatarField";
 import styles from "./ArtistProfileForm.module.css";
 
 /**
@@ -162,6 +163,17 @@ if (
           <ReadOnlyField label="Role" value={artistProfile.role} />
           <ReadOnlyField label="Email" value={artistProfile.email} />
         </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionHeading}>Avatar</h2>
+        <AvatarField
+          initialAvatar={{
+            objectKey: artistProfile.profileImageKey,
+            width: artistProfile.profileImageWidth,
+            height: artistProfile.profileImageHeight,
+          }}
+        />
       </section>
 
       <section className={styles.section}>

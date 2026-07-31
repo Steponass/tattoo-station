@@ -24,8 +24,12 @@ export default [
     route("api/artist-photos", "routes/api.artist-photos.ts"),
     route("portfolio-image/*", "routes/portfolio-image.$.tsx"),
     route("api/artist-avatar", "routes/api.artist-avatar.ts"),
+    route("api/artist-photos/reorder", "routes/api.artist-photos.reorder.ts"),
+    route("api/artist-photos/delete", "routes/api.artist-photos.delete.ts"),
   ]),
     route("admin", "routes/admin.tsx", [
     route("me", "routes/admin.me.tsx"),
+    route("me/photos", "routes/admin.me.photos.tsx"),
+    route("me/flash", "routes/admin.me.flash.tsx"),
   ]),
 ] satisfies RouteConfig;

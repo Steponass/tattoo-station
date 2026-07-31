@@ -1,0 +1,120 @@
+// app/components/admin/profile/PhotoTile.tsx
+
+import { useEffect, useState } from "react";
+import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
+import { SortableGridItem } from "~/components/admin/sortable/SortableGrid";
+import styles from "./PhotoTile.module.css";
+
+/**
+ * One photo cell in the grid. Wraps the image in a SortableGridItem (dnd-kit
+ * wiring) and overlays a delete button that flips to "Confirm?" on first
+ * click.
+ *
+ * Delete confirmation is inline rather than a modal or native confirm(). A
+ * two-step tap pattern is mobile-friendly, doesn't interrupt the page, and
+ * auto-cancels after 3 seconds — misclicks recover on their own without user
+ * action.
+ *
+ * The tile's outer surface is the drag handle (whole cell draggable). The
+ * delete button lives inside a container with `pointer-events` isolation so
+ * clicks on it don't propagate up to the drag listeners. The SortableGrid
+ * component's PointerSensor also has an 8px distance threshold, which
+ * further defends against click-becomes-drag confusion.
+ */
+
+/**
+ * How long the "confirm?" state stays visible before reverting to the
+ * default delete affordance. Long enough that a slow user has time to
+ * decide, short enough that a leftover confirm state doesn't linger.
+ */
+const CONFIRM_TIMEOUT_MS = 3000;
+
+type PhotoTileProps = {
+  photo: {
+    id: number;
+    objectKey: string;
+    width: number;
+    height: number;
+  };
+  onDelete: (photoId: number) => void;
+  isDeleting: boolean;
+};
+
+export default function PhotoTile(props: PhotoTileProps) {
+  const { photo, onDelete, isDeleting } = props;
+
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  // Auto-revert the confirm state after the timeout. The cleanup handles the
+  // case where the tile unmounts or the user confirms before the timer fires.
+  useEffect(() => {
+    if (!isConfirming) {
+      return;
+    }
+
+    const timerId = window.setTimeout(() => {
+      setIsConfirming(false);
+    }, CONFIRM_TIMEOUT_MS);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [isConfirming]);
+
+  function handleDeleteButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
+    // Stop the event before it reaches SortableGridItem's drag listeners.
+    // Without this, a click on the button can register as the start of a
+    // drag if the pointer moves at all before mouseup.
+    event.stopPropagation();
+
+    if (!isConfirming) {
+      setIsConfirming(true);
+      return;
+    }
+
+    setIsConfirming(false);
+    onDelete(photo.id);
+  }
+
+  function handleDeleteButtonKeyDown(
+    event: React.KeyboardEvent<HTMLButtonElement>,
+  ) {
+    // Space and Enter on the button should trigger click behavior only; the
+    // SortableGrid's keyboard sensor uses Space as the pick-up gesture, so
+    // without this the same key press starts a drag AND triggers the button.
+    event.stopPropagation();
+  }
+
+  return (
+    <SortableGridItem itemId={photo.id}>
+      <div className={styles.tile} data-deleting={isDeleting}>
+        <img
+          src={buildPortfolioImageUrl(photo.objectKey)}
+          width={photo.width}
+          height={photo.height}
+          alt=""
+          loading="lazy"
+          className={styles.photo}
+          draggable={false}
+        />
+        <div className={styles.actions}>
+          <button
+            type="button"
+            onClick={handleDeleteButtonClick}
+            onKeyDown={handleDeleteButtonKeyDown}
+            disabled={isDeleting}
+            data-confirming={isConfirming}
+            aria-label={
+              isConfirming
+                ? "Confirm delete photo"
+                : "Delete photo"
+            }
+            className={styles.deleteButton}
+          >
+            {isDeleting ? "…" : isConfirming ? "Confirm?" : "×"}
+          </button>
+        </div>
+      </div>
+    </SortableGridItem>
+  );
+}

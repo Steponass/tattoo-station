@@ -10,6 +10,8 @@ import { isArtistStyle, type ArtistStyle } from "~/lib/artists/artistStyles";
 import type { ArtistPhotoUploadOutcome } from "~/lib/artists/uploadArtistPhoto";
 import type { Route } from "./+types/api.artist-photos";
 import { isArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
+import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
+import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
 
 /**
  * A generous ceiling on the raw upload before normalization. An unbounded
@@ -115,6 +117,107 @@ function resolveTargetArtistId({
   return { ok: true, artistId: parseResult.artistId };
 }
 
+type ResolveTargetCategoryResult =
+  | {
+      ok: true;
+      category: import("~/lib/artists/artistPhotoCategories").ArtistPhotoCategory;
+    }
+  | {
+      ok: false;
+      failureCode: string;
+      detail: string;
+      status: number;
+    };
+
+/**
+ * Resolves which category the upload targets, given the resolved caller.
+ *
+ * Artist: category is derived server-side from the artist's role AND the
+ *   `surface` field the UI passes ("main" or "flash"). The artist UI never
+ *   sends a category; §6 of the handoff: "The upload UI never asks for
+ *   category." Missing surface defaults to "main" for backwards compatibility
+ *   with the /admin/me/photos page written before this endpoint knew about
+ *   surfaces.
+ *
+ *   - surface=main → mainPhotoCategoryForRole(role) → "tattoo" or "piercing"
+ *   - surface=flash → literal "flash", allowed only for tattoo/both roles.
+ *     Piercer trying to upload flash is a UI bug or an attack; either way,
+ *     rejected here.
+ *
+ * Admin: category comes from the form as before. Admins may upload to any of
+ *   the three categories for any artist; the surface concept doesn't apply.
+ */
+async function resolveTargetCategory({
+  actor,
+  formData,
+  database,
+  targetArtistId,
+}: {
+  actor: Exclude<Actor, { kind: "unknown" }>;
+  formData: FormData;
+  database: D1Database;
+  targetArtistId: number;
+}): Promise<ResolveTargetCategoryResult> {
+  if (actor.kind === "artist") {
+    const artistProfile = await findArtistProfileForEditing({
+      database,
+      artistId: targetArtistId,
+    });
+
+    if (artistProfile === null) {
+      return {
+        ok: false,
+        failureCode: "artist_not_found",
+        detail: "Your account could not be found.",
+        status: 404,
+      };
+    }
+
+    const surfaceValue = formData.get("surface");
+    const surface =
+      typeof surfaceValue === "string" ? surfaceValue : "main";
+
+    if (surface === "main") {
+      return {
+        ok: true,
+        category: mainPhotoCategoryForRole(artistProfile.role),
+      };
+    }
+
+    if (surface === "flash") {
+      if (artistProfile.role === "piercing") {
+        return {
+          ok: false,
+          failureCode: "surface_not_available_for_role",
+          detail: "Flash uploads aren't available for your role.",
+          status: 403,
+        };
+      }
+      return { ok: true, category: "flash" };
+    }
+
+    return {
+      ok: false,
+      failureCode: "invalid_surface",
+      detail: "Surface must be 'main' or 'flash'.",
+      status: 400,
+    };
+  }
+
+  const categoryValue = formData.get("category");
+
+  if (typeof categoryValue !== "string" || !isArtistPhotoCategory(categoryValue)) {
+    return {
+      ok: false,
+      failureCode: "invalid_category",
+      detail: "A valid photo category is required.",
+      status: 400,
+    };
+  }
+
+  return { ok: true, category: categoryValue };
+}
+
 /**
  * Creates one portfolio photo: authenticate, validate, normalize, store in R2,
  * record in D1.
@@ -144,10 +247,15 @@ export async function action({ request, context }: Route.ActionArgs) {
     );
   }
 
-  const categoryValue = formData.get("category");
+  const categoryResult = await resolveTargetCategory({
+    actor,
+    formData,
+    database: env.DB,
+    targetArtistId: targetArtistIdResult.artistId,
+  });
 
-  if (typeof categoryValue !== "string" || !isArtistPhotoCategory(categoryValue)) {
-    return reject("invalid_category", "A valid photo category is required.", 400);
+  if (!categoryResult.ok) {
+    return reject(categoryResult.failureCode, categoryResult.detail, categoryResult.status);
   }
 
   const uploadedFile = formData.get("photo");
@@ -177,7 +285,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     mediaBucket: env.MEDIA,
     database: env.DB,
     artistId: targetArtistIdResult.artistId,
-    category: categoryValue,
+    category: categoryResult.category,
     style: styleResult.style,
     sourceBytes,
   });

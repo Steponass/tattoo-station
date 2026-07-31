@@ -8,6 +8,8 @@ import { handleArtistProfilePatchRequest } from "~/lib/artists/artistProfilePatc
 import ArtistProfileForm from "~/components/admin/profile/ArtistProfileForm";
 
 import type { Route } from "./+types/admin.me";
+import NavButton from "~/components/Button/NavButton";
+import styles from './admin.me.module.css'
 
 /**
  * The artist's self-service editor. Loads the caller's own profile — never
@@ -90,8 +92,18 @@ export default function AdminMePage({ loaderData }: Route.ComponentProps) {
   const { artistProfile } = loaderData;
 
   return (
-    <main>
+    <main className={styles.admin_main}>
       <h5>Editing your profile</h5>
+      <div className={styles.photo_nav_buttons}>
+      <NavButton 
+        to="/admin/me/photos"
+        buttonText="My Photos"
+      />
+      <NavButton 
+        to="/admin/me/flash"
+        buttonText="My Flash designs"
+      />
+</div>
       <ArtistProfileForm artistProfile={artistProfile} />
     </main>
   );
