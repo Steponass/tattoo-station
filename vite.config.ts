@@ -11,6 +11,9 @@ import { resolve } from "node:path";
 const intlayerMainDir = resolve(__dirname, ".intlayer/main");
 
 export default defineConfig({
+  server: {
+    host: true,
+  },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     reactRouter(),

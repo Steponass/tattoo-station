@@ -22,9 +22,12 @@
 			"migrations_dir": "migrations"
 		},
 	],
+	// NOTE: "remote": true forces the Vite dev server to open a remote proxy
+	// session against the Cloudflare API. Temporarily disabled to work around a
+	// 522 from the edge-preview endpoint. Restore it before deploying — and for
+	// any work that actually exercises env.IMAGES (photo/avatar uploads).
 	"images": {
-		"binding": "IMAGES",
-		"remote": true
+		"binding": "IMAGES"
 	},
 	"r2_buckets": [
 		{

@@ -6,16 +6,30 @@ import LandingGallery from "~/components/LandingGallery/LandingGallery";
 import Process from "~/components/Process/Process";
 import NavButton from "~/components/Button/NavButton";
 import Testimonials from "~/components/Testimonials/Testimonials";
-import styles from './home.module.css'
+import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
+import { findPlacedPhotos } from "~/lib/gallery/galleryPlacementRepository.server";
+import styles from './home.module.css';
 
-export const loader = ({ params }: Route.LoaderArgs) => {
-const { lang: locale } = params;
+export const loader = async ({ params, context }: Route.LoaderArgs) => {
+  const { lang: locale } = params;
 
   const { isValid } = validatePrefix(locale);
 
   if (!isValid) {
     throw data("Locale not supported", { status: 404 });
   }
+
+  const { env } = getCloudflareBindings(context);
+
+  // The home page hero gallery reads the same placements the admin curates
+  // at /admin/landing. If nothing is placed, the LandingGallery component
+  // returns null and the page renders without the hero section.
+  const landingGalleryPhotos = await findPlacedPhotos({
+    database: env.DB,
+    gallery: "landing",
+  });
+
+  return { landingGalleryPhotos };
 };
 
 export const meta: Route.MetaFunction = ({ params }) => {
@@ -32,19 +46,20 @@ export const handle = {
   titleBoard: { show: true, labelKey: "home" },
 };
 
-export default function Home() {
-  const { buttonTextArtists } = useIntlayer("home")
-  
+export default function Home({ loaderData }: Route.ComponentProps) {
+  const { buttonTextArtists } = useIntlayer("home");
+  const { landingGalleryPhotos } = loaderData;
+
   return (
     <>
       <section className={styles.hero_section}>
-
-      <h2>One stop. Countless directions</h2>
-      <NavButton
+        <h2>One stop. Countless directions</h2>
+        <NavButton
           buttonText={buttonTextArtists}
-          to={"/artists"}/>
+          to={"/artists"}
+        />
       </section>
-      <LandingGallery />
+      <LandingGallery photos={landingGalleryPhotos} />
 
       <Process />
 

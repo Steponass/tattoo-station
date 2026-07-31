@@ -45,6 +45,7 @@ export type PlacedPhoto = {
   height: number;
   category: "tattoo" | "piercing" | "flash";
   artistId: number;
+  artistSlug: string;
   artistDisplayName: string;
   sortOrder: number;
 };
@@ -56,6 +57,7 @@ type PlacedPhotoRow = {
   height: number;
   category: "tattoo" | "piercing" | "flash";
   artist_id: number;
+  artist_slug: string;
   artist_display_name: string;
   sort_order: number;
 };
@@ -68,6 +70,7 @@ const SELECT_PLACED_PHOTOS_SQL = `
     artist_photos.height                           AS height,
     artist_photos.category                         AS category,
     artist_photos.artist_id                        AS artist_id,
+    artists.slug                                   AS artist_slug,
     artists.display_name                           AS artist_display_name,
     gallery_placements.sort_order                  AS sort_order
   FROM gallery_placements
@@ -105,6 +108,7 @@ export async function findPlacedPhotos({
     height: row.height,
     category: row.category,
     artistId: row.artist_id,
+    artistSlug: row.artist_slug,
     artistDisplayName: row.artist_display_name,
     sortOrder: row.sort_order,
   }));
