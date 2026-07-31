@@ -57,7 +57,7 @@
 
 .artist_image_wrapper {
   position: relative;
-  background-color: var(--color-accent-3);
+  background-color: var(--color-accent);
   clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
   transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --chamfer: 16px;

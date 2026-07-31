@@ -10,15 +10,23 @@ import {
   TextAreaField,
   TextField,
 } from "~/components/admin/form/FormFields";
+import { useField } from "~/hooks/useField";
 import StylesPicker from "./StylesPicker";
 import AvatarField from "./AvatarField";
 import styles from "./ArtistProfileForm.module.css";
 
 /**
- * The artist self-service profile editor. Renders every field in the artist's
- * loader-shaped profile: admin-only fields (slug, displayName, role, email)
- * as read-only labels; artist-editable fields (bio ×2, excerpt ×2, styles,
- * isActive, instagramHandle) as inputs.
+ * The profile editor. Serves two callers:
+ *
+ *   actorKind === "artist"  → the artist's self-service editor (/admin/me).
+ *                             Admin-only fields (slug, displayName, role,
+ *                             email) render as ReadOnlyField labels.
+ *   actorKind === "admin"   → the admin editor (/admin/artists/:id). Same
+ *                             admin-only fields become editable inputs.
+ *
+ * The form structure and submission logic are identical between the two.
+ * Only the Identity section branches on actorKind. Every other section
+ * (Avatar, Presence, Bio ×2) is unchanged between actor kinds.
  *
  * Submission is a fetcher, not a Form — the response is JSON, not a redirect,
  * and we want to stay on the page after save. The fetcher's response is read
@@ -36,7 +44,8 @@ import styles from "./ArtistProfileForm.module.css";
  * Bio and excerpt maxLengths come from the service constants. If those change
  * server-side, this file needs the same update — a real coupling worth
  * calling out. The alternative (loader returns the limits) is worth doing
- * once a second form needs them; for one caller, importing is fine.
+ * once a second form needs them; for two callers of the same limits, still
+ * importing is fine.
  */
 
 const MAX_BIO_LENGTH = 3000;
@@ -44,6 +53,8 @@ const MAX_BIO_EXCERPT_LENGTH = 300;
 
 type ArtistProfileFormProps = {
   artistProfile: ArtistProfileForEditing;
+  actorKind: "artist" | "admin";
+  targetArtistIdForAdmin?: number;
 };
 
 type PatchResponse =
@@ -55,6 +66,12 @@ type PatchResponse =
  * the failure's detail string beneath the offending field. Failures that
  * don't map to a specific field (persist_failed, forbidden, etc.) render
  * in the form-level banner.
+ *
+ * The admin-only field codes route to their respective fields when
+ * actorKind === "admin". When actorKind === "artist" those inputs aren't
+ * rendered, so a mapped error would be invisible — but the artist branch
+ * of the API never emits those codes because the service refuses admin-
+ * only writes for artist actors.
  */
 const FIELD_FOR_FAILURE_CODE: Partial<Record<ArtistProfilePatchFailureCode, string>> = {
   bio_too_long: "bio",
@@ -67,13 +84,16 @@ const FIELD_FOR_FAILURE_CODE: Partial<Record<ArtistProfilePatchFailureCode, stri
 };
 
 export default function ArtistProfileForm(props: ArtistProfileFormProps) {
-  const { artistProfile } = props;
+  const { artistProfile, actorKind, targetArtistIdForAdmin } = props;
 
   const fetcher = useFetcher<PatchResponse>();
   const isSubmitting = fetcher.state === "submitting";
 
   const [isDirty, setIsDirty] = useState(false);
   const [lastSaveWasSuccessful, setLastSaveWasSuccessful] = useState(false);
+  const [dirtyFieldNames, setDirtyFieldNames] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const patchResponse = fetcher.data;
   const patchFailure =
@@ -94,54 +114,54 @@ export default function ArtistProfileForm(props: ArtistProfileFormProps) {
     return fieldWithError === field ? patchFailure?.detail : undefined;
   }
 
-  const [dirtyFieldNames, setDirtyFieldNames] = useState<Set<string>>(
-  () => new Set(),
-);
-
-function handleInput(event: React.FormEvent<HTMLFormElement>) {
-  setIsDirty(true);
-  if (lastSaveWasSuccessful) {
-    setLastSaveWasSuccessful(false);
+  function handleInput(event: React.FormEvent<HTMLFormElement>) {
+    setIsDirty(true);
+    if (lastSaveWasSuccessful) {
+      setLastSaveWasSuccessful(false);
+    }
+    const target = event.target as HTMLElement;
+    if (
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement
+    ) {
+      setDirtyFieldNames((previous) => {
+        if (previous.has(target.name)) {
+          return previous;
+        }
+        const next = new Set(previous);
+        next.add(target.name);
+        return next;
+      });
+    }
   }
-  const target = event.target as HTMLElement;
-  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
-    setDirtyFieldNames((previous) => {
-      if (previous.has(target.name)) {
-        return previous;
-      }
-      const next = new Set(previous);
-      next.add(target.name);
-      return next;
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const patchBody = buildPatchBodyFromForm({
+      formElement: event.currentTarget,
+      dirtyFieldNames,
+    });
+
+    fetcher.submit(patchBody, {
+      method: "post",
+      encType: "application/json",
     });
   }
-}
-
-function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
-
-  const patchBody = buildPatchBodyFromForm({
-    formElement: event.currentTarget,
-    dirtyFieldNames,
-  });
-
-  fetcher.submit(patchBody, {
-    method: "post",
-    encType: "application/json",
-  });
-}
 
   // React Router surfaces the just-completed fetcher response via
   // fetcher.data + a state transition back to "idle". Flip the confirmation
   // state when we see a successful response we haven't already acknowledged.
-if (
-  fetcher.state === "idle" &&
-  patchResponse?.ok === true &&
-  !lastSaveWasSuccessful
-) {
-  setLastSaveWasSuccessful(true);
-  setIsDirty(false);
-  setDirtyFieldNames(new Set());
-}
+  if (
+    fetcher.state === "idle" &&
+    patchResponse?.ok === true &&
+    !lastSaveWasSuccessful
+  ) {
+    setLastSaveWasSuccessful(true);
+    setIsDirty(false);
+    setDirtyFieldNames(new Set());
+  }
 
   return (
     <fetcher.Form
@@ -153,16 +173,14 @@ if (
     >
       <section className={styles.section}>
         <h2 className={styles.sectionHeading}>Identity</h2>
-        <div className={styles.fieldGrid}>
-          <ReadOnlyField
-            label="Display name"
-            value={artistProfile.displayName}
-            hint="Contact the studio to change."
+        {actorKind === "admin" ? (
+          <AdminIdentityFields
+            artistProfile={artistProfile}
+            errorFor={errorFor}
           />
-          <ReadOnlyField label="Slug" value={artistProfile.slug} />
-          <ReadOnlyField label="Role" value={artistProfile.role} />
-          <ReadOnlyField label="Email" value={artistProfile.email} />
-        </div>
+        ) : (
+          <ArtistIdentityFields artistProfile={artistProfile} />
+        )}
       </section>
 
       <section className={styles.section}>
@@ -173,6 +191,8 @@ if (
             width: artistProfile.profileImageWidth,
             height: artistProfile.profileImageHeight,
           }}
+              targetArtistIdForAdmin={targetArtistIdForAdmin}
+
         />
       </section>
 
@@ -183,7 +203,7 @@ if (
             name="isActive"
             label="Active on the site"
             defaultChecked={artistProfile.isActive}
-            hint="When off, you don't appear on the artists page or in the booking form."
+            hint="When off, this artist doesn't appear on the artists page or in the booking form."
           />
           <TextField
             name="instagramHandle"
@@ -193,19 +213,19 @@ if (
             autoComplete="off"
             error={errorFor("instagramHandle")}
           />
-<StylesPicker
-  defaultSelected={artistProfile.styles}
-  error={errorFor("styles")}
-  onSelectionChange={() => {
-    setDirtyFieldNames((previous) => {
-      if (previous.has("styles")) return previous;
-      const next = new Set(previous);
-      next.add("styles");
-      return next;
-    });
-    setIsDirty(true);
-  }}
-/>
+          <StylesPicker
+            defaultSelected={artistProfile.styles}
+            error={errorFor("styles")}
+            onSelectionChange={() => {
+              setDirtyFieldNames((previous) => {
+                if (previous.has("styles")) return previous;
+                const next = new Set(previous);
+                next.add("styles");
+                return next;
+              });
+              setIsDirty(true);
+            }}
+          />
         </div>
       </section>
 
@@ -275,6 +295,118 @@ if (
   );
 }
 
+// ---------------------------------------------------------------------------
+// Identity sections — one per actor kind
+// ---------------------------------------------------------------------------
+
+type ArtistIdentityFieldsProps = {
+  artistProfile: ArtistProfileForEditing;
+};
+
+function ArtistIdentityFields(props: ArtistIdentityFieldsProps) {
+  const { artistProfile } = props;
+
+  return (
+    <div className={styles.fieldGrid}>
+      <ReadOnlyField
+        label="Display name"
+        value={artistProfile.displayName}
+        hint="Contact the studio to change."
+      />
+      <ReadOnlyField label="Slug" value={artistProfile.slug} />
+      <ReadOnlyField label="Role" value={artistProfile.role} />
+      <ReadOnlyField label="Email" value={artistProfile.email} />
+    </div>
+  );
+}
+
+type AdminIdentityFieldsProps = {
+  artistProfile: ArtistProfileForEditing;
+  errorFor: (field: string) => string | undefined;
+};
+
+function AdminIdentityFields(props: AdminIdentityFieldsProps) {
+  const { artistProfile, errorFor } = props;
+
+  return (
+    <div className={styles.fieldStack}>
+      <TextField
+        name="displayName"
+        label="Display name"
+        defaultValue={artistProfile.displayName}
+        error={errorFor("displayName")}
+      />
+      <TextField
+        name="slug"
+        label="Slug"
+        defaultValue={artistProfile.slug}
+        hint="URL-safe. Lowercase, no spaces. Used in /artists/<slug>."
+        error={errorFor("slug")}
+      />
+      <RoleField
+        defaultValue={artistProfile.role}
+        error={errorFor("role")}
+      />
+      <TextField
+        name="email"
+        label="Email"
+        defaultValue={artistProfile.email}
+        autoComplete="off"
+        hint="Must match this artist's entry in the Cloudflare Access policy."
+        error={errorFor("email")}
+      />
+    </div>
+  );
+}
+
+/**
+ * Role selector — a labeled <select> over the three role values. Inline
+ * rather than a promoted SelectField primitive because this is the only
+ * <select> in the admin surface right now. The booking form's dropdowns
+ * are still hardcoded HTML; when they migrate to primitives, a real
+ * SelectField gets extracted from this shape.
+ */
+type RoleFieldProps = {
+  defaultValue: "tattoo" | "piercing" | "both";
+  error: string | undefined;
+};
+
+function RoleField(props: RoleFieldProps) {
+  const { defaultValue, error } = props;
+
+  const { labelProps, controlProps, errorProps } = useField({
+    name: "role",
+    hasHint: false,
+    hasError: error !== undefined,
+  });
+
+  return (
+    <div className={styles.roleField}>
+      <label {...labelProps} className={styles.roleFieldLabel}>
+        Role
+      </label>
+      <select
+        {...controlProps}
+        defaultValue={defaultValue}
+        className={styles.roleFieldSelect}
+      >
+        <option value="tattoo">Tattoo</option>
+        <option value="piercing">Piercing</option>
+        <option value="both">Both</option>
+      </select>
+      {error !== undefined && (
+        <p {...errorProps} className={styles.roleFieldError}>
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Form submission helpers
+// ---------------------------------------------------------------------------
+
 /**
  * Reads FormData from the submitted form, reshapes it into the JSON envelope
  * the API expects. Keys with dotted names ("bio.en") are split into per-locale
@@ -283,11 +415,15 @@ if (
  * "false"); empty strings for instagramHandle are treated as null (explicit
  * clear).
  *
+ * Admin-only fields (slug, role, email, displayName) are only sent when
+ * they've been dirtied. The artist form doesn't render inputs for these, so
+ * their dirty flags never flip; the admin form does, and the server-side
+ * type gates them for the artist branch of the API anyway.
+ *
  * The reshape happens on the client because the API expects a nested body.
  * An alternative — send flat form-encoded data and reshape on the server —
  * moves this logic behind an HTTP boundary but doesn't remove it. Doing it
- * here keeps the API endpoint's contract clean (JSON in, JSON out) and
- * consistent with what a step-4 admin form will also submit.
+ * here keeps the API endpoint's contract clean (JSON in, JSON out).
  */
 function buildPatchBodyFromForm({
   formElement,
@@ -321,6 +457,29 @@ function buildPatchBodyFromForm({
     } catch {
       fields.styles = [];
     }
+  }
+
+  if (dirtyFieldNames.has("displayName")) {
+    fields.displayName = readString("displayName").trim();
+  }
+
+  if (dirtyFieldNames.has("slug")) {
+    fields.slug = readString("slug").trim();
+  }
+
+  if (dirtyFieldNames.has("role")) {
+    const roleValue = readString("role");
+    if (
+      roleValue === "tattoo" ||
+      roleValue === "piercing" ||
+      roleValue === "both"
+    ) {
+      fields.role = roleValue;
+    }
+  }
+
+  if (dirtyFieldNames.has("email")) {
+    fields.email = readString("email").trim();
   }
 
   const bioByLocale: Record<string, string> = {};

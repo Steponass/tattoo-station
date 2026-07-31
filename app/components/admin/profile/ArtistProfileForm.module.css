@@ -179,3 +179,39 @@
   color: #b01e28;
   margin: 0;
 }
+
+/* RoleField (admin-only) */
+
+.roleField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.roleFieldLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.roleFieldSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.roleFieldSelect:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.roleFieldError {
+  font-size: 0.8125rem;
+  color: #b01e28;
+  margin: 0;
+}

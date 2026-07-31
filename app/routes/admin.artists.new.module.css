@@ -1,0 +1,109 @@
+.main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid currentColor;
+}
+
+.heading {
+  font-size: 1.5rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.subheading {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.formLevelError {
+  padding: 0.75rem 1rem;
+  border: 1px solid #b01e28;
+  color: #b01e28;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid currentColor;
+}
+
+.submit {
+  padding: 0.625rem 1.5rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  font: inherit;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.submit:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.roleField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.roleFieldLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.roleFieldSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.roleFieldSelect:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.roleFieldError {
+  font-size: 0.8125rem;
+  color: #b01e28;
+  margin: 0;
+}

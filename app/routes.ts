@@ -27,13 +27,18 @@ export default [
     route("api/artist-photos/reorder", "routes/api.artist-photos.reorder.ts"),
     route("api/artist-photos/delete", "routes/api.artist-photos.delete.ts"),
     route("api/curate-gallery", "routes/api.curate-gallery.ts"),
+    route("api/reorder-roster", "routes/api.reorder-roster.ts"),
   ]),
     route("admin", "routes/admin.tsx", [
+    index("routes/admin._index.tsx"),
     route("me", "routes/admin.me.tsx"),
     route("me/photos", "routes/admin.me.photos.tsx"),
     route("me/flash", "routes/admin.me.flash.tsx"),
     route("landing", "routes/admin.landing.tsx"),
     route("flash", "routes/admin.flash.tsx"),
+    route("artists/new", "routes/admin.artists.new.tsx"),
+    route("artists/:id", "routes/admin.artists.$id.tsx"),
+    route("artists/:id/delete", "routes/admin.artists.$id.delete.tsx"),
 
   ]),
 ] satisfies RouteConfig;

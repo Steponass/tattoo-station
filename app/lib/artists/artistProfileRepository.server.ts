@@ -194,3 +194,40 @@ export async function upsertArtistTranslation({
     .bind(...bindValues, artistId, locale)
     .run();
 }
+
+/**
+ * Rewrites the sort_order on a list of artists in a single atomic batch.
+ *
+ * D1's batch() runs all statements inside one implicit transaction: either
+ * every artist's sort_order updates, or none do. Same reasoning as
+ * rewriteArtistPhotoSortOrder — a half-completed roster reorder would leave
+ * the admin looking at an inconsistent list and would break the next
+ * reorder's set-exact-match validation.
+ *
+ * Ownership is not checked here. The service has already validated that
+ * every id in the list is a real artist; this function trusts its inputs.
+ */
+export async function rewriteArtistSortOrder({
+  database,
+  artistIdsInOrder,
+  sortOrderIncrement,
+}: {
+  database: D1Database;
+  artistIdsInOrder: readonly number[];
+  sortOrderIncrement: number;
+}): Promise<void> {
+  if (artistIdsInOrder.length === 0) {
+    return;
+  }
+
+  const updateStatement = database.prepare(
+    "UPDATE artists SET sort_order = ? WHERE id = ?",
+  );
+
+  const batch = artistIdsInOrder.map((artistId, index) => {
+    const nextSortOrder = (index + 1) * sortOrderIncrement;
+    return updateStatement.bind(nextSortOrder, artistId);
+  });
+
+  await database.batch(batch);
+}

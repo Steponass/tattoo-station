@@ -499,6 +499,79 @@ export async function findArtistProfileForEditing({
   };
 }
 
+export type AdminRosterEntry = {
+  id: number;
+  slug: string;
+  displayName: string;
+  role: "tattoo" | "piercing" | "both";
+  email: string;
+  isActive: boolean;
+  sortOrder: number;
+  photoCount: number;
+};
+
+type AdminRosterRow = {
+  id: number;
+  slug: string;
+  display_name: string;
+  role: "tattoo" | "piercing" | "both";
+  email: string;
+  is_active: number;
+  sort_order: number;
+  photo_count: number;
+};
+
+/**
+ * Returns every artist for the admin dashboard, in roster order (sort_order,
+ * with display_name tiebreak), with a photo count per artist.
+ *
+ * The photo count comes from a LEFT JOIN + COUNT aggregate rather than a
+ * subquery — LEFT JOIN preserves artists with zero photos as 0, which is
+ * exactly the "no photos yet" case the admin will look at when deciding
+ * whether an artist is set up. COUNT counts non-NULL matched rows only, so
+ * the zero case works naturally.
+ *
+ * Deliberately not filtered by is_active. The admin needs to see every
+ * artist — including inactive ones — to reactivate them or clean them up.
+ * The is_active flag is returned so the row can visually indicate the state.
+ */
+export async function findAdminRoster({
+  database,
+}: {
+  database: D1Database;
+}): Promise<AdminRosterEntry[]> {
+  const queryResult = await database
+    .prepare(SELECT_ADMIN_ROSTER_SQL)
+    .all<AdminRosterRow>();
+
+  return queryResult.results.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    displayName: row.display_name,
+    role: row.role,
+    email: row.email,
+    isActive: row.is_active === 1,
+    sortOrder: row.sort_order,
+    photoCount: row.photo_count,
+  }));
+}
+
+const SELECT_ADMIN_ROSTER_SQL = `
+  SELECT
+    artists.id                            AS id,
+    artists.slug                          AS slug,
+    artists.display_name                  AS display_name,
+    artists.role                          AS role,
+    artists.email                         AS email,
+    artists.is_active                     AS is_active,
+    artists.sort_order                    AS sort_order,
+    COUNT(artist_photos.id)               AS photo_count
+  FROM artists
+  LEFT JOIN artist_photos ON artist_photos.artist_id = artists.id
+  GROUP BY artists.id
+  ORDER BY artists.sort_order ASC, artists.display_name ASC
+`;
+
 /**
  * Reshapes the flat list of translation rows into a locale-keyed record. The
  * record has an entry for every supported locale — locales without a row are

@@ -431,28 +431,26 @@ function failWith(
 }
 
 /**
- * Route-action-callable wrapper around `applyArtistProfilePatch`. Parses the
- * request body, constructs a typed patch, delegates to the service, returns a
- * ready-to-return Response.
+ * Route-action-callable wrapper around applyArtistProfilePatch. Parses the
+ * request body, constructs a typed patch, delegates to the service, returns
+ * a ready-to-return Response.
  *
- * Called from every route action that mutates artist profiles: /admin/me for
- * artist self-service, /admin/artists/:id for the admin editor (step 4). Both
- * routes' actions are one-line delegations to this function.
- *
- * The route already resolved the actor (its loader and action both do so). We
- * take the resolved actor as a parameter rather than resolving it here — the
- * route may want to make decisions about the actor before delegating (e.g., an
- * artist reaching the admin editor should get 403'd before we even parse the
- * body).
+ * `targetArtistIdOverride` lets a route inject the artistId from a URL
+ * parameter — used by /admin/artists/:id, where the target artist is
+ * addressed by URL, not by form field. When provided, it takes precedence
+ * over anything in the body. When absent (the /admin/me case), admin
+ * callers still supply artistId via the body per the original contract.
  */
 export async function handleArtistProfilePatchRequest({
   request,
   database,
   actor,
+  targetArtistIdOverride,
 }: {
   request: Request;
   database: D1Database;
   actor: Exclude<Actor, { kind: "unknown" }>;
+  targetArtistIdOverride?: number;
 }): Promise<Response> {
   let parsedBody: unknown;
 
@@ -462,7 +460,11 @@ export async function handleArtistProfilePatchRequest({
     return envelopeReject("invalid_body", "Request body was not valid JSON.", 400);
   }
 
-  const patchResult = buildPatchFromBody({ actor, body: parsedBody });
+  const patchResult = buildPatchFromBody({
+    actor,
+    body: parsedBody,
+    targetArtistIdOverride,
+  });
 
   if (!patchResult.ok) {
     return envelopeReject(patchResult.failureCode, patchResult.detail, 400);
@@ -519,9 +521,11 @@ type BuildPatchResult =
 function buildPatchFromBody({
   actor,
   body,
+  targetArtistIdOverride,
 }: {
   actor: Exclude<Actor, { kind: "unknown" }>;
   body: unknown;
+  targetArtistIdOverride: number | undefined;
 }): BuildPatchResult {
   if (typeof body !== "object" || body === null) {
     return {
@@ -552,13 +556,13 @@ function buildPatchFromBody({
     };
   }
 
-  const rawArtistId = bodyRecord.artistId;
+  // Admin patch. If the route injected a target id (from a URL param),
+  // use it and ignore anything in the body. Otherwise fall back to the
+  // body's `artistId` field for callers that still supply it that way.
+  const targetArtistId =
+    targetArtistIdOverride ?? readOptionalArtistIdFromBody(bodyRecord);
 
-  if (
-    typeof rawArtistId !== "number" ||
-    !Number.isInteger(rawArtistId) ||
-    rawArtistId <= 0
-  ) {
+  if (targetArtistId === null) {
     return {
       ok: false,
       failureCode: "invalid_artist_id",
@@ -570,8 +574,24 @@ function buildPatchFromBody({
     ok: true,
     patch: {
       kind: "admin_patch",
-      artistId: rawArtistId,
+      artistId: targetArtistId,
       fields: fieldsCandidate as AdminPatchableFields,
     },
   };
+}
+
+function readOptionalArtistIdFromBody(
+  bodyRecord: Record<string, unknown>,
+): number | null {
+  const rawArtistId = bodyRecord.artistId;
+
+  if (
+    typeof rawArtistId !== "number" ||
+    !Number.isInteger(rawArtistId) ||
+    rawArtistId <= 0
+  ) {
+    return null;
+  }
+
+  return rawArtistId;
 }

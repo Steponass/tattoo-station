@@ -104,7 +104,7 @@ export default function AdminMePage({ loaderData }: Route.ComponentProps) {
         buttonText="My Flash designs"
       />
 </div>
-      <ArtistProfileForm artistProfile={artistProfile} />
+      <ArtistProfileForm artistProfile={artistProfile} actorKind="artist"/>
     </main>
   );
 }
