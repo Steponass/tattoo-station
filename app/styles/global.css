@@ -1,8 +1,9 @@
 /* UTILITY CLASSES TO REDUCE D.R.Y. */
 
-.chamfer-l {
-  /* Since sorner-shape property is NOT baseline, 
-  clip-path is the workaround */
+/* Chamfered corners. Since corner-shape is not supported on iOS,
+   clip-path is the workaround. The base class does the clipping,
+   the modifiers only set the size — use both: class="chamfer chamfer-s" */
+.chamfer {
   --c: 15px; /* chamfer size */
   clip-path: polygon(
     var(--c) 0,
@@ -16,19 +17,23 @@
   );
 }
 
-.chamfer-s {
-  --c: 8px; /* chamfer size */
-  clip-path: polygon(
-    var(--c) 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c)),
-    0 var(--c)
-  );
+.chamfer-l  { --c: 15px; }
+.chamfer-s  { --c: 8px; }
+.chamfer-xs { --c: 4px; }
+
+/* Side hole punches, "ticket stub" style. Composes with .chamfer.
+   Each layer fills the box and is opaque except for its own circle;
+   intersect keeps only what both agree on, so both holes survive.
+   NOTE: `mask` is a shorthand that resets mask-composite, so the
+   composite declaration has to stay after it. */
+.punch {
+  --p: 6px; /* punch radius */
+  mask:
+    radial-gradient(circle var(--p) at 0    50%, #0000 98%, #000),
+    radial-gradient(circle var(--p) at 100% 50%, #0000 98%, #000);
+  mask-composite: intersect;
 }
+
 
 body {
   background-color: var(--color-bg-base);
@@ -40,7 +45,7 @@ body {
 
 main {
   margin-block: var(--space-xl-2xl);
-  width: min(1280px, 90%);
+  width: min(1280px, 100%);
   margin-inline: auto;
   container-type: inline-size;
   @media (width < 780px) {
@@ -54,11 +59,7 @@ button {
   letter-spacing: 0.4px;
 }
 
-/* Possibly not working? fix tbd */
-:where(a) {
-  text-decoration: underline;
-}
-
-a.active {
-  color: var(--color-accent);
+:where(a):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }

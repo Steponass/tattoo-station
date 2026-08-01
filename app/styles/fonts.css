@@ -20,13 +20,15 @@
   font-style: normal;
   font-display: swap;
   src: url('/app/fonts/AtkinsonHyperlegibleNextVF-Variable.woff2') format('woff2-variations');
+  /* font's em-box is weird. Might decide to change completely */
+  ascent-override: 90%;
 }
 
 @font-face {
     font-family: 'Adjusted Body Fallback';
     src: local(Arial);
     size-adjust: 99%;
-    ascent-override: 84%;
+    ascent-override: 90%;
     descent-override: normal;
     line-gap-override: 15%;
 }
@@ -76,6 +78,7 @@ button, label, legend, input, textarea) {
   font-weight: 450;
   letter-spacing: 0.25px;
   color: var(--color-text-strong);
+
 }
 
 :where(h6, h5, h4, h3, h2, h1) {

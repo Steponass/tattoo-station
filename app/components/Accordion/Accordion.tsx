@@ -9,7 +9,7 @@ type AccordionProps = {
 
 export default function Accordion({ items }: AccordionProps) {
   return (
-    <div className={`${styles.accordion_wrapper} chamfer-s`}>
+    <div className={`${styles.accordion_wrapper} chamfer chamfer-s`}>
       {items.map((accordionItem, index) => (
         <AccordionItem
           key={index}

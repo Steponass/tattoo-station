@@ -1,5 +1,4 @@
 .footer {
-  padding-inline: var(--space-s-m);
   background-color: var(--color-bg2);
 }
 
@@ -7,6 +6,7 @@
   display: flex;
   justify-content: space-between;
   padding-block: var(--space-m-l);
+  padding-inline: var(--space-s-m);
   @media (max-width: 768px) {
     flex-direction: column;;
 
@@ -41,6 +41,7 @@
 
 .footer_policy_container {
   padding-block: var(--space-xs-s);
+  padding-inline: var(--space-s-m);
   display: flex;
   justify-content: space-between;
   align-items: center;

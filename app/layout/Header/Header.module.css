@@ -56,7 +56,6 @@
   text-decoration-thickness: 3px;
   text-underline-offset: var(--space-4px);
   color: var(--color-text-strong);
-  animation-delay: 0.1s;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,8 +100,7 @@
     background-clip: text;
     -webkit-background-clip: text;
 
-    animation: nav-carriages 0.5s ease-in-out;
-    animation-delay: 0.15s;
+    animation: nav-carriages 0.7s ease-in-out;
   }
 }
 

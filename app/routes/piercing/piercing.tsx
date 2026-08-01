@@ -109,7 +109,7 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
     <main>
       <div className={styles.piercing_table_and_profile}>
         <section className={styles.section_price}>
-          <table className={`${styles.piercing_table} chamfer-l`}>
+          <table className={`${styles.piercing_table} chamfer chamfer-l`}>
             <thead>
               <tr>
                 <th>{content.tableHeaderType}</th>

@@ -20,7 +20,7 @@ export const LocaleSwitcher: FC = () => {
   return (
     <ol className={styles.locale_switcher}>
       {availableLocales.map((localeItem) => (
-        <li key={localeItem}>
+        <li key={localeItem} className="chamfer chamfer-xs">
           <Link
             aria-current={localeItem === locale ? "page" : undefined}
             aria-label={`${localeSwitcherLabel.value} ${getLocaleName(localeItem)}`}

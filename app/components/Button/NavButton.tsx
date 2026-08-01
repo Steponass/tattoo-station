@@ -12,7 +12,7 @@ export default function NavButton(
   return (
     <LocalizedLink
       to={to}
-      className={styles.nav_button}
+      className={`${styles.nav_button} chamfer chamfer-xs punch`}
       viewTransition>
       {buttonText}
     </LocalizedLink>

@@ -1,23 +1,26 @@
 .locale_switcher {
   display: flex;
-  gap: var(--space-12px);
+  gap: var(--space-8px);
 }
 
 .locale_switcher li {
-    background-color: var(--color-accent);
-    /* padding-block: var(--space-4px);z */
-    /* padding-inline: var(--space-12px); */
-    width: 1.5em;
-    height: 1.5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background-color: var(--color-secondary);
+  min-width: 26px;
+  display: flex;
   text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
 
+  @media (hover: hover) {
     &:hover {
-      background-color: var(--color-accent-hover);
+      transform: rotateY(180deg);
     }
+  }
 }
 
-li {
+.locale_switcher li a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8px);
+    /* text-box: trim-both cap alphabetic; */
 }

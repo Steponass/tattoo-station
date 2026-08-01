@@ -45,11 +45,12 @@
 }
 
 .testimonial-card {
-  border: 1px solid var(--color-stroke-strong);
+  /* border: 1px solid var(--color-stroke-strong); */
   background-color: var(--color-bg-overlay);
   max-width: 500px;
   padding: var(--space-s-m);
   position: absolute;
+  box-shadow: 0px 2px 1px var(--color-shadow-dark);
 }
 
 .testimonial-card:nth-child(1) {
