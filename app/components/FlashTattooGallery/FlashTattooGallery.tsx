@@ -1,6 +1,9 @@
 // app/components/FlashTattooGallery/FlashTattooGallery.tsx
 
+import { useMemo } from 'react'
 import { buildPortfolioImageUrl } from '~/lib/media/portfolioImageUrl'
+import { Lightbox, LightboxTrigger } from '~/components/Lightbox/Lightbox'
+import type { LightboxLabels, LightboxPhoto } from '~/components/Lightbox/lightboxPhoto'
 import styles from './FlashTattooGallery.module.css'
 
 /**
@@ -17,6 +20,13 @@ import styles from './FlashTattooGallery.module.css'
  * entirely. A missing gallery is meaningful to visitors — the studio does
  * flash — so we tell them it's coming rather than pretending the page
  * has no reason to exist.
+ *
+ * Each tile is wrapped in a <LightboxTrigger>. Clicking a tile opens
+ * a single shared <Lightbox> that carries every photo in the gallery, so
+ * prev/next navigation works across the whole set. The domain photo shape
+ * (FlashGalleryPhoto) is mapped to the lightbox's shape (LightboxPhoto)
+ * here — the lightbox stays gallery-agnostic and every gallery owns its
+ * own mapping.
  */
 
 export type FlashGalleryPhoto = {
@@ -25,35 +35,69 @@ export type FlashGalleryPhoto = {
   width: number
   height: number
   artistDisplayName: string
+  /**
+   * Slug is needed on each photo now so the lightbox can link the "visit
+   * artist" and "book now" buttons. If the D1 read doesn't already
+   * expose the artist slug for flash placements, the loader/repository
+   * needs to include it — findPlacedPhotos already returns artistSlug,
+   * so the flashdesigns route needs to pass it through.
+   */
+  artistSlug: string
 }
 
 type FlashTattooGalleryProps = {
   photos: readonly FlashGalleryPhoto[]
+  labels: LightboxLabels
 }
 
 export default function FlashTattooGallery(props: FlashTattooGalleryProps) {
-  const { photos } = props
+  const { photos, labels } = props
+
+  const lightboxPhotos = useMemo<readonly LightboxPhoto[]>(
+    () => photos.map(toLightboxPhoto),
+    [photos],
+  )
 
   if (photos.length === 0) {
     return <EmptyFlashGallery />
   }
 
   return (
-    <section className={styles.flash_tattoo_gallery}>
-      {photos.map((photo) => (
-        <div key={photo.photoId} className={styles.artist_image_wrapper}>
-          <img
-            src={buildPortfolioImageUrl(photo.objectKey)}
-            alt={`Flash design by ${photo.artistDisplayName}`}
-            width={photo.width}
-            height={photo.height}
-            className={styles.artist_image}
-            loading="lazy"
-          />
-        </div>
-      ))}
-    </section>
+    <Lightbox photos={lightboxPhotos} labels={labels}>
+      <section className={styles.flash_tattoo_gallery}>
+        {photos.map((photo) => (
+          <LightboxTrigger
+            key={photo.photoId}
+            photoId={photo.photoId}
+            className={styles.artist_image_wrapper}
+          >
+            <img
+              src={buildPortfolioImageUrl(photo.objectKey)}
+              alt={`Flash design by ${photo.artistDisplayName}`}
+              width={photo.width}
+              height={photo.height}
+              className={styles.artist_image}
+              loading="lazy"
+            />
+          </LightboxTrigger>
+        ))}
+      </section>
+    </Lightbox>
   )
+}
+
+function toLightboxPhoto(photo: FlashGalleryPhoto): LightboxPhoto {
+  return {
+    id: photo.photoId,
+    src: buildPortfolioImageUrl(photo.objectKey),
+    width: photo.width,
+    height: photo.height,
+    alt: `Flash design by ${photo.artistDisplayName}`,
+    artist: {
+      slug: photo.artistSlug,
+      displayName: photo.artistDisplayName,
+    },
+  }
 }
 
 function EmptyFlashGallery() {

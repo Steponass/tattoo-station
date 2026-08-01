@@ -99,6 +99,9 @@ const SELECT_ACTIVE_ARTISTS_SQL = `
     artists.role,
     artists.instagram_handle,
     artists.profile_image_key,
+    artists.profile_image_width,
+    artists.profile_image_height,
+    artists.styles,
     COALESCE(requested.bio, fallback.bio)                 AS bio,
     COALESCE(requested.bio_excerpt, fallback.bio_excerpt) AS bio_excerpt
   FROM artists
@@ -128,6 +131,9 @@ function mapRowToRosterEntry(row: ArtistRosterRow): ArtistRosterEntry | null {
     role: row.role,
     instagramHandle: row.instagram_handle,
     profileImageKey: row.profile_image_key,
+    profileImageWidth: row.profile_image_width,
+    profileImageHeight: row.profile_image_height,
+    styles: parseArtistStyles(row.styles),
     bio: row.bio,
     bioExcerpt: excerpt,
   };

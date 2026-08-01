@@ -58,3 +58,7 @@ button {
 :where(a) {
   text-decoration: underline;
 }
+
+a.active {
+  color: var(--color-accent);
+}

@@ -1,16 +1,6 @@
-import { getTranslation, type LocalesValues } from "intlayer";
-import type { LocalizedContent } from "./roster.types";
-
 const ROSTER_POSITION_PAD_LENGTH = 2;
 const BIO_EXCERPT_MAX_LENGTH = 70;
 const ELLIPSIS = "…";
-
-export function resolveLocalizedContent(
-  content: LocalizedContent,
-  locale: LocalesValues,
-): string {
-  return getTranslation(content, locale);
-}
 
 export function formatRosterPosition(zeroBasedIndex: number): string {
   return String(zeroBasedIndex + 1).padStart(ROSTER_POSITION_PAD_LENGTH, "0");

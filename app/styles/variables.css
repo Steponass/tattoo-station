@@ -10,6 +10,7 @@
   --color-bg-raised:   hsl(143, 25%, 9%);
   --color-bg-overlay:   hsl(143, 20%, 12%);
   --color-accent:      hsl(356, 69%, 37%);
+  --color-accent-light: hsl(356, 67%, 50%);
   --color-accent-hover: hsl(356, 79%, 27%);
   --color-accent-disabled: hsl(357, 9%, 30%);
   /* Lighter than --color-accent, which is the CTA colour and too dark to read

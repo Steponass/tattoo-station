@@ -1,4 +1,10 @@
-.heading {
+.splitflap_heading {
   margin: 0;
   padding-block: var(--space-m-l);
+  view-transition-name: splitflap;
+}
+
+
+:root[data-view-transition] .splitflap_heading {
+  view-transition-name: none;
 }

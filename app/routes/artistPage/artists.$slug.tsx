@@ -1,13 +1,10 @@
+import { useMemo } from "react";
 import { validatePrefix } from "intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/artists.$slug";
 import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 import { getDatabase } from "~/lib/cloudflare/cloudflareContext";
-import {
-  FALLBACK_LOCALE,
-  type ArtistProfile,
-  type SupportedLocale,
-} from "~/lib/artists/artistTypes";
+import { resolveLocale, type ArtistProfile } from "~/lib/artists/artistTypes";
 import { findArtistProfileBySlug } from "~/lib/artists/artistRepository.server";
 import {
   findArtistPhotos,
@@ -17,13 +14,8 @@ import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
 import ArtistGallery, {
   type PortfolioImage,
 } from "~/components/ArtistProfile/ArtistGallery";
+import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
 import styles from "./artist.page.module.css";
-
-/** The default site locale (Lithuanian) has no URL prefix; only "en" is
- * explicit, so anything that isn't "en" resolves to Lithuanian. */
-function resolveLocale(langParam: string | undefined): SupportedLocale {
-  return langParam === "en" ? "en" : "lt";
-}
 
 type GalleryGroups = {
   tattooPhotos: PortfolioImage[];
@@ -154,6 +146,14 @@ export default function ArtistProfileRoute({
 }: Route.ComponentProps) {
   const { artist, avatar, galleryGroups } = loaderData;
   const stylesLabel = artist.styles.join(" · ");
+  const lightboxLabels = useLightboxLabels();
+
+  // Memoised so the gallery's photo mapping doesn't rebuild on every
+  // render — it takes this object as a useMemo dependency.
+  const lightboxArtist = useMemo(
+    () => ({ slug: artist.slug, displayName: artist.displayName }),
+    [artist.slug, artist.displayName],
+  );
 
   return (
     <main>
@@ -169,6 +169,8 @@ export default function ArtistProfileRoute({
         <ArtistGallery
           tattooPhotos={galleryGroups.tattooPhotos}
           flashPhotos={galleryGroups.flashPhotos}
+          labels={lightboxLabels}
+          artist={lightboxArtist}
         />
         <div className={styles.bottom_nav}>
           <LocalizedLink to="/artists">Meistrai</LocalizedLink>

@@ -1,0 +1,226 @@
+/* app/components/Lightbox/Lightbox.module.css */
+/* Layout essentials only. Visual polish (typography, chamfers, hover,
+   Solari-flavoured chrome) belongs in a follow-up pass. Colours reference
+   existing tokens so nothing here has to change when the palette does. */
+
+/* -------------------------------------------------------------------------- */
+/* Trigger                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/* Reset the <button> so the gallery tile inside it keeps controlling its
+   own layout, background, and clip-path. `display: contents` would drop
+   the button from the box tree entirely and break focus outlines, so we
+   keep the button as a normal box but strip its cosmetic defaults. */
+.trigger {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: inherit;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Dialog                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/* Native <dialog> comes with default max-width, max-height, margins, and
+   a border. We strip all of that so the dialog occupies the viewport. */
+.dialog {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-bg-base);
+  color: var(--color-text-strong);
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: hsl(0 0% 0% / 0.85);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Contents grid                                                              */
+/* -------------------------------------------------------------------------- */
+
+/* A three-row grid: close button at top, hero + prev/next in the middle,
+   footer at bottom. Prev/next overlay the hero row via absolute
+   positioning inside their grid cell so they don't steal horizontal
+   space from the image. */
+.contents {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
+}
+
+.closeButton {
+  grid-row: 1;
+  justify-self: end;
+  padding: var(--space-16px);
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hero {
+  grid-row: 2;
+  grid-column: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  min-height: 0;
+  min-width: 0;
+}
+
+.previousButton,
+.nextButton {
+  grid-row: 2;
+  grid-column: 1;
+  align-self: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 2rem;
+  padding: var(--space-16px);
+  cursor: pointer;
+}
+
+.previousButton {
+  justify-self: start;
+}
+
+.nextButton {
+  justify-self: end;
+}
+
+.previousButton:disabled,
+.nextButton:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.footer {
+  grid-row: 3;
+  grid-column: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-s-m);
+  padding: var(--space-s-m);
+}
+
+.artistLink,
+.bookNowLink {
+  padding: var(--space-xs-s) var(--space-s-m);
+  color: inherit;
+  text-decoration: none;
+}
+
+.footerSpacer {
+  /* Reserves the artist-link slot when the button doesn't render, so the
+     book-now button stays right-aligned instead of shifting left. */
+  display: inline-block;
+}
+
+/* -------------------------------------------------------------------------- */
+/* View Transitions — reduced motion                                          */
+/* -------------------------------------------------------------------------- */
+
+/* The morph is enabled by JS assigning view-transition-name to the
+   trigger and by the hero rendering with one. `prefers-reduced-motion`
+   is checked in JS too (see `canUseViewTransitions`), so the transition
+   is not started at all. This rule is belt-and-braces: even if some
+   code path assigns the name, the browser cannot animate what it
+   doesn't recognise as transitionable. */
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    view-transition-name: none;
+  }
+}
+
+::view-transition-group(*) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+::view-transition-new(*) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(*) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+}
+
+/* -------------------------------------------------------------------------- */
+/* View Transition — prev/next slide+fade                                     */
+/* -------------------------------------------------------------------------- */
+
+/* Direction is signaled from JS by setting `--lightbox-nav-direction` on
+   :root before starting the transition:
+     +1  → next (old slides left, new arrives from right)
+     -1  → prev (old slides right, new arrives from left)
+      0  → not a prev/next transition (e.g. the open morph); the
+           keyframes still run but translate by 0, so they collapse to
+           a plain fade. Which is fine — the open morph's group
+           animation dominates visually, and the image opacity dip is
+           within tolerance.
+
+   Only the hero's named group gets these overrides, so the root group
+   (background, chrome) keeps Chrome's default cross-fade. */
+
+@keyframes lightbox-hero-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--lightbox-nav-direction, 0) * -30%));
+  }
+}
+
+@keyframes lightbox-hero-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--lightbox-nav-direction, 0) * 30%));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+::view-transition-old(lightbox-hero) {
+  animation: lightbox-hero-slide-out 320ms cubic-bezier(0.4, 0, 0.2, 1)
+    forwards;
+}
+
+::view-transition-new(lightbox-hero) {
+  animation: lightbox-hero-slide-in 320ms cubic-bezier(0.4, 0, 0.2, 1)
+    forwards;
+}

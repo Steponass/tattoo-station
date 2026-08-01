@@ -6,6 +6,7 @@
 
 .roster_item_wrapper {
   transition: 0.2s all ease-in;
+  width: 100%;
   @media (hover: hover) {
   &:hover {
     transform: translateY(-5px);
@@ -21,6 +22,13 @@
   align-items: center;
   gap: var(--space-12px);
   cursor: pointer;
+  @media (max-width: 620px) {
+    flex-direction: column;
+  }
+}
+
+.roster_identity{
+  flex: 1;
 }
 
 /* 16.7.2026 Safari supports only color & font-size on ::marker */
@@ -44,8 +52,8 @@
 
 .roster_number span {
   background-color: var(--color-stroke-weak);
-  padding: 3px;
-  font-size: 32px;
+  padding: var(--space-4px);
+  font-size: var(--fontsize-h3);
   --c: 2px;
   position: relative;
   clip-path: polygon(
@@ -93,6 +101,31 @@
   justify-items: start;
 }
 
+.roster_no_and_avatar_container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m-l);
+}
+
+/* Square by ratio rather than by a height cap: the img carries width/height
+   attributes for CLS, and those map to the CSS properties, so a bare
+   max-height would squash portrait avatars instead of cropping them. */
+.roster_avatar {
+  width: 200px;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+/* min-width overrides the flex default of auto, so this column yields to the
+   fixed-width avatar instead of forcing the summary row wider than its item. */
+.roster_identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4px);
+  min-width: 0;
+}
+
 .preview_grid_wrapper {
   max-width: 100%;
   /* overflow-x: scroll; */
@@ -107,33 +140,26 @@
   gap: var(--space-8px);
 }
 
-.preview_item:nth-child(n + 5) {
-  display: none;
-}
-
 @media (max-width: 800px) {
   .preview_grid {  grid-template-columns: repeat(2, 1fr);
-
-  }
-
-  .preview_item:nth-child(n + 5) {
-    display: revert;
   }
 }
 
+/* Uniform tiles: the 1fr tracks give every cell the same width, and the
+   aspect-ratio here turns that into the same height. The ratio belongs on the
+   tile rather than on the image — the img carries width/height attributes for
+   CLS, and those map to the CSS width/height properties, where an explicit
+   height would win over any aspect-ratio set on the image itself. */
+.preview_item {
+  aspect-ratio: 1;
+}
+
+/* Filling both axes of the ratio-locked tile is what overrides the height
+   attribute, and what leaves object-fit a real mismatch to resolve: it crops
+   the overflow instead of stretching the photo. */
 .preview_image {
-  /* inline-size: 100%; */
-  max-width: 300px;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
   object-fit: cover;
-  --c: 3px;
-  clip-path: polygon(
-    var(--c) 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c)),
-    0 var(--c)
-  );
 }

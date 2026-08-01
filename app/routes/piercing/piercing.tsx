@@ -1,10 +1,13 @@
+import { useMemo } from "react";
 import { getIntlayer, validatePrefix } from "intlayer";
-import { useIntlayer, useLocale } from "react-intlayer";
+import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/piercing";
 import styles from "./piercing.module.css";
-import { mockRosterArtists } from "~/data/roster.mock";
 import Accordion from "~/components/Accordion/Accordion";
+import { Lightbox, LightboxTrigger } from "~/components/Lightbox/Lightbox";
+import type { LightboxPhoto } from "~/components/Lightbox/lightboxPhoto";
+import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const { lang } = params;
@@ -34,11 +37,60 @@ export const handle = {
 };
 
 
+/**
+ * The piercing gallery's photos are static files in /public, not D1 rows —
+ * this page has not been migrated to the artist_photos table yet. Built at
+ * module scope because nothing about them depends on render state, which
+ * also gives the lightbox a stable `photos` identity across renders.
+ *
+ * Ids are strings here (the lightbox accepts `number | string`), so the
+ * `#photo-<id>` deep link reads as `#photo-raimundas-tattoo-001`.
+ */
+interface GalleryPhoto {
+  id: string;
+  url: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+const PIERCING_IMAGE_COUNT = 12;
+
+const piercingPhotos: GalleryPhoto[] = Array.from(
+  { length: PIERCING_IMAGE_COUNT },
+  (_, index) => {
+    const fileNumber = String(index + 1).padStart(3, "0");
+    return {
+      id: `raimundas-tattoo-${fileNumber}`,
+      url: `/artist_works/Raimundas/tattoo/RaimundasTattoo${fileNumber}.webp`,
+      alt: `Raimundas tattoo ${index + 1}`,
+      width: 600,
+      height: 600,
+    };
+  },
+);
+
+/**
+ * No `artist` on these photos: the gallery is unattributed, so the lightbox
+ * hides its "visit artist" button and sends book-now to the plain /booking
+ * page rather than prefilling an artist.
+ */
+const piercingLightboxPhotos: LightboxPhoto[] = piercingPhotos.map((photo) => ({
+  id: photo.id,
+  src: photo.url,
+  width: photo.width,
+  height: photo.height,
+  alt: photo.alt,
+}));
+
+/** Intrinsic size of the piercer's logo in /public — a fixed asset, not an
+ *  uploaded avatar, so the dimensions are known at build time. */
+const ARTIST_LOGO_SIZE = 96;
+
 export default function piercing() {
   const content = useIntlayer("piercing");
-  const { locale } = useLocale();
-  const artist = mockRosterArtists.find((a) => a.slug === "joana")!;
-  const bioParagraphs = artist.bio[locale].split("\n\n");
+  const lightboxLabels = useLightboxLabels();
+  const bioParagraphs = content.artistBio.value.split("\n\n");
 
   const rows = [
     [content.piercingService1, content.piercingPrice1],
@@ -52,30 +104,6 @@ export default function piercing() {
 
 const { items: first_accordion } = useIntlayer("faq-piercing1");
 const { items: second_accordion } = useIntlayer("faq-piercing2");
-
-  interface GalleryPhoto {
-    id: string;
-    url: string;
-    alt: string;
-    width: number;
-    height: number;
-  }
-
-  const PIERCING_IMAGE_COUNT = 12;
-
-  const piercingPhotos: GalleryPhoto[] = Array.from(
-    { length: PIERCING_IMAGE_COUNT },
-    (_, index) => {
-      const fileNumber = String(index + 1).padStart(3, "0");
-      return {
-        id: `raimundas-tattoo-${fileNumber}`,
-        url: `/artist_works/Raimundas/tattoo/RaimundasTattoo${fileNumber}.webp`,
-        alt: `Raimundas tattoo ${index + 1}`,
-        width: 600,
-        height: 600,
-      };
-    },
-  );
 
   return (
     <main>
@@ -102,11 +130,11 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
             <img
               src='/Joana_Piercing_logo_transparent_bg_cropped.png'
               alt=""
-              width={artist.avatar.width}
-              height={artist.avatar.height}
+              width={ARTIST_LOGO_SIZE}
+              height={ARTIST_LOGO_SIZE}
               className={styles.artist_photo}
             />
-            <h2>{artist.name}</h2>
+            <h2>{content.artistName}</h2>
           </div>
         <article className={styles.artist_text}>
           <img className={styles.piercing_jewelry_1} src="/Piercing_jewelry_1.webp">
@@ -128,20 +156,26 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
       </div>
       <section className={styles.section_piercing_gallery}>
         <h2>{content.galleryHeading}</h2>
-        <div className={styles.piercing_gallery_grid}>
-          {piercingPhotos.map((photo) => (
-            <div className={styles.artist_image_wrapper}>
-              <img
+        <Lightbox photos={piercingLightboxPhotos} labels={lightboxLabels}>
+          <div className={styles.piercing_gallery_grid}>
+            {piercingPhotos.map((photo) => (
+              <LightboxTrigger
                 key={photo.id}
-                src={photo.url}
-                alt={photo.alt}
-                width={photo.width}
-                height={photo.height}
-                className={styles.artist_image}
-              />
-            </div>
-          ))}
-        </div>
+                photoId={photo.id}
+                className={styles.artist_image_wrapper}
+              >
+                <img
+                  src={photo.url}
+                  alt={photo.alt}
+                  width={photo.width}
+                  height={photo.height}
+                  className={styles.artist_image}
+                  loading="lazy"
+                />
+              </LightboxTrigger>
+            ))}
+          </div>
+        </Lightbox>
       </section>
       <section className={styles.section_piercing_faq}>
         <Accordion items={first_accordion} />

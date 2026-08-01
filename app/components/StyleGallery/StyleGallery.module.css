@@ -24,3 +24,18 @@
   /* max-height: 500px; */
   aspect-ratio: 0.8;
 }
+
+/* A real photo tile occupies the same box the placeholder does. The grid
+   column already sets the width, so the tile only has to match the
+   placeholder's proportions and clip the image to them. */
+.style_gallery_tile {
+  min-width: 100px;
+  aspect-ratio: 0.8;
+}
+
+.style_gallery_image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

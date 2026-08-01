@@ -23,8 +23,131 @@
   text-align: center;
 }
 
+/* NavLink sets aria-current="page" on the link matching the current URL, so the
+   active state needs no extra class plumbing in the JSX.
+   Direct children only: LocaleSwitcher sits inside .mobile_nav and marks its
+   own current-language link with aria-current, which is not a page link. */
+.nav > a[aria-current="page"],
+.mobile_nav > a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 3px;
+  text-underline-offset: var(--space-4px);
+  color: var(--color-text-strong);
+}
+
 .header_mobile{
   display: none;
+}
+
+/* `color` is deliberately NOT transitioned. While hovered the glyphs are filled
+   by the gradient via -webkit-text-fill-color, which overrides `color` — so a
+   colour transition is invisible on the way in, and on the way out it leaves
+   the text transparent for its whole duration while the (always-on, from
+   :where(a) in global.css) underline is still secondary. That reads as a
+   secondary flash. Snapping `color` back means the glyphs are just there. */
+.nav > a, .mobile_nav > a {
+  transition: text-decoration-color 0.1s ease-in;
+}
+
+.nav > a:hover, .mobile_nav > a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-secondary);
+  text-decoration-thickness: 3px;
+  text-underline-offset: var(--space-4px);
+  color: var(--color-text-strong);
+  animation-delay: 0.1s;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Nav hover — lit carriages passing in the dark                               */
+/* -------------------------------------------------------------------------- */
+
+/* The glyphs are painted with a gradient rather than a flat colour
+   (background-clip: text + transparent fill), which lets a pack of bright
+   stripes be swept through the letterforms and out the other side.
+
+   The gradient image is 4x the link's width, so the visible slice is 25% of
+   it. background-position 0% shows image 0-25% (solid secondary), 100% shows
+   75-100% (solid text-strong). The stripe pack sits between them, so it is
+   off-frame at both ends: it crosses the text mid-animation and leaves the
+   settled colour behind. No fill-mode needed — the resting
+   background-position declared below IS the settled frame. */
+@media (prefers-reduced-motion: no-preference) {
+  .nav > a:hover,
+  .mobile_nav > a:hover {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+
+    /* Stripe geometry: these percentages are of the gradient IMAGE, which is
+       400% of the link's width — so a 6% band paints at ~24% of the text.
+       The whole pack must stay inside 25%-75% or it peeks out at rest, which
+       is a 50% budget; widen stripes by trading away carriages, not by
+       spilling past those bounds. Here: 6% lit, 4% dark, four carriages. */
+    background-image: linear-gradient(
+      100deg,
+      var(--color-secondary) 0 30%,
+      var(--color-text-strong) 30% 36%,
+      var(--color-secondary) 36% 40%,
+      var(--color-text-strong) 40% 46%,
+      var(--color-secondary) 56% 60%,
+      var(--color-text-strong) 60% 66%,
+      var(--color-secondary) 66% 72%,
+      var(--color-text-strong) 72% 100%
+    );
+    background-size: 400% 100%;
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+    background-clip: text;
+    -webkit-background-clip: text;
+
+    animation: nav-carriages 0.5s ease-in-out;
+    animation-delay: 0.15s;
+  }
+}
+
+/* ease-out on the sweep: the pack arrives at speed and decelerates into the
+   settled colour. Swap to linear if you want a flatter, more mechanical pass. */
+@keyframes nav-carriages {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* View Transitions — keep the header out of the page wipe                     */
+/* -------------------------------------------------------------------------- */
+
+/* Naming an element pulls it out of the root snapshot into its own
+   ::view-transition-group, which is positioned from its own old/new box
+   rather than being dragged along by the root translate. That is what
+   makes the header read as persistent while the page wipes beneath it.
+
+   Two names, not one: both headers are always in the DOM, but each is
+   display:none at the other's breakpoint, and an unrendered element's
+   view-transition-name is ignored. Sharing a single name would make the
+   two collide the moment a resize left both rendered, which aborts the
+   whole transition. */
+.header {
+  view-transition-name: site-header;
+}
+
+.header_mobile {
+  view-transition-name: site-header-mobile;
+}
+
+/* In-page transitions (the Lightbox — see page-transitions.css for the
+   marker) must NOT lift the header out. Named groups paint above the root
+   group, and the open dialog lives inside root, so a named header would
+   float on top of the lightbox for the length of the morph. Dropping the
+   name puts the header back in the root snapshot, where it belongs. */
+:root[data-view-transition] .header,
+:root[data-view-transition] .header_mobile {
+  view-transition-name: none;
 }
 
 .header, .logo, .burger_wrapper {

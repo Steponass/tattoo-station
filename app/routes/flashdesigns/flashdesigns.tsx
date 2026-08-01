@@ -2,10 +2,10 @@ import styles from "./flashdesigns.module.css";
 
 // Intlayer start
 import { getIntlayer, validatePrefix } from "intlayer";
-import { useIntlayer, useLocale } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/flashdesigns";
 import FlashTattooGallery from "~/components/FlashTattooGallery/FlashTattooGallery";
+import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { findPlacedPhotos } from "~/lib/gallery/galleryPlacementRepository.server";
 
@@ -47,9 +47,11 @@ export const meta: Route.MetaFunction = ({ params }) => {
 export default function flashdesigns({ loaderData }: Route.ComponentProps) {
   const { placedPhotos } = loaderData;
 
+  const lightboxLabels = useLightboxLabels();
+
   return (
     <main>
-      <FlashTattooGallery photos={placedPhotos} />
+      <FlashTattooGallery photos={placedPhotos} labels={lightboxLabels} />
     </main>
   );
 }

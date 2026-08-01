@@ -1,10 +1,14 @@
 // app/components/LandingGallery/LandingGallery.tsx
 
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { LocalizedLink } from "../intlayer/LocalizedLink";
+import { Lightbox, LightboxTrigger } from "~/components/Lightbox/Lightbox";
+import type {
+  LightboxLabels,
+  LightboxPhoto,
+} from "~/components/Lightbox/lightboxPhoto";
 import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
 import styles from "./LandingGallery.module.css";
 
@@ -31,6 +35,19 @@ gsap.registerPlugin(ScrollTrigger);
  * Reduced-motion respect via gsap.matchMedia: users with the preference
  * see the photos as a static two-row layout with no scroll-driven
  * animation and no ScrollTrigger pin.
+ *
+ * Each tile opens a shared <Lightbox> carrying every placed photo, in
+ * placement order — not row order — so prev/next walks the whole gallery
+ * rather than stopping at the row boundary the parallax split created.
+ * The tile used to be a <LocalizedLink> to the artist's page; that
+ * navigation now lives on the lightbox's "visit artist" button, since a
+ * tile click is an open action rather than a navigation.
+ *
+ * The <Lightbox> wraps the pinned container rather than sitting inside
+ * it: ScrollTrigger's pin applies a transform to that element, and a
+ * transformed ancestor is a containing block for fixed-position
+ * descendants. Keeping the dialog outside the pin sidesteps the question
+ * entirely.
  */
 
 export type LandingGalleryPhoto = {
@@ -44,10 +61,16 @@ export type LandingGalleryPhoto = {
 
 type LandingGalleryProps = {
   photos: readonly LandingGalleryPhoto[];
+  labels: LightboxLabels;
 };
 
 export default function LandingGallery(props: LandingGalleryProps) {
-  const { photos = [] } = props;
+  const { photos = [], labels } = props;
+
+  const lightboxPhotos = useMemo<readonly LightboxPhoto[]>(
+    () => photos.map(toLightboxPhoto),
+    [photos],
+  );
 
 
   
@@ -143,26 +166,42 @@ export default function LandingGallery(props: LandingGalleryProps) {
 
   return (
     <section>
-      <div
-        className={styles.landing_gallery_container}
-        ref={landingGalleryContainerRef}
-      >
-        <div className={styles.landing_gallery_top} ref={landingGalleryTopRef}>
-          {topRowPhotos.map((photo) => (
-            <LandingGalleryTile key={photo.photoId} photo={photo} />
-          ))}
-        </div>
+      <Lightbox photos={lightboxPhotos} labels={labels}>
         <div
-          className={styles.landing_gallery_bottom}
-          ref={landingGalleryBottomRef}
+          className={styles.landing_gallery_container}
+          ref={landingGalleryContainerRef}
         >
-          {bottomRowPhotos.map((photo) => (
-            <LandingGalleryTile key={photo.photoId} photo={photo} />
-          ))}
+          <div className={styles.landing_gallery_top} ref={landingGalleryTopRef}>
+            {topRowPhotos.map((photo) => (
+              <LandingGalleryTile key={photo.photoId} photo={photo} />
+            ))}
+          </div>
+          <div
+            className={styles.landing_gallery_bottom}
+            ref={landingGalleryBottomRef}
+          >
+            {bottomRowPhotos.map((photo) => (
+              <LandingGalleryTile key={photo.photoId} photo={photo} />
+            ))}
+          </div>
         </div>
-      </div>
+      </Lightbox>
     </section>
   );
+}
+
+function toLightboxPhoto(photo: LandingGalleryPhoto): LightboxPhoto {
+  return {
+    id: photo.photoId,
+    src: buildPortfolioImageUrl(photo.objectKey),
+    width: photo.width,
+    height: photo.height,
+    alt: `Work by ${photo.artistDisplayName}`,
+    artist: {
+      slug: photo.artistSlug,
+      displayName: photo.artistDisplayName,
+    },
+  };
 }
 
 type LandingGalleryTileProps = {
@@ -173,7 +212,10 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
   const { photo } = props;
 
   return (
-    <LocalizedLink to={`/artists/${photo.artistSlug}`}>
+    <LightboxTrigger
+      photoId={photo.photoId}
+      className={styles.landing_gallery_tile}
+    >
       <div className={styles.placeholder}>
         <img
           src={buildPortfolioImageUrl(photo.objectKey)}
@@ -183,7 +225,7 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
           loading="lazy"
         />
       </div>
-    </LocalizedLink>
+    </LightboxTrigger>
   );
 }
 

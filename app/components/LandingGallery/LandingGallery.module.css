@@ -9,6 +9,18 @@
   width: max-content;
 }
 
+/* The tile is a <button> (the lightbox trigger). Lightbox's own `.trigger`
+   reset sets `width: 100%`, which inside a `width: max-content` flex row
+   would resolve against the whole row and stretch every tile to the row's
+   width. The two-class selector outranks that single-class rule
+   deterministically, regardless of stylesheet order, and lets the inner
+   `.placeholder` keep owning the tile's size. */
+.landing_gallery_top .landing_gallery_tile,
+.landing_gallery_bottom .landing_gallery_tile {
+  width: max-content;
+  flex: 0 0 auto;
+}
+
 .placeholder {
   width: 280px;
   aspect-ratio: 0.8;

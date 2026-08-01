@@ -1,7 +1,11 @@
 import { useRef, type MouseEvent } from "react";
 import { Link } from "react-router";
-import type { RosterArtist, RosterCopy } from "~/data/roster.types";
-import { buildArtistProfilePath, resolveLocalizedContent } from "~/data/roster.format";
+import type {
+  RosterArtist,
+  RosterAvatar,
+  RosterCopy,
+} from "~/data/roster.types";
+import { buildArtistProfilePath } from "~/data/roster.format";
 import { useAccordionAnimation } from "~/components/Accordion/useAccordionAnimation";
 import { RosterNumber } from "./RosterNumber";
 import { RosterPreviewGrid } from "./RosterPreviewGrid";
@@ -13,8 +17,27 @@ interface RosterItemProps {
   copy: RosterCopy;
   locale: string;
   position: string;
-  buttonText: string,
+  buttonText: string;
   onDisclosureSettled?: () => void;
+}
+
+/** Renders nothing when the artist has no avatar yet; the summary's flex row
+ *  simply closes the gap rather than reserving space for a missing image. */
+function RosterAvatarImage({ avatar }: { avatar: RosterAvatar | null }) {
+  if (avatar === null) {
+    return null;
+  }
+
+  return (
+    <img
+      className={styles.roster_avatar}
+      src={avatar.url}
+      alt=""
+      width={avatar.width}
+      height={avatar.height}
+      loading="lazy"
+    />
+  );
 }
 
 export default function RosterItem({
@@ -34,7 +57,6 @@ export default function RosterItem({
 
   const profilePath = buildArtistProfilePath(locale, artist.slug);
   const stylesLabel = artist.styles.join(` ${copy.stylesSeparator} `);
-  const bioExcerpt = resolveLocalizedContent(artist.bioExcerpt, locale);
 
   function handleSummaryClick(event: MouseEvent<HTMLElement>) {
     // Suppress the native toggle so the WAAPI animation owns the open state.
@@ -46,21 +68,15 @@ export default function RosterItem({
     <div className={styles.roster_item_wrapper}>
       <details className={styles.roster_item} ref={detailsRef}>
         <summary className={styles.roster_summary} onClick={handleSummaryClick}>
-          <RosterNumber position={position} />
+          <div className={styles.roster_no_and_avatar_container}>
+            <RosterNumber position={position} />
 
-          <img
-            className={styles.roster_avatar}
-            src={artist.avatar.url}
-            alt=""
-            width={artist.avatar.width}
-            height={artist.avatar.height}
-            loading="lazy"
-          />
-
-          <span className={styles.roster_identity}>
+            <RosterAvatarImage avatar={artist.avatar} />
+          </div>
+          <div className={styles.roster_identity}>
             <h4 className={styles.roster_name}>{artist.name}</h4>
             <span className={styles.roster_styles}>{stylesLabel}</span>
-          </span>
+          </div>
         </summary>
 
         {/* Wrapper is the animated element and must stay padding-free. */}
@@ -70,12 +86,13 @@ export default function RosterItem({
               <Link
                 to={`${profilePath}#bio`}
                 className={styles.roster_excerpt_link}
+                viewTransition
               >
-                {bioExcerpt}
+                {artist.bioExcerpt}
               </Link>
             </p>
             <RosterPreviewGrid photos={artist.previewPhotos} />
-            <NavButton to={`/artists/${artist.slug}`} buttonText={buttonText}/>
+            <NavButton to={`/artists/${artist.slug}`} buttonText={buttonText} />
           </div>
         </div>
       </details>

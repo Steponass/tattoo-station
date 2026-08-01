@@ -1,6 +1,9 @@
 // app/lib/artists/artistPhotoRepository.server.ts
 
-import type { ArtistPhotoCategory } from "./artistPhotoCategories";
+import {
+  mainPhotoCategoryForRole,
+  type ArtistPhotoCategory,
+} from "./artistPhotoCategories";
 
 /** A stored portfolio photo, mapped to camelCase. `objectKey` is turned into a
  * delivery URL by the view layer, not here — the repository stays URL-agnostic. */
@@ -214,6 +217,90 @@ export async function findArtistPhotosByCategory({
     width: row.width,
     height: row.height,
     style: row.style,
+  }));
+}
+
+/**
+ * One photo as the roster teaser needs it. Carries `artistId` because a single
+ * query returns every artist's preview photos together; the caller groups on it.
+ */
+export type RosterPreviewPhotoRecord = {
+  id: number;
+  artistId: number;
+  objectKey: string;
+  width: number;
+  height: number;
+};
+
+type RosterPreviewPhotoRow = {
+  id: number;
+  artist_id: number;
+  object_key: string;
+  width: number;
+  height: number;
+};
+
+/**
+ * The first N photos of every active artist, each in that artist's own
+ * gallery order.
+ *
+ * ROW_NUMBER() ... PARTITION BY keeps the whole roster to one query rather
+ * than one query per artist: the subquery numbers each artist's photos
+ * independently and the outer WHERE clips every artist to the same limit. The
+ * result set is bounded by (artists × N), not by the per-artist portfolio cap,
+ * so a well-stocked portfolio costs the roster nothing.
+ *
+ * Only the artist's main category is previewed — tattoo work for tattooists,
+ * piercing work for piercers — so the teaser matches the gallery they curate
+ * at /admin/me/photos. Flash is deliberately excluded: it is separate work
+ * with its own page. The two category names are bound rather than written
+ * inline so `mainPhotoCategoryForRole` stays the single source of that mapping.
+ */
+const SELECT_ROSTER_PREVIEW_PHOTOS_SQL = `
+  SELECT id, artist_id, object_key, width, height
+  FROM (
+    SELECT
+      artist_photos.id         AS id,
+      artist_photos.artist_id  AS artist_id,
+      artist_photos.object_key AS object_key,
+      artist_photos.width      AS width,
+      artist_photos.height     AS height,
+      ROW_NUMBER() OVER (
+        PARTITION BY artist_photos.artist_id
+        ORDER BY artist_photos.sort_order ASC, artist_photos.id ASC
+      )                        AS rank_in_artist
+    FROM artist_photos
+    JOIN artists ON artists.id = artist_photos.artist_id
+    WHERE artists.is_active = 1
+      AND artist_photos.category =
+        CASE artists.role WHEN 'piercing' THEN ? ELSE ? END
+  )
+  WHERE rank_in_artist <= ?
+  ORDER BY artist_id ASC, rank_in_artist ASC
+`;
+
+export async function findRosterPreviewPhotos({
+  database,
+  photosPerArtist,
+}: {
+  database: D1Database;
+  photosPerArtist: number;
+}): Promise<RosterPreviewPhotoRecord[]> {
+  const queryResult = await database
+    .prepare(SELECT_ROSTER_PREVIEW_PHOTOS_SQL)
+    .bind(
+      mainPhotoCategoryForRole("piercing"),
+      mainPhotoCategoryForRole("tattoo"),
+      photosPerArtist,
+    )
+    .all<RosterPreviewPhotoRow>();
+
+  return queryResult.results.map((row) => ({
+    id: row.id,
+    artistId: row.artist_id,
+    objectKey: row.object_key,
+    width: row.width,
+    height: row.height,
   }));
 }
 

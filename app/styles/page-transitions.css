@@ -1,0 +1,112 @@
+/*
+ * Root-level page transition: hard wipe, left-to-right push.
+ *
+ * The View Transitions API renders snapshots of the old and new document
+ * root as sibling pseudo-elements inside ::view-transition-group(root).
+ * Default UA behavior is a 250ms opacity crossfade on both. We override
+ * that with a translate animation to produce a "push" — both snapshots
+ * move in lockstep, old exits left, new enters from the right.
+ *
+ * Scope: navigations only. Every rule here is guarded by
+ * `:root:not([data-view-transition])`, because the root snapshot is taken
+ * for *every* view transition on the document — including in-page ones
+ * that have nothing to do with navigating (the Lightbox open morph and
+ * its prev/next photo swaps). Those set `data-view-transition` on <html>
+ * for the duration of the transition, which switches the root pair back
+ * to the UA crossfade and leaves the named groups to drive the visuals.
+ * The guard must sit on the originating element itself — view transition
+ * pseudo-elements are not descendants of <html> in the selector sense.
+ *
+ * Persistence: the Header opts out of the wipe by claiming its own
+ * view-transition-name (`site-header` / `site-header-mobile`, assigned in
+ * Header.module.css). A named element is painted into its own group
+ * instead of the root snapshot, so it holds position while the page slides
+ * beneath it. Footer and PageTitleBoard are still swept along with root —
+ * same treatment when they're ready for it.
+ */
+
+@keyframes page-wipe-out {
+  from {
+    translate: 0 0;
+    opacity: 1;
+    filter: blur(0px);
+  }
+  to {
+    translate: -100% 0;
+    opacity: 0;
+    filter: blur(20px);
+  }
+}
+
+@keyframes page-wipe-in {
+  from {
+    translate: 100% 0;
+    opacity: 0;
+    filter: blur(20px);
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+:root:not([data-view-transition])::view-transition-old(root) {
+  animation: page-wipe-out 600ms cubic-bezier(0.702, 0.003, 0.184, 0.994) both;
+}
+
+:root:not([data-view-transition])::view-transition-new(root) {
+  animation: page-wipe-in 600ms cubic-bezier(0.702, 0.003, 0.184, 0.994) both;
+}
+
+/* Lightbox.module.css sets a 400ms group animation on `::view-transition-
+   group(*)`, which matches root too. Pin the root group to the wipe's own
+   timing so the two snapshots stay in lockstep for the full push. */
+:root:not([data-view-transition])::view-transition-group(root) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.9, 0, 0.1, 1);
+}
+
+/* The header's own group. Its old and new boxes are identical on a normal
+   navigation, so the group animation resolves to no movement and the pair
+   just crossfades — invisible when the markup matches, a soft swap when it
+   doesn't (e.g. active-link styling). Pinned to the wipe's duration so the
+   header settles at the same moment the page does, rather than at the
+   350/400ms the Lightbox's `(*)` rules would otherwise impose. */
+::view-transition-group(site-header),
+::view-transition-group(site-header-mobile),
+::view-transition-old(site-header),
+::view-transition-new(site-header),
+::view-transition-old(site-header-mobile),
+::view-transition-new(site-header-mobile) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.9, 0, 0.1, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes page-wipe-reduced-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes page-wipe-reduced-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  :root:not([data-view-transition])::view-transition-old(root) {
+    animation: page-wipe-reduced-out 80ms linear both;
+  }
+
+  :root:not([data-view-transition])::view-transition-new(root) {
+    animation: page-wipe-reduced-in 80ms linear both;
+  }
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
+import { LocalizedLink, LocalizedNavLink } from "~/components/intlayer/LocalizedLink";
 import { LocaleSwitcher } from "~/components/intlayer/locale-switcher";
 import styles from "./Header.module.css";
 
@@ -36,35 +36,35 @@ export default function Header() {
     <>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <LocalizedLink to="/" viewTransition>
+          <LocalizedLink to="/">
             <img src="/public/TEMP-Logo-from-photo.webp" />
           </LocalizedLink>
         </div>
         <nav className={styles.nav}>
-          <LocalizedLink to="/Artists" viewTransition>
+          <LocalizedNavLink to="/artists">
             {artists}
-          </LocalizedLink>
-          <LocalizedLink to="/piercing" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/piercing">
             {piercing}
-          </LocalizedLink>
-          <LocalizedLink to="/flashdesigns" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/flashdesigns">
             {flashdesigns}
-          </LocalizedLink>
-          <LocalizedLink to="/tattoostyles" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/tattoostyles">
             {tattoostyles}
-          </LocalizedLink>
-          <LocalizedLink to="/aftercare" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/aftercare">
             {aftercare}
-          </LocalizedLink>
-          <LocalizedLink to="/faq" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/faq">
             {faq}
-          </LocalizedLink>
-          <LocalizedLink to="/coupon" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/coupon">
             {coupon}
-          </LocalizedLink>
-          <LocalizedLink to="/booking" viewTransition>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/booking">
             {booking}
-          </LocalizedLink>
+          </LocalizedNavLink>
         </nav>
         <LocaleSwitcher />
       </header>
@@ -72,7 +72,7 @@ export default function Header() {
         className={`${styles.header_mobile} ${isMenuOpen ? styles.open : ""}`}
       >
         <div className={styles.logo}>
-          <LocalizedLink to="/" viewTransition>
+          <LocalizedLink to="/">
             <img src="/public/TEMP-Logo-from-photo.webp" />
           </LocalizedLink>
         </div>
@@ -82,30 +82,30 @@ export default function Header() {
           className={styles.mobile_nav}
           aria-hidden={!isMenuOpen}
         >
-          <LocalizedLink to="/artists" viewTransition onClick={closeMenu}>
+          <LocalizedNavLink to="/artists" onClick={closeMenu}>
             {artists}
-          </LocalizedLink>
-          <LocalizedLink to="/piercing" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/piercing" onClick={closeMenu}>
             {piercing}
-          </LocalizedLink>
-          <LocalizedLink to="/faq" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/faq" onClick={closeMenu}>
             {faq}
-          </LocalizedLink>
-          <LocalizedLink to="/tattoostyles" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/tattoostyles" onClick={closeMenu}>
             {tattoostyles}
-          </LocalizedLink>
-          <LocalizedLink to="/aftercare" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/aftercare" onClick={closeMenu}>
             {aftercare}
-          </LocalizedLink>
-          <LocalizedLink to="/flashdesigns" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/flashdesigns" onClick={closeMenu}>
             {flashdesigns}
-          </LocalizedLink>
-          <LocalizedLink to="/coupon" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/coupon" onClick={closeMenu}>
             {coupon}
-          </LocalizedLink>
-          <LocalizedLink to="/booking" viewTransition onClick={closeMenu}>
+          </LocalizedNavLink>
+          <LocalizedNavLink to="/booking" onClick={closeMenu}>
             {booking}
-          </LocalizedLink>
+          </LocalizedNavLink>
           <LocaleSwitcher />
         </nav>
 

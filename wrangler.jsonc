@@ -22,12 +22,12 @@
 			"migrations_dir": "migrations"
 		},
 	],
-	// NOTE: "remote": true forces the Vite dev server to open a remote proxy
-	// session against the Cloudflare API. Temporarily disabled to work around a
-	// 522 from the edge-preview endpoint. Restore it before deploying — and for
-	// any work that actually exercises env.IMAGES (photo/avatar uploads).
+	// NOTE: Images has no local emulation — "remote": true is required even in
+	// dev, otherwise env.IMAGES is a stub that throws and every upload fails as
+	// "unreadable_image". Needs an authenticated wrangler session.
 	"images": {
-		"binding": "IMAGES"
+		"binding": "IMAGES",
+		"remote": true
 	},
 	"r2_buckets": [
 		{

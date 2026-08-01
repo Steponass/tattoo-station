@@ -6,6 +6,7 @@ import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/tattoostyles";
 import StyleGallery from "~/components/StyleGallery/StyleGallery";
+import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
 
 // Intlayer Start
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -30,6 +31,7 @@ export const meta: Route.MetaFunction = ({ params }) => {
 
 export default function tattoostyles() {
   const content = useIntlayer("tattoostyles");
+  const lightboxLabels = useLightboxLabels();
 
   return (
     <main>
@@ -44,7 +46,9 @@ export default function tattoostyles() {
             <p>{content.neoTraditionalDescription}</p>
           </div>
           {/* <div className="pimpa bg-amber-50 h-4 w-full"></div> */}
-          <StyleGallery />
+          {/* No photos wired yet — the gallery renders its placeholder
+              tiles until a loader supplies style-tagged photos. */}
+          <StyleGallery labels={lightboxLabels} />
         </div>
       </article>
     </main>

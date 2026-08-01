@@ -97,7 +97,7 @@ export function PageTitleBoard() {
   }
 
   return (
-    <h1 className={styles.heading}>
+    <h1 className={styles.splitflap_heading}>
       <SplitFlapText target={label} timing={timing} />
     </h1>
   );

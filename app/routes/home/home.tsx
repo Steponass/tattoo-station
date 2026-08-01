@@ -3,6 +3,7 @@ import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/home";
 import LandingGallery from "~/components/LandingGallery/LandingGallery";
+import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
 import Process from "~/components/Process/Process";
 import NavButton from "~/components/Button/NavButton";
 import Testimonials from "~/components/Testimonials/Testimonials";
@@ -49,6 +50,7 @@ export const handle = {
 export default function Home({ loaderData }: Route.ComponentProps) {
   const { buttonTextArtists } = useIntlayer("home");
   const { landingGalleryPhotos } = loaderData;
+  const lightboxLabels = useLightboxLabels();
 
   return (
     <>
@@ -59,7 +61,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           to={"/artists"}
         />
       </section>
-      <LandingGallery photos={landingGalleryPhotos} />
+      <LandingGallery photos={landingGalleryPhotos} labels={lightboxLabels} />
 
       <Process />
 

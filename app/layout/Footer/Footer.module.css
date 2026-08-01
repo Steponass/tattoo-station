@@ -56,3 +56,13 @@
   background-repeat: repeat-x;
   background-size: 5.5px 5px;
 }
+
+/* View Transition block */
+
+.footer {
+  view-transition-name: site-footer;
+}
+
+:root[data-view-transition] .footer {
+  view-transition-name: none;
+}

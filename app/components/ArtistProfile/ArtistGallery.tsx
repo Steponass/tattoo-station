@@ -1,3 +1,10 @@
+import { useMemo } from 'react'
+import { Lightbox, LightboxTrigger } from '~/components/Lightbox/Lightbox'
+import type {
+  LightboxArtistLink,
+  LightboxLabels,
+  LightboxPhoto,
+} from '~/components/Lightbox/lightboxPhoto'
 import styles from './ArtistGallery.module.css'
 
 /**
@@ -14,6 +21,14 @@ export interface PortfolioImage {
 interface ArtistGalleryProps {
   tattooPhotos: PortfolioImage[]
   flashPhotos: PortfolioImage[]
+  labels: LightboxLabels
+  /**
+   * Whose gallery this is. Not used for a "visit artist" button — the
+   * visitor is already here — but it prefills the lightbox's book-now link
+   * with `?artist=<slug>`, which is the whole point of showing a photo
+   * full-screen on an artist's page.
+   */
+  artist: LightboxArtistLink
 }
 
 interface PortfolioTileProps {
@@ -24,19 +39,47 @@ interface PortfolioTileProps {
  * intentionally empty. */
 function PortfolioTile({ photo }: PortfolioTileProps) {
   return (
-    <div className={styles.artist_image_wrapper}>
+    <LightboxTrigger photoId={photo.id} className={styles.artist_image_wrapper}>
       <img
         src={photo.src}
-        alt=""
+        alt=''
         width={photo.width}
         height={photo.height}
         className={styles.artist_image}
       />
-    </div>
+    </LightboxTrigger>
   )
 }
 
-export default function ArtistGallery({ tattooPhotos, flashPhotos }: ArtistGalleryProps) {
+/** The tabs hold two independent photo sets, so each panel gets its own
+ * <Lightbox> rather than one shared across both. Prev/next then stays inside
+ * the tab the visitor opened from — walking from the last tattoo into the
+ * first flash design would be a jump they never asked for. Photo ids are
+ * unique across the whole artist_photos table, so a `#photo-<id>` deep link
+ * still resolves in exactly one of the two. */
+function toLightboxPhoto(
+  photo: PortfolioImage,
+  artist: LightboxArtistLink,
+): LightboxPhoto {
+  return {
+    id: photo.id,
+    src: photo.src,
+    width: photo.width,
+    height: photo.height,
+    artist,
+  }
+}
+
+export default function ArtistGallery({ tattooPhotos, flashPhotos, labels, artist }: ArtistGalleryProps) {
+  const tattooLightboxPhotos = useMemo(
+    () => tattooPhotos.map((photo) => toLightboxPhoto(photo, artist)),
+    [tattooPhotos, artist],
+  )
+  const flashLightboxPhotos = useMemo(
+    () => flashPhotos.map((photo) => toLightboxPhoto(photo, artist)),
+    [flashPhotos, artist],
+  )
+
   return (
     <section className={styles.artist_gallery_section}>
       <h2>Works</h2>
@@ -58,16 +101,31 @@ export default function ArtistGallery({ tattooPhotos, flashPhotos }: ArtistGalle
         <label htmlFor={styles.flashdesigns_tab} className={styles.tab_label}>Laisvi eskizai</label>
 
         <div className={styles.tab_panels}>
-          <div className={styles.tab_panel} id={styles.tattoo_panel}>
-            {tattooPhotos.map((photo) => (
-              <PortfolioTile key={photo.id} photo={photo} />
-            ))}
-          </div>
-          <div className={styles.tab_panel} id={styles.flashdesign_panel}>
-            {flashPhotos.map((photo) => (
-              <PortfolioTile key={photo.id} photo={photo} />
-            ))}
-          </div>
+          {/* The visitor is already on this artist's page, so the lightbox's
+              "visit artist" button would be a no-op — hence showArtistLink
+              is off here but on for the mixed-artist galleries. */}
+          <Lightbox
+            photos={tattooLightboxPhotos}
+            labels={labels}
+            showArtistLink={false}
+          >
+            <div className={styles.tab_panel} id={styles.tattoo_panel}>
+              {tattooPhotos.map((photo) => (
+                <PortfolioTile key={photo.id} photo={photo} />
+              ))}
+            </div>
+          </Lightbox>
+          <Lightbox
+            photos={flashLightboxPhotos}
+            labels={labels}
+            showArtistLink={false}
+          >
+            <div className={styles.tab_panel} id={styles.flashdesign_panel}>
+              {flashPhotos.map((photo) => (
+                <PortfolioTile key={photo.id} photo={photo} />
+              ))}
+            </div>
+          </Lightbox>
         </div>
       </div>
     </section>
