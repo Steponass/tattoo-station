@@ -17,6 +17,8 @@ export const ARTIST_STYLES = [
   "Neo-traditional",
   "Fine line",
   "Watercolor",
+  "Black & grey",
+  "Abstract",
   "Geometric",
   "Blackwork",
   "Minimalist",

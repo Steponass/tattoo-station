@@ -47,7 +47,7 @@
   --fontsize-h1: clamp(5.53rem, 5.12vi + 4.38rem, 8.99rem); */
 
   /* https://www.fluid-type-scale.com/calculate?minFontSize=16&minWidth=360&minRatio=1.25&maxFontSize=18&maxWidth=1440&maxRatio=1.414&steps=body-s%2C+body%2C+h6%2C+h5%2C+h4%2C+h3%2C+h2%2C+h1&baseStep=body&prefix=fontsize&useContainerWidth=false&includeFallbacks=false&useRems=true&remValue=16&decimals=2&previewFont=Hepta+Slab&previewText=Almost+before+we+knew+it%2C+we+had+left+the+ground&previewWidth=1280 */
-  --fontsize-body-s: clamp(0.8rem, -0.01vi + 0.8rem, 0.8rem);
+--fontsize-body-s: clamp(0.8rem, -0.01vi + 0.8rem, 0.8rem);
 --fontsize-body: clamp(1rem, 0.19vi + 0.96rem, 1.13rem);
 --fontsize-h6: clamp(1.25rem, 0.5vi + 1.14rem, 1.59rem);
 --fontsize-h5: clamp(1.56rem, 1.02vi + 1.33rem, 2.25rem);
@@ -73,7 +73,7 @@
 }
 
 :where(p, ul, ol, li, a, th, td, summary, details,
-button, label, legend, input, textarea) {
+button, label, legend, input, textarea, address) {
   font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
   font-weight: 450;
   letter-spacing: 0.25px;

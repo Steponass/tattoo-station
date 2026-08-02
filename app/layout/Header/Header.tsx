@@ -68,6 +68,7 @@ export default function Header() {
         </nav>
         <LocaleSwitcher />
       </header>
+      
       <header
         className={`${styles.header_mobile} ${isMenuOpen ? styles.open : ""}`}
       >
@@ -124,9 +125,9 @@ export default function Header() {
               fill="currentColor"
               aria-hidden="true"
             >
-              <rect x="0" y="0" width="66" height="20" />
-              <rect x="33" y="44" width="66" height="20" />
-              <rect x="66" y="88" width="66" height="20" />
+              {/* <rect x="0" y="0" width="66" height="20" /> */}
+              <rect x="33" y="0" width="66" height="20" />
+              <rect x="66" y="40" width="66" height="20" />
             </svg>
           </button>
         </div>

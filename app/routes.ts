@@ -21,6 +21,7 @@ export default [
     route("tattoostyles", "routes/tattoostyles/tattoostyles.tsx"),
     route("faq", "routes/faq/faq.tsx"),
     route("coupon", "routes/coupon/coupon.tsx"),
+    route("privacypolicy", "routes/privacypolicy/privacypolicy.tsx"),
     route("api/artist-photos", "routes/api.artist-photos.ts"),
     route("portfolio-image/*", "routes/portfolio-image.$.tsx"),
     route("api/artist-avatar", "routes/api.artist-avatar.ts"),

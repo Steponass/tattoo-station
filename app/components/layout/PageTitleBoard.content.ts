@@ -32,6 +32,10 @@ const pageTitleBoardContent = {
       lt: "Laisvi eskizai",
       en: "Flash designs",
     }),
+    privacy: t({
+      lt: "Privatumas",
+      en: "Privacy",
+    }),
   },
 } satisfies Dictionary;
 

@@ -478,7 +478,8 @@ function LightboxContents(props: LightboxContentsProps) {
         aria-label={labels.previous}
         className={styles.previousButton}
       >
-        {"\u2190"}
+       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M513 216.6H158.5L316.1 59.1H197.9L1 256l196.9 196.9h118.2L158.5 295.4H513z"/>
+       </svg>
       </button>
 
       <img
@@ -497,21 +498,21 @@ function LightboxContents(props: LightboxContentsProps) {
         aria-label={labels.next}
         className={styles.nextButton}
       >
-        {"\u2192"}
+       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M513 216.6H158.5L316.1 59.1H197.9L1 256l196.9 196.9h118.2L158.5 295.4H513z"/>
+       </svg>
       </button>
 
       <footer className={styles.footer}>
         {shouldShowArtistLink && photo.artist !== undefined ? (
           <a
             href={`/artists/${photo.artist.slug}`}
-            className={styles.artistLink}
+            className={`${styles.artist_link} chamfer chamfer-xs punch`}
           >
-            {labels.visitArtistPrefix} {photo.artist.displayName}
+           {photo.artist.displayName}
           </a>
-        ) : (
-          <span aria-hidden="true" className={styles.footerSpacer} />
-        )}
-        <a href={bookingHref} className={styles.bookNowLink}>
+        ) : null }
+        <a href={bookingHref} 
+        className={`${styles.booknow_link} chamfer chamfer-xs punch`}>
           {labels.bookNow}
         </a>
       </footer>

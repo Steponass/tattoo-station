@@ -40,7 +40,8 @@
   max-width: 100vw;
   max-height: 100vh;
   margin: 0;
-  padding: 0;
+  padding-block: var(--space-16px);
+  padding-inline: var(--space-s-m);
   border: 0;
   background: var(--color-bg-base);
   color: var(--color-text-strong);
@@ -63,20 +64,18 @@
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 2fr auto;
   grid-template-columns: 1fr;
 }
 
 .closeButton {
   grid-row: 1;
   justify-self: end;
-  padding: var(--space-16px);
+  padding: var(--space-8px);
   background: transparent;
   border: 0;
-  color: inherit;
-  font-size: 2rem;
+  font-size: 2.5rem;
   line-height: 1;
-  cursor: pointer;
 }
 
 .hero {
@@ -94,12 +93,9 @@
   grid-row: 2;
   grid-column: 1;
   align-self: center;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  font-size: 2rem;
-  padding: var(--space-16px);
+  padding: var(--space-8px);
   cursor: pointer;
+  z-index: 10;
 }
 
 .previousButton {
@@ -112,8 +108,18 @@
 
 .previousButton:disabled,
 .nextButton:disabled {
-  opacity: 0.3;
+  opacity: 0.5;
   cursor: default;
+}
+
+.previousButton svg,
+.nextButton svg {
+  width: var(--space-l-xl);
+  height: 2em;
+}
+
+.nextButton svg {
+  rotate: 180deg;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -123,24 +129,33 @@
 .footer {
   grid-row: 3;
   grid-column: 1;
+  width: min(80%, 640px);
+  margin-inline: auto;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  justify-content: center;
   align-items: center;
   gap: var(--space-s-m);
-  padding: var(--space-s-m);
+  /* padding: var(--space-s-m); */
 }
 
-.artistLink,
-.bookNowLink {
-  padding: var(--space-xs-s) var(--space-s-m);
-  color: inherit;
-  text-decoration: none;
+.footer:has(a:nth-child(2)) {
+    justify-content: space-between;
 }
 
-.footerSpacer {
-  /* Reserves the artist-link slot when the button doesn't render, so the
-     book-now button stays right-aligned instead of shifting left. */
-  display: inline-block;
+.artist_link,
+.booknow_link {
+  min-width: 128px;
+  text-align: center;
+  padding: var(--space-8px) var(--space-16px);
+  margin-top: var(--space-xs-s);
+}
+.artist_link {
+  background-color: var(--color-accent);
+}
+
+.booknow_link {
+  background-color: var(--color-secondary);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -159,21 +174,14 @@
   }
 }
 
-::view-transition-group(*) {
+/* Group (position/size) and old/new (crossfade) must share a duration —
+   otherwise the box keeps resizing after the crossfade has already
+   finished, which reads as a stutter on top of the crossfade itself. */
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
-::view-transition-new(*) {
-  animation-duration: 350ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-::view-transition-old(*) {
-  animation-duration: 350ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-
 }
 
 /* -------------------------------------------------------------------------- */
@@ -198,6 +206,7 @@
     opacity: 1;
     transform: translateX(0);
   }
+
   to {
     opacity: 0;
     transform: translateX(calc(var(--lightbox-nav-direction, 0) * -30%));
@@ -209,6 +218,7 @@
     opacity: 0;
     transform: translateX(calc(var(--lightbox-nav-direction, 0) * 30%));
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -216,11 +226,15 @@
 }
 
 ::view-transition-old(lightbox-hero) {
-  animation: lightbox-hero-slide-out 320ms cubic-bezier(0.4, 0, 0.2, 1)
-    forwards;
+  animation: lightbox-hero-slide-out 320ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 ::view-transition-new(lightbox-hero) {
-  animation: lightbox-hero-slide-in 320ms cubic-bezier(0.4, 0, 0.2, 1)
-    forwards;
+  animation: lightbox-hero-slide-in 320ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (hover: hover) {
+  button:hover {
+    color: var(--color-focus);
+  }
 }

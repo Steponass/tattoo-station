@@ -258,19 +258,47 @@
   }
 
   .burger_icon {
-    margin-top: -28px;
     width: 40px;
     height: auto;
     color: var(--color-text-strong);
     pointer-events: auto;
-    transition: transform 0.3s ease-in;
+    overflow: visible;
+    transition: all 0.3s ease-in;
     &:hover {
       color: var(--color-accent);
     }
   }
 
+  /* Bars scale along their own local x-axis (the long edge of each rect).
+     The icon itself rotates 90deg on open, which swaps local x for screen-y,
+     so growing x here is what reads as the bars growing taller on screen. */
+  .burger_icon rect {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.3s 0.3s ease-in-out;
+  }
+
   .header_mobile.open .burger_icon {
-    transform: rotateZ(-45deg);
+    transform-origin: center;
+    transform: rotateZ(90deg);
+  }
+
+  /* Scale factors are tuned so the grown bar length roughly matches the
+     curtain panel height (.header_mobile::before/::after) it grows into. */
+  .header_mobile.open .burger_icon rect {
+    transform: scaleX(13);
+    @media (width < 360px) {
+      transform: scaleX(18);
+    }
+  }
+
+    .header_mobile.open .burger_icon rect:nth-child(2) {
+          transform: scaleX(12);
+    }
+  /* The wrapper's diagonal clip-path is sized to its own 100px box, so
+     bars growing past it would otherwise be cut off mid-animation. */
+  .header_mobile.open .burger_wrapper {
+    clip-path: none;
   }
 
   .mobile_nav {
