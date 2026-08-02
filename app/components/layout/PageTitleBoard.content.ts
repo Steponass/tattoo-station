@@ -8,6 +8,10 @@ const pageTitleBoardContent = {
       lt: "Tattoo Station",
       en: "Tattoo Station",
     }),
+    artists: t({
+      lt: "Meistrai",
+      en: "Artists",
+    }),
     piercing: t({
       lt: "Auskarai",
       en: "Piercing",

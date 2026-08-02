@@ -84,6 +84,7 @@ function buildRosterArtists({
     id: entry.id,
     slug: entry.slug,
     name: entry.displayName,
+    role: entry.role,
     styles: entry.styles,
     bioExcerpt: entry.bioExcerpt,
     avatar: buildAvatar(entry),
@@ -119,6 +120,14 @@ export async function loader({ params, context }: Route.LoaderArgs) {
   return { artists: buildRosterArtists({ entries, previewPhotoRecords }) };
 }
 
+export const handle = {
+  titleBoard: { 
+    show: true, 
+    labelKey: "artists",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 8 },
+ },
+};
+
 export const meta: Route.MetaFunction = ({ params }) => {
   const content = getIntlayer("artists", params.lang);
 
@@ -136,7 +145,6 @@ export default function ArtistsRoute({ loaderData }: Route.ComponentProps) {
 
   return (
     <main>
-      <h1>{title}</h1>
       <Roster
         artists={artists}
         copy={{

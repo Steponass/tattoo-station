@@ -22,6 +22,10 @@ export interface RosterArtist {
   id: number;
   slug: string;
   name: string;
+  /** Determines where the roster item's "see more" button points — every
+   *  role but "piercing" links to the artist's own profile page; a piercing
+   *  artist's real page is /piercing, which she owns. */
+  role: "tattoo" | "piercing" | "both";
   styles: string[];
   bioExcerpt: string;
   /** Null until the artist uploads one — the summary renders without it. */

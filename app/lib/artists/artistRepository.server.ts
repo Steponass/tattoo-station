@@ -260,6 +260,46 @@ export async function findArtistProfileBySlug({
   };
 }
 
+export type ArtistRoleIdentity = {
+  id: number;
+  slug: string;
+};
+
+const SELECT_ACTIVE_ARTIST_BY_ROLE_SQL = `
+  SELECT id, slug
+  FROM artists
+  WHERE role = ? AND is_active = 1
+  ORDER BY sort_order ASC, display_name ASC
+  LIMIT 1
+`;
+
+/**
+ * Resolves the id and slug of the (single, active) artist holding a given
+ * role. Built for /piercing, which is hand-built around one piercer rather
+ * than driven by a slug param — the route knows it wants "the piercing
+ * artist," not a specific slug. Returns null if no active artist currently
+ * holds that role, which the caller treats as "no gallery yet" rather than
+ * a 404: the rest of the page's copy is hand-authored and still renders.
+ */
+export async function findActiveArtistIdentityByRole({
+  database,
+  role,
+}: {
+  database: D1Database;
+  role: ArtistRole;
+}): Promise<ArtistRoleIdentity | null> {
+  const row = await database
+    .prepare(SELECT_ACTIVE_ARTIST_BY_ROLE_SQL)
+    .bind(role)
+    .first<{ id: number; slug: string }>();
+
+  if (row === null) {
+    return null;
+  }
+
+  return { id: row.id, slug: row.slug };
+}
+
 export type ArtistAvatarTarget = {
   id: number;
   slug: string;

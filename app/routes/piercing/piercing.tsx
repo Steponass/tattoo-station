@@ -6,10 +6,41 @@ import type { Route } from "./+types/piercing";
 import styles from "./piercing.module.css";
 import Accordion from "~/components/Accordion/Accordion";
 import { Lightbox, LightboxTrigger } from "~/components/Lightbox/Lightbox";
-import type { LightboxPhoto } from "~/components/Lightbox/lightboxPhoto";
+import type {
+  LightboxArtistLink,
+  LightboxPhoto,
+} from "~/components/Lightbox/lightboxPhoto";
 import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
+import { getDatabase } from "~/lib/cloudflare/cloudflareContext";
+import { findActiveArtistIdentityByRole } from "~/lib/artists/artistRepository.server";
+import {
+  findArtistPhotosByCategory,
+  type ArtistPhotoRecord,
+} from "~/lib/artists/artistPhotoRepository.server";
+import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
+import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
 
-export const loader = ({ params }: Route.LoaderArgs) => {
+/**
+ * A gallery photo as this page renders it — a delivery URL plus the stored
+ * dimensions, so each tile reserves layout space before the image loads.
+ */
+interface GalleryPhoto {
+  id: number;
+  url: string;
+  width: number;
+  height: number;
+}
+
+function toGalleryPhoto(record: ArtistPhotoRecord): GalleryPhoto {
+  return {
+    id: record.id,
+    url: buildPortfolioImageUrl(record.objectKey),
+    width: record.width,
+    height: record.height,
+  };
+}
+
+export async function loader({ params, context }: Route.LoaderArgs) {
   const { lang } = params;
 
   const { isValid } = validatePrefix(lang);
@@ -17,7 +48,30 @@ export const loader = ({ params }: Route.LoaderArgs) => {
   if (!isValid) {
     throw data("Locale not supported", { status: 404 });
   }
-};
+
+  const database = getDatabase(context);
+
+  const piercingArtist = await findActiveArtistIdentityByRole({
+    database,
+    role: "piercing",
+  });
+
+  // No active piercing artist yet: the page still renders (price list, bio,
+  // FAQ are all hand-authored copy) with an empty gallery rather than 404ing.
+  const photoRecords =
+    piercingArtist === null
+      ? []
+      : await findArtistPhotosByCategory({
+          database,
+          artistId: piercingArtist.id,
+          category: mainPhotoCategoryForRole("piercing"),
+        });
+
+  return {
+    piercingArtistSlug: piercingArtist?.slug ?? null,
+    photos: photoRecords.map(toGalleryPhoto),
+  };
+}
 
 export const meta: Route.MetaFunction = ({ params }) => {
   const content = getIntlayer("piercing", params.lang);
@@ -37,60 +91,47 @@ export const handle = {
 };
 
 
-/**
- * The piercing gallery's photos are static files in /public, not D1 rows —
- * this page has not been migrated to the artist_photos table yet. Built at
- * module scope because nothing about them depends on render state, which
- * also gives the lightbox a stable `photos` identity across renders.
- *
- * Ids are strings here (the lightbox accepts `number | string`), so the
- * `#photo-<id>` deep link reads as `#photo-raimundas-tattoo-001`.
- */
-interface GalleryPhoto {
-  id: string;
-  url: string;
-  alt: string;
-  width: number;
-  height: number;
-}
-
-const PIERCING_IMAGE_COUNT = 12;
-
-const piercingPhotos: GalleryPhoto[] = Array.from(
-  { length: PIERCING_IMAGE_COUNT },
-  (_, index) => {
-    const fileNumber = String(index + 1).padStart(3, "0");
-    return {
-      id: `raimundas-tattoo-${fileNumber}`,
-      url: `/artist_works/Raimundas/tattoo/RaimundasTattoo${fileNumber}.webp`,
-      alt: `Raimundas tattoo ${index + 1}`,
-      width: 600,
-      height: 600,
-    };
-  },
-);
-
-/**
- * No `artist` on these photos: the gallery is unattributed, so the lightbox
- * hides its "visit artist" button and sends book-now to the plain /booking
- * page rather than prefilling an artist.
- */
-const piercingLightboxPhotos: LightboxPhoto[] = piercingPhotos.map((photo) => ({
-  id: photo.id,
-  src: photo.url,
-  width: photo.width,
-  height: photo.height,
-  alt: photo.alt,
-}));
-
 /** Intrinsic size of the piercer's logo in /public — a fixed asset, not an
  *  uploaded avatar, so the dimensions are known at build time. */
 const ARTIST_LOGO_SIZE = 96;
 
-export default function piercing() {
+function toLightboxPhoto(
+  photo: GalleryPhoto,
+  artist: LightboxArtistLink | undefined,
+): LightboxPhoto {
+  return {
+    id: photo.id,
+    src: photo.url,
+    width: photo.width,
+    height: photo.height,
+    artist,
+  };
+}
+
+export default function piercing({ loaderData }: Route.ComponentProps) {
+  const { piercingArtistSlug, photos } = loaderData;
   const content = useIntlayer("piercing");
   const lightboxLabels = useLightboxLabels();
   const bioParagraphs = content.artistBio.value.split("\n\n");
+
+  // Undefined (not null) when there's no active piercing artist row yet, so
+  // the spread in toLightboxPhoto omits `artist` entirely rather than
+  // carrying a null — matching LightboxPhoto's optional-field contract.
+  const lightboxArtist: LightboxArtistLink | undefined = useMemo(() => {
+    if (piercingArtistSlug === null) {
+      return undefined;
+    }
+    return { slug: piercingArtistSlug, displayName: content.artistName.value };
+  }, [piercingArtistSlug, content.artistName.value]);
+
+  // The visitor is already on the piercer's own page, so the lightbox's
+  // "visit artist" button would be a no-op — showArtistLink stays off here.
+  // `artist` is still attached to each photo purely to prefill book-now
+  // with `?artist=<slug>`.
+  const piercingLightboxPhotos = useMemo(
+    () => photos.map((photo) => toLightboxPhoto(photo, lightboxArtist)),
+    [photos, lightboxArtist],
+  );
 
   const rows = [
     [content.piercingService1, content.piercingPrice1],
@@ -156,9 +197,13 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
       </div>
       <section className={styles.section_piercing_gallery}>
         <h2>{content.galleryHeading}</h2>
-        <Lightbox photos={piercingLightboxPhotos} labels={lightboxLabels}>
+        <Lightbox
+          photos={piercingLightboxPhotos}
+          labels={lightboxLabels}
+          showArtistLink={false}
+        >
           <div className={styles.piercing_gallery_grid}>
-            {piercingPhotos.map((photo) => (
+            {photos.map((photo) => (
               <LightboxTrigger
                 key={photo.id}
                 photoId={photo.id}
@@ -166,7 +211,7 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
               >
                 <img
                   src={photo.url}
-                  alt={photo.alt}
+                  alt=""
                   width={photo.width}
                   height={photo.height}
                   className={styles.artist_image}

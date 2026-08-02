@@ -58,6 +58,11 @@ export default function RosterItem({
   const profilePath = buildArtistProfilePath(locale, artist.slug);
   const stylesLabel = artist.styles.join(` ${copy.stylesSeparator} `);
 
+  // The piercing artist's real page is /piercing — her bio, price list, and
+  // gallery all live there rather than on the generic /artists/:slug
+  // template — so her "see more" button skips that template entirely.
+  const seeMorePath = artist.role === "piercing" ? "/piercing" : `/artists/${artist.slug}`;
+
   function handleSummaryClick(event: MouseEvent<HTMLElement>) {
     // Suppress the native toggle so the WAAPI animation owns the open state.
     event.preventDefault();
@@ -92,7 +97,7 @@ export default function RosterItem({
               </Link>
             </p>
             <RosterPreviewGrid photos={artist.previewPhotos} />
-            <NavButton to={`/artists/${artist.slug}`} buttonText={buttonText} />
+            <NavButton to={seeMorePath} buttonText={buttonText} />
           </div>
         </div>
       </details>

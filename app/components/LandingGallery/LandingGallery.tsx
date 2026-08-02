@@ -138,7 +138,7 @@ export default function LandingGallery(props: LandingGalleryProps) {
               trigger: landingGalleryContainer,
               start: "10px 15%",
               end: "+=100%",
-              scrub: 1,
+              scrub: 5,
               pin: true,
             },
           });

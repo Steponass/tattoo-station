@@ -162,7 +162,7 @@ export default function Process() {
           if (stepMarker) {
             timeline.to(
               stepMarker,
-              { scale: 1.5, duration: 0.15, ease: "power3.in" },
+              { scale: 1.25, duration: 0.15, ease: "power3.in" },
               Math.max(0, progress - 0.09),
             );
           }
@@ -193,6 +193,8 @@ export default function Process() {
   return (
     <section className={styles.section_process}>
       <div className={styles.process_container} ref={processContainerRef}>
+        <h2 className={styles.section_heading}>Process</h2>
+        <div className={styles.process_wrapper}>
         <div className={styles.process_track} ref={trackRef}>
           <div
             className={styles.process_trackline}
@@ -228,7 +230,9 @@ export default function Process() {
               ref={(el) => {
                 stepMarkerRefs.current[index] = el;
               }}
-            ><h6>{step.number}</h6></div>
+            >
+              <h6>{step.number}</h6>
+            </div>
           ))}
         </div>
         <div className={styles.process_steps}>
@@ -243,6 +247,7 @@ export default function Process() {
               <p>{step.text}</p>
             </div>
           ))}
+        </div>
         </div>
       </div>
     </section>
