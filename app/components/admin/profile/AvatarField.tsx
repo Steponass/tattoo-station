@@ -170,7 +170,7 @@ export default function AvatarField(props: AvatarFieldProps) {
 
     fetcher.submit(uploadFormData, {
       method: "post",
-      action: "/api/artist-avatar",
+      action: "/admin/api/artist-avatar",
       encType: "multipart/form-data",
     });
 

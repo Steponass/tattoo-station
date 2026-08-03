@@ -212,7 +212,7 @@ async function persistRosterReorder({
   orderedArtistIds: number[];
 }): Promise<PersistResult> {
   try {
-    const response = await fetch("/api/reorder-roster", {
+    const response = await fetch("/admin/api/reorder-roster", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderedArtistIds }),

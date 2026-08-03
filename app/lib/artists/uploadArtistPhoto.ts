@@ -1,6 +1,6 @@
 // app/lib/artists/uploadArtistPhoto.ts
 
-export const ARTIST_PHOTO_UPLOAD_PATH = "/api/artist-photos";
+export const ARTIST_PHOTO_UPLOAD_PATH = "/admin/api/artist-photos";
 
 /**
  * The client's view of a successfully uploaded portfolio photo. Includes the

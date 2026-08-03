@@ -1,6 +1,6 @@
 // app/lib/artists/uploadArtistAvatar.ts
 
-export const ARTIST_AVATAR_UPLOAD_PATH = "/api/artist-avatar";
+export const ARTIST_AVATAR_UPLOAD_PATH = "/admin/api/artist-avatar";
 
 export type UploadedArtistAvatar = {
   objectKey: string;

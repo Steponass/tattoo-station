@@ -1,8 +1,7 @@
 // app/lib/admin/server/resolveActor.server.ts
 
 import { jwtVerify, createRemoteJWKSet, type JWTPayload } from "jose";
-import { isAdminEmail } from "./adminAllowlist.server";
-import { findArtistIdByEmail } from "~/lib/artists/artistRepository.server";
+import { findArtistAuthByEmail } from "~/lib/artists/artistRepository.server";
 
 /**
  * The resolved caller of an admin-area request. The three variants are the
@@ -26,7 +25,6 @@ export type Actor =
 type ResolveActorEnv = {
   POLICY_AUD: string;
   TEAM_DOMAIN: string;
-  ADMIN_EMAILS?: string;
   DEV_ACTOR: string;
   DB: D1Database;
 };
@@ -140,11 +138,12 @@ function extractEmail(payload: JWTPayload): string | null {
  * There is no downstream re-verification: every consumer trusts what this
  * function returns.
  *
- * Resolution order (see §3 of the handoff):
+ * Resolution order:
  *   1. Verify the Access JWT (signature, issuer, audience).
- *   2. If the email is in ADMIN_EMAILS → admin.
- *   3. Else look up `artists` by email (regardless of is_active) → artist.
- *   4. Else → unknown.
+ *   2. Look up `artists` by email (regardless of is_active).
+ *   3. If found and is_admin = 1 → admin.
+ *   4. If found and is_admin = 0 → artist.
+ *   5. Else → unknown (Access policy and D1 have drifted — logged).
  */
 export async function resolveActor(
   request: Request,
@@ -192,18 +191,23 @@ export async function resolveActor(
     return { kind: "unknown" };
   }
 
-  if (isAdminEmail({ email, rawAllowlist: env.ADMIN_EMAILS })) {
-    return { kind: "admin", email };
-  }
-
-  const artistId = await findArtistIdByEmail({
+  const artistAuth = await findArtistAuthByEmail({
     database: env.DB,
     email,
   });
 
-  if (artistId !== null) {
-    return { kind: "artist", artistId, email };
+  if (artistAuth === null) {
+    console.warn(
+      `[resolveActor] Verified JWT for "${email}" but no artists row exists. ` +
+        `Access policy and D1 have drifted — either remove this email from ` +
+        `the Access policy or add a matching artists row.`,
+    );
+    return { kind: "unknown" };
   }
 
-  return { kind: "unknown" };
+  if (artistAuth.isAdmin) {
+    return { kind: "admin", email };
+  }
+
+  return { kind: "artist", artistId: artistAuth.id, email };
 }

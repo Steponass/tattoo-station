@@ -1,4 +1,4 @@
-// app/routes/admin.flash.tsx
+// app/routes/admin.landing.tsx
 
 import { useMemo, useState } from "react";
 import { data, redirect } from "react-router";
@@ -17,26 +17,24 @@ import {
 } from "~/components/admin/curation/CurationTile";
 import CurationFilters from "~/components/admin/curation/CurationFilters";
 import type { PhotoCategoryFilter } from "~/components/admin/curation/photoCategoryFilter";
-import type { Route } from "../+types/admin.flash";
+import type { Route } from "../+types/admin.landing";
 import styles from "./admin.landing.module.css";
 
-const CURRENT_GALLERY = "flash" as const;
-const OTHER_GALLERY_LABEL = "In landing gallery";
+const CURRENT_GALLERY = "landing" as const;
+const OTHER_GALLERY_LABEL = "In flash gallery";
 
 /**
- * Flash-page curation. Structurally identical to admin.landing.tsx: same
- * split view, same SortableGrid, same tile variants, same filter panel.
- * The only page-level differences are the gallery it targets, the
- * blocked-tile hint copy, and header copy.
+ * Landing-gallery curation. Two-pane split view:
  *
- * The two curation routes stay as separate files even though they share
- * almost everything — same reasoning as admin.me.photos vs admin.me.flash:
- * the divergence is more likely than the convergence. If a future
- * substep proves they'll stay identical, we extract; not now.
+ *   Left  — photos placed in landing, in display order, drag to reorder,
+ *           click to remove (two-step confirm).
+ *   Right — the pool. Photos placed in the flash gallery appear here dimmed
+ *           with a hint; photos not placed anywhere are the actual add-
+ *           candidates. Two filters (artist, category) narrow the pool.
  *
- * CSS module is shared (imported from admin.landing.module.css) because the
- * layout truly is the same. If either page's layout diverges, the CSS
- * splits at that time.
+ * Admin-only. The route's loader rejects non-admin actors. The endpoint at
+ * /api/curate-gallery is the sole write path; this component holds local
+ * state, mutations flow through fetch() calls with optimistic UI.
  */
 export async function loader({ request, context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
@@ -58,7 +56,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   return { photos, artistOptions };
 }
 
-export default function AdminFlashPage({ loaderData }: Route.ComponentProps) {
+export default function AdminLandingPage({ loaderData }: Route.ComponentProps) {
   const { photos: initialPhotos, artistOptions } = loaderData;
 
   const [photos, setPhotos] = useState<PhotoForCuration[]>(() => initialPhotos);
@@ -184,9 +182,9 @@ export default function AdminFlashPage({ loaderData }: Route.ComponentProps) {
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1 className={styles.heading}>Flash page</h1>
+        <h1 className={styles.heading}>Landing gallery</h1>
         <p className={styles.subheading}>
-          Placed designs on the left; pool on the right. Drag to reorder, click
+          Placed photos on the left; pool on the right. Drag to reorder, click
           to add or remove.
         </p>
       </header>
@@ -206,7 +204,7 @@ export default function AdminFlashPage({ loaderData }: Route.ComponentProps) {
             <SortableGrid
               orderedItemIds={placedOrderedIds}
               onOrderChange={handleReorder}
-              ariaLabel="Designs placed on the flash page, drag to reorder"
+              ariaLabel="Photos placed in the landing gallery, drag to reorder"
             >
               {placedPhotos.map((photo) => (
                 <PlacedCurationTile
@@ -289,7 +287,7 @@ function EmptyPlacedState() {
     <div className={styles.emptyState}>
       <p className={styles.emptyStateHeading}>Nothing placed yet.</p>
       <p className={styles.emptyStateHint}>
-        Click a design in the pool to add it to the flash page.
+        Click a photo in the pool to add it to the landing gallery.
       </p>
     </div>
   );
@@ -298,9 +296,9 @@ function EmptyPlacedState() {
 function EmptyPoolState() {
   return (
     <div className={styles.emptyState}>
-      <p className={styles.emptyStateHeading}>No designs match.</p>
+      <p className={styles.emptyStateHeading}>No photos match.</p>
       <p className={styles.emptyStateHint}>
-        Adjust the filters or upload more designs.
+        Adjust the filters or upload more photos.
       </p>
     </div>
   );
@@ -310,6 +308,13 @@ function EmptyPoolState() {
 // Local reducers
 // ---------------------------------------------------------------------------
 
+/**
+ * Splits the photos list into (a) photos placed in the current gallery, in
+ * placement sort_order, and (b) the pool, in the loader's default order
+ * (roster then portfolio order). Photos placed in the other gallery live
+ * in the pool with `placement` still set — the tile renderer branches on
+ * that to render the blocked variant.
+ */
 function partitionPhotos({
   photos,
   currentGallery,
@@ -355,6 +360,11 @@ function filterPool({
   });
 }
 
+/**
+ * Optimistic reorder: rebuild every placed photo's sort_order to match the
+ * new client-side order. Uses the same 10-step spacing convention as the
+ * server; the actual values will be overwritten by the server on success.
+ */
 function applyReorderLocally({
   currentPhotos,
   currentGallery,
@@ -436,7 +446,7 @@ const FAILURE_MESSAGES: Record<string, string> = {
     "That photo is already placed in the other gallery.",
   not_placed_in_gallery: "That photo is no longer in this gallery.",
   reorder_wrong_count: "The gallery changed. Please refresh and try again.",
-  reorder_unknown_ids: "One of the designs is gone. Please refresh.",
+  reorder_unknown_ids: "One of the photos is gone. Please refresh.",
   reorder_missing_ids: "The gallery is out of sync. Please refresh.",
   reorder_duplicate_ids: "Something went wrong with the order.",
   persist_failed: "The change didn't save. Please try again.",
@@ -450,7 +460,7 @@ async function persistCurate(
   body: CurateOperationBody,
 ): Promise<PersistResult> {
   try {
-    const response = await fetch("/api/curate-gallery", {
+    const response = await fetch("/admin/api/curate-gallery", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -464,6 +474,7 @@ async function persistCurate(
       return { ok: true };
     }
 
+    // 404-on-remove is idempotent success from the user's perspective.
     if (payload.failureCode === "not_placed_in_gallery" && body.kind === "remove") {
       return { ok: true };
     }

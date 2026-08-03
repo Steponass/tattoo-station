@@ -367,49 +367,57 @@ export async function updateArtistAvatar({
     .run();
 }
 
-const SELECT_ARTIST_ID_BY_EMAIL_SQL = `
-  SELECT id
+export type ArtistAuth = {
+  id: number;
+  isAdmin: boolean;
+};
+
+const SELECT_ARTIST_AUTH_BY_EMAIL_SQL = `
+  SELECT id, is_admin
   FROM artists
   WHERE LOWER(email) = LOWER(?)
 `;
 
 /**
- * Resolves an artist's id from their email address, case-insensitively. Used by
- * the actor resolver: when the Access JWT's email isn't in the admin allowlist,
- * we fall through to this lookup to see if it belongs to a known artist.
+ * Resolves an artist's id and admin flag from their email address,
+ * case-insensitively. Used by the actor resolver: an email verified by
+ * Cloudflare Access is looked up here to decide whether the caller is an
+ * admin, a regular artist, or unknown to the system.
  *
- * Deliberately not filtered by `is_active`. An artist who has toggled themselves
- * inactive should still be able to log in and manage their own profile — for
- * example, to reactivate or correct something before returning. The `is_active`
- * flag governs public visibility on the roster, not access to the admin. This
- * matches §3 of the build handoff: "look up artists by email (active or not)".
+ * Deliberately not filtered by `is_active`. Both the hidden developer row
+ * (is_admin = 1, is_active = 0) and any artist who has temporarily
+ * deactivated themselves should still be able to log in — is_active governs
+ * public visibility on the roster, not access to the admin.
  *
- * The `LOWER(...) = LOWER(?)` comparison sidesteps any case mismatch between the
- * hand-entered D1 row and the hand-entered Cloudflare Access policy entry — a
- * class of "why can't Ada log in when her email is right there" bug at basically
- * zero cost given the ~10-row table. ASCII-only, which matches every real-world
- * email address at this studio.
+ * The `LOWER(...) = LOWER(?)` comparison sidesteps case mismatches between
+ * the hand-entered D1 row and the hand-entered Cloudflare Access policy
+ * entry — a class of "why can't Ada log in when her email is right there"
+ * bug at basically zero cost given the ~10-row table. ASCII-only, which
+ * matches every real-world email address at this studio.
  *
- * Returns only `id`. The resolver builds the full actor union from the id plus
- * the JWT-supplied email; it never needs anything else from this row.
+ * Returns id + isAdmin. The resolver builds the full actor union from
+ * these plus the JWT-supplied email; no other columns are read here.
  */
-export async function findArtistIdByEmail({
+export async function findArtistAuthByEmail({
   database,
   email,
 }: {
   database: D1Database;
   email: string;
-}): Promise<number | null> {
+}): Promise<ArtistAuth | null> {
   const row = await database
-    .prepare(SELECT_ARTIST_ID_BY_EMAIL_SQL)
+    .prepare(SELECT_ARTIST_AUTH_BY_EMAIL_SQL)
     .bind(email)
-    .first<{ id: number }>();
+    .first<{ id: number; is_admin: number }>();
 
   if (row === null) {
     return null;
   }
 
-  return row.id;
+  return {
+    id: row.id,
+    isAdmin: row.is_admin === 1,
+  };
 }
 
 /**
