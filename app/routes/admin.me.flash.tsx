@@ -68,6 +68,7 @@ type Photo = {
   objectKey: string;
   width: number;
   height: number;
+  style: string | null;
 };
 
 export default function AdminMeFlashPage({
@@ -81,15 +82,22 @@ export default function AdminMeFlashPage({
       objectKey: photo.objectKey,
       width: photo.width,
       height: photo.height,
+      style: photo.style,
     })),
   );
   const [deletingPhotoIds, setDeletingPhotoIds] = useState<Set<number>>(
     () => new Set(),
   );
+  const [styleUpdatingPhotoIds, setStyleUpdatingPhotoIds] = useState<
+    Set<number>
+  >(() => new Set());
   const [reorderErrorMessage, setReorderErrorMessage] = useState<string | null>(
     null,
   );
   const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(
+    null,
+  );
+  const [styleErrorMessage, setStyleErrorMessage] = useState<string | null>(
     null,
   );
 
@@ -142,6 +150,35 @@ export default function AdminMeFlashPage({
     });
   }
 
+  async function handleStyleChange(photoId: number, nextStyle: string | null) {
+    const previousPhotos = photos;
+
+    setPhotos((previous) =>
+      previous.map((photo) =>
+        photo.id === photoId ? { ...photo, style: nextStyle } : photo,
+      ),
+    );
+    setStyleUpdatingPhotoIds((previous) => {
+      const next = new Set(previous);
+      next.add(photoId);
+      return next;
+    });
+    setStyleErrorMessage(null);
+
+    const persistResult = await persistStyleChange({ photoId, style: nextStyle });
+
+    if (!persistResult.ok) {
+      setPhotos(previousPhotos);
+      setStyleErrorMessage(persistResult.errorMessage);
+    }
+
+    setStyleUpdatingPhotoIds((previous) => {
+      const next = new Set(previous);
+      next.delete(photoId);
+      return next;
+    });
+  }
+
   return (
     <main className={styles.main}>
       <header className={styles.header}>
@@ -167,6 +204,12 @@ export default function AdminMeFlashPage({
         </p>
       )}
 
+      {styleErrorMessage !== null && (
+        <p role="alert" className={styles.mutationError}>
+          {styleErrorMessage}
+        </p>
+      )}
+
       {photos.length === 0 ? (
         <EmptyState />
       ) : (
@@ -181,6 +224,8 @@ export default function AdminMeFlashPage({
               photo={photo}
               onDelete={handleDelete}
               isDeleting={deletingPhotoIds.has(photo.id)}
+              onStyleChange={handleStyleChange}
+              isUpdatingStyle={styleUpdatingPhotoIds.has(photo.id)}
             />
           ))}
         </SortableGrid>
@@ -228,6 +273,12 @@ const REORDER_FAILURE_MESSAGES: Record<string, string> = {
 const DELETE_FAILURE_MESSAGES: Record<string, string> = {
   photo_not_found: "That design has already been removed.",
   d1_delete_failed: "The design couldn't be deleted. Please try again.",
+};
+
+const STYLE_FAILURE_MESSAGES: Record<string, string> = {
+  invalid_style: "That's not a recognized style.",
+  photo_not_found: "That design has already been removed.",
+  d1_update_failed: "The style couldn't be saved. Please try again.",
 };
 
 async function persistReorder({
@@ -297,6 +348,43 @@ async function persistDelete({
     };
   } catch (networkError) {
     console.error("[delete] network error:", networkError);
+    return {
+      ok: false,
+      errorMessage: "Couldn't reach the server. Check your connection.",
+    };
+  }
+}
+
+async function persistStyleChange({
+  photoId,
+  style,
+}: {
+  photoId: number;
+  style: string | null;
+}): Promise<PersistResult> {
+  try {
+    const response = await fetch("/admin/api/artist-photos/style", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ photoId, style }),
+    });
+
+    const payload = (await response.json()) as
+      | { ok: true }
+      | { ok: false; failureCode: string; detail: string };
+
+    if (payload.ok) {
+      return { ok: true };
+    }
+
+    return {
+      ok: false,
+      errorMessage:
+        STYLE_FAILURE_MESSAGES[payload.failureCode] ??
+        "The style couldn't be saved.",
+    };
+  } catch (networkError) {
+    console.error("[style] network error:", networkError);
     return {
       ok: false,
       errorMessage: "Couldn't reach the server. Check your connection.",

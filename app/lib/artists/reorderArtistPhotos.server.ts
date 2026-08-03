@@ -13,7 +13,9 @@ import { rewriteArtistPhotoSortOrder } from "./artistPhotoRepository.server";
  * Two invariants enforced here, not at the route:
  *
  * 1. Actor-pinning: the artistId passed in is the one written against. Callers
- *    resolve it from the actor; the route never forwards a form value.
+ *    resolve it from the actor; the route never forwards a form value for an
+ *    artist caller (admin callers do supply a target id, resolved at the
+ *    route from the request body).
  *
  * 2. Category-scoping: an artist may only reorder the categories they can
  *    touch — their main-photo category (derived from role) and, if not a
@@ -21,6 +23,9 @@ import { rewriteArtistPhotoSortOrder } from "./artistPhotoRepository.server";
  *    categories, even though the artist owns rows there (a piercer trying to
  *    reorder their piercing photos hits the main-photo category branch, which
  *    resolves to "piercing" for them — no gate needed for the main case).
+ *    Admin callers skip this gate entirely — an admin may reorder any
+ *    category for any artist, matching the upload endpoint's admin branch,
+ *    which likewise has no role-based category restriction.
  *
  * The exact-set-match rule (§7 of the handoff): the submitted list must be
  * exactly the artist's rows for that category — same length, same ids, no
@@ -53,10 +58,14 @@ export type ReorderArtistPhotosResult =
       detail: string;
     };
 
+export type ReorderArtistPhotosCategoryGate =
+  | { kind: "artist"; artistRole: ArtistRole }
+  | { kind: "admin" };
+
 export type ReorderArtistPhotosInput = {
   database: D1Database;
   artistId: number;
-  artistRole: ArtistRole;
+  categoryGate: ReorderArtistPhotosCategoryGate;
   category: ArtistPhotoCategory;
   orderedPhotoIds: readonly number[];
 };
@@ -64,15 +73,17 @@ export type ReorderArtistPhotosInput = {
 export async function reorderArtistPhotos(
   input: ReorderArtistPhotosInput,
 ): Promise<ReorderArtistPhotosResult> {
-  const { database, artistId, artistRole, category, orderedPhotoIds } = input;
+  const { database, artistId, categoryGate, category, orderedPhotoIds } = input;
 
-  const categoryGateResult = ensureCategoryEditableByArtist({
-    artistRole,
-    category,
-  });
+  if (categoryGate.kind === "artist") {
+    const categoryGateResult = ensureCategoryEditableByArtist({
+      artistRole: categoryGate.artistRole,
+      category,
+    });
 
-  if (!categoryGateResult.ok) {
-    return categoryGateResult;
+    if (!categoryGateResult.ok) {
+      return categoryGateResult;
+    }
   }
 
   const duplicateCheckResult = ensureNoDuplicates(orderedPhotoIds);
@@ -119,8 +130,9 @@ export async function reorderArtistPhotos(
 
 /**
  * The categories an artist may write to. Piercer can touch "piercing" only;
- * tattoo/both can touch their main category ("tattoo") and "flash". Admin
- * doesn't reach this service — the route rejects non-artist callers.
+ * tattoo/both can touch their main category ("tattoo") and "flash". Only
+ * called when `categoryGate.kind === "artist"` — admin callers bypass this
+ * entirely.
  */
 function ensureCategoryEditableByArtist({
   artistRole,

@@ -27,6 +27,7 @@ export const ARTIST_STYLES = [
   "New School",
   "Japanese",
   "Surrealism",
+  "Piercing"
 ] as const;
 
 export type ArtistStyle = (typeof ARTIST_STYLES)[number];

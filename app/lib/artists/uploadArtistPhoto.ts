@@ -1,5 +1,7 @@
 // app/lib/artists/uploadArtistPhoto.ts
 
+import type { ArtistPhotoCategory } from "./artistPhotoCategories";
+
 export const ARTIST_PHOTO_UPLOAD_PATH = "/admin/api/artist-photos";
 
 /**
@@ -27,6 +29,18 @@ export type ArtistPhotoUploadOutcome =
  */
 export type UploadSurface = "main" | "flash";
 
+type UploadArtistPhotoInput =
+  | {
+      file: File;
+      surface?: UploadSurface;
+      targetArtistIdForAdmin?: undefined;
+    }
+  | {
+      file: File;
+      targetArtistIdForAdmin: number;
+      category: ArtistPhotoCategory;
+    };
+
 /**
  * Uploads a single portfolio photo. One request per file, so a failure or
  * retry is isolated to that file.
@@ -34,17 +48,27 @@ export type UploadSurface = "main" | "flash";
  * The client passes `surface` (a UI concept — "which page am I on?"); the
  * server derives `category` (a data concept) from that plus the artist's
  * role. Artists never see the word "category" in this flow.
+ *
+ * Admin callers (editing another artist's photos from /admin/artists/:id/*)
+ * pass `targetArtistIdForAdmin` and an explicit `category` instead — the
+ * server's admin branch reads `artistId`/`category` directly rather than
+ * deriving them from `surface` + the caller's own role. Mirrors how
+ * AvatarField adds `artistId` to its upload FormData only for admin callers.
  */
-export async function uploadArtistPhoto({
-  file,
-  surface = "main",
-}: {
-  file: File;
-  surface?: UploadSurface;
-}): Promise<ArtistPhotoUploadOutcome> {
+export async function uploadArtistPhoto(
+  input: UploadArtistPhotoInput,
+): Promise<ArtistPhotoUploadOutcome> {
+  const { file } = input;
+
   const requestBody = new FormData();
   requestBody.set("photo", file);
-  requestBody.set("surface", surface);
+
+  if (input.targetArtistIdForAdmin !== undefined) {
+    requestBody.set("artistId", String(input.targetArtistIdForAdmin));
+    requestBody.set("category", input.category);
+  } else {
+    requestBody.set("surface", input.surface ?? "main");
+  }
 
   const response = await fetch(ARTIST_PHOTO_UPLOAD_PATH, {
     method: "POST",

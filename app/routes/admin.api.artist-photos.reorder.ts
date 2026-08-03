@@ -1,11 +1,12 @@
 // app/routes/api.artist-photos.reorder.ts
 
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import { isArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import {
   reorderArtistPhotos,
+  type ReorderArtistPhotosCategoryGate,
   type ReorderArtistPhotosFailureCode,
 } from "~/lib/artists/reorderArtistPhotos.server";
 import type { Route } from "../+types/api.artist-photos.reorder";
@@ -13,12 +14,10 @@ import type { Route } from "../+types/api.artist-photos.reorder";
 /**
  * Rewrites the order of an artist's photos in one category.
  *
- * Artist-only. Admins do not use this endpoint — profile grids are
- * "controlled by artist (own)" per §5 of the handoff. Admins reorder rosters
- * and curated galleries via separate endpoints in steps 3 and 4.
- *
- * Actor-pinned: the target artistId is derived from the actor, never from the
- * body. The body carries only the category being reordered and the id list.
+ * Reachable by both admins (targeting any artist via the body) and artists
+ * (pinned to themselves) — same actor-pinning invariant as
+ * api.artist-photos.ts's upload endpoint. The body carries the category being
+ * reordered, the id list, and, for admin callers only, the target artistId.
  * The service performs the exact-set-match validation and the atomic batch
  * rewrite; this action is envelope parsing plus a delegation.
  */
@@ -38,6 +37,39 @@ function reject(failureCode: string, detail: string, status: number): Response {
   return Response.json({ ok: false, failureCode, detail }, { status });
 }
 
+type ResolveTargetArtistIdResult =
+  | { ok: true; artistId: number }
+  | { ok: false; failureCode: "invalid_artist_id" };
+
+/**
+ * Resolves which artist's photos are being reordered, given the resolved
+ * caller. Artist: always their own id, ignoring any body-supplied value.
+ * Admin: the id comes from the body, since the admin UI acts on any artist.
+ */
+function resolveTargetArtistId({
+  actor,
+  body,
+}: {
+  actor: Exclude<Actor, { kind: "unknown" }>;
+  body: Record<string, unknown>;
+}): ResolveTargetArtistIdResult {
+  if (actor.kind === "artist") {
+    return { ok: true, artistId: actor.artistId };
+  }
+
+  const rawArtistId = body.artistId;
+
+  if (
+    typeof rawArtistId !== "number" ||
+    !Number.isInteger(rawArtistId) ||
+    rawArtistId <= 0
+  ) {
+    return { ok: false, failureCode: "invalid_artist_id" };
+  }
+
+  return { ok: true, artistId: rawArtistId };
+}
+
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
 
@@ -45,10 +77,6 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   if (actor.kind === "unknown") {
     return reject("forbidden", "Authentication required.", 403);
-  }
-
-  if (actor.kind !== "artist") {
-    return reject("wrong_actor", "Only artists reorder their own photos.", 403);
   }
 
   let parsedBody: unknown;
@@ -65,22 +93,43 @@ export async function action({ request, context }: Route.ActionArgs) {
     return reject(envelopeResult.failureCode, envelopeResult.detail, 400);
   }
 
-  const artistProfile = await findArtistProfileForEditing({
-    database: env.DB,
-    artistId: actor.artistId,
+  const targetArtistIdResult = resolveTargetArtistId({
+    actor,
+    body: envelopeResult.body,
   });
 
-  if (artistProfile === null) {
-    // The actor resolved as an artist (email matched a D1 row) but the row
-    // has since disappeared. Same race guard as /admin/me's loader; fail
-    // closed rather than reorder against a stale identity.
-    return reject("artist_not_found", "Your account could not be found.", 404);
+  if (!targetArtistIdResult.ok) {
+    return reject(
+      targetArtistIdResult.failureCode,
+      "Missing or malformed artist id.",
+      400,
+    );
+  }
+
+  let categoryGate: ReorderArtistPhotosCategoryGate;
+
+  if (actor.kind === "artist") {
+    const artistProfile = await findArtistProfileForEditing({
+      database: env.DB,
+      artistId: actor.artistId,
+    });
+
+    if (artistProfile === null) {
+      // The actor resolved as an artist (email matched a D1 row) but the row
+      // has since disappeared. Same race guard as /admin/me's loader; fail
+      // closed rather than reorder against a stale identity.
+      return reject("artist_not_found", "Your account could not be found.", 404);
+    }
+
+    categoryGate = { kind: "artist", artistRole: artistProfile.role };
+  } else {
+    categoryGate = { kind: "admin" };
   }
 
   const reorderResult = await reorderArtistPhotos({
     database: env.DB,
-    artistId: actor.artistId,
-    artistRole: artistProfile.role,
+    artistId: targetArtistIdResult.artistId,
+    categoryGate,
     category: envelopeResult.category,
     orderedPhotoIds: envelopeResult.orderedPhotoIds,
   });
@@ -99,6 +148,7 @@ type EnvelopeParseResult =
       ok: true;
       category: import("~/lib/artists/artistPhotoCategories").ArtistPhotoCategory;
       orderedPhotoIds: number[];
+      body: Record<string, unknown>;
     }
   | { ok: false; failureCode: string; detail: string };
 
@@ -155,5 +205,6 @@ function parseReorderEnvelope(body: unknown): EnvelopeParseResult {
     ok: true,
     category: rawCategory,
     orderedPhotoIds: parsedIds,
+    body: bodyRecord,
   };
 }

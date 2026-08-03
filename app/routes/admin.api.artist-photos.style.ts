@@ -1,28 +1,28 @@
-// app/routes/api.artist-photos.delete.ts
+// app/routes/api.artist-photos.style.ts
 
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
+import { isArtistStyle, type ArtistStyle } from "~/lib/artists/artistStyles";
 import {
-  deleteArtistPhoto,
-  type DeleteArtistPhotoFailureCode,
-} from "~/lib/artists/deleteArtistPhoto.server";
-import type { Route } from "../+types/api.artist-photos.delete";
+  updateArtistPhotoStyle,
+  type UpdateArtistPhotoStyleFailureCode,
+} from "~/lib/artists/updateArtistPhotoStyle.server";
+import type { Route } from "../+types/api.artist-photos.style";
 
 /**
- * Deletes a photo. Reachable by both admins (targeting any artist via the
- * body) and artists (pinned to themselves) — same actor-pinning invariant as
- * api.artist-photos.ts's upload endpoint.
+ * Changes the style tag on a photo. Reachable by both admins (targeting any
+ * artist via the body) and artists (pinned to themselves) — same
+ * actor-pinning invariant as api.artist-photos.ts's upload endpoint.
  *
- * The body carries `photoId` and, for admin callers only, `artistId`.
- * Ownership (photo belongs to the target artist) is enforced by the
- * service's D1 read, which is scoped by both photo id and artist id; the
- * same "photo_not_found" code covers both "doesn't exist" and "not yours" so
- * callers can't enumerate photo ids.
+ * The body carries `photoId`, `style` (a recognized style string, or
+ * null/"" to clear the tag back to "unsorted"), and, for admin callers only,
+ * `artistId`. Ownership is enforced by the service's D1 write, which is
+ * scoped by both photo id and artist id.
  */
 
-const FAILURE_STATUS: Record<DeleteArtistPhotoFailureCode, number> = {
+const FAILURE_STATUS: Record<UpdateArtistPhotoStyleFailureCode, number> = {
   photo_not_found: 404,
-  d1_delete_failed: 500,
+  d1_update_failed: 500,
 };
 
 function reject(failureCode: string, detail: string, status: number): Response {
@@ -34,7 +34,7 @@ type ResolveTargetArtistIdResult =
   | { ok: false; failureCode: "invalid_artist_id" };
 
 /**
- * Resolves which artist's photo is being deleted, given the resolved caller.
+ * Resolves which artist's photo is being updated, given the resolved caller.
  * Artist: always their own id, ignoring any body-supplied value. Admin: the
  * id comes from the body, since the admin UI acts on any artist.
  */
@@ -101,37 +101,34 @@ export async function action({ request, context }: Route.ActionArgs) {
     return reject(photoIdResult.failureCode, photoIdResult.detail, 400);
   }
 
-  const deleteResult = await deleteArtistPhoto({
+  const styleResult = parseStyle(bodyRecord.style);
+
+  if (!styleResult.ok) {
+    return reject("invalid_style", "The style tag is not a recognized style.", 400);
+  }
+
+  const updateResult = await updateArtistPhotoStyle({
     database: env.DB,
-    mediaBucket: env.MEDIA,
     artistId: targetArtistIdResult.artistId,
     photoId: photoIdResult.photoId,
+    style: styleResult.style,
   });
 
-  if (!deleteResult.ok) {
-    return Response.json(deleteResult, {
-      status: FAILURE_STATUS[deleteResult.failureCode],
+  if (!updateResult.ok) {
+    return Response.json(updateResult, {
+      status: FAILURE_STATUS[updateResult.failureCode],
     });
   }
 
-  return Response.json(deleteResult);
+  return Response.json(updateResult);
 }
 
 type PhotoIdParseResult =
   | { ok: true; photoId: number }
   | { ok: false; failureCode: string; detail: string };
 
-function parsePhotoId(body: unknown): PhotoIdParseResult {
-  if (typeof body !== "object" || body === null) {
-    return {
-      ok: false,
-      failureCode: "invalid_body",
-      detail: "Request body must be an object.",
-    };
-  }
-
-  const bodyRecord = body as Record<string, unknown>;
-  const rawPhotoId = bodyRecord.photoId;
+function parsePhotoId(body: Record<string, unknown>): PhotoIdParseResult {
+  const rawPhotoId = body.photoId;
 
   if (
     typeof rawPhotoId !== "number" ||
@@ -146,4 +143,24 @@ function parsePhotoId(body: unknown): PhotoIdParseResult {
   }
 
   return { ok: true, photoId: rawPhotoId };
+}
+
+type StyleParseResult =
+  | { ok: true; style: ArtistStyle | null }
+  | { ok: false };
+
+/**
+ * Absent, null, or empty string all mean "clear the tag" (unsorted).
+ * Anything else must match the canonical vocabulary.
+ */
+function parseStyle(rawValue: unknown): StyleParseResult {
+  if (rawValue === null || rawValue === undefined || rawValue === "") {
+    return { ok: true, style: null };
+  }
+
+  if (typeof rawValue !== "string" || !isArtistStyle(rawValue)) {
+    return { ok: false };
+  }
+
+  return { ok: true, style: rawValue };
 }

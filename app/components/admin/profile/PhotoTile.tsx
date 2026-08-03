@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { SortableGridItem } from "~/components/admin/sortable/SortableGrid";
+import { ARTIST_STYLES } from "~/lib/artists/artistStyles";
 import styles from "./PhotoTile.module.css";
 
 /**
@@ -35,15 +36,18 @@ type PhotoTileProps = {
     objectKey: string;
     width: number;
     height: number;
+    style: string | null;
   };
   onDelete: (photoId: number) => void;
   isDeleting: boolean;
+  onStyleChange: (photoId: number, nextStyle: string | null) => void;
+  isUpdatingStyle: boolean;
 };
 
 const PHOTO_TILE_SIZES = "(max-width: 60rem) 33vw, 200px";
 
 export default function PhotoTile(props: PhotoTileProps) {
-  const { photo, onDelete, isDeleting } = props;
+  const { photo, onDelete, isDeleting, onStyleChange, isUpdatingStyle } = props;
 
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -86,7 +90,24 @@ export default function PhotoTile(props: PhotoTileProps) {
     // without this the same key press starts a drag AND triggers the button.
     event.stopPropagation();
   }
-  
+
+  function handleStyleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const nextStyle = event.target.value === "" ? null : event.target.value;
+    onStyleChange(photo.id, nextStyle);
+  }
+
+  function handleStyleSelectClick(event: React.MouseEvent<HTMLSelectElement>) {
+    // Same isolation as the delete button — stop the click before it reaches
+    // SortableGridItem's drag listeners.
+    event.stopPropagation();
+  }
+
+  function handleStyleSelectKeyDown(
+    event: React.KeyboardEvent<HTMLSelectElement>,
+  ) {
+    event.stopPropagation();
+  }
+
   const photoImageAttributes = buildPortfolioImageAttributes({
     objectKey: photo.objectKey,
     sizes: PHOTO_TILE_SIZES,
@@ -95,7 +116,6 @@ export default function PhotoTile(props: PhotoTileProps) {
   return (
     <SortableGridItem itemId={photo.id}>
       <div className={styles.tile} data-deleting={isDeleting}>
-tsx
         <img
           src={photoImageAttributes.src}
           srcSet={photoImageAttributes.srcSet}
@@ -124,6 +144,22 @@ tsx
             {isDeleting ? "…" : isConfirming ? "Confirm?" : "×"}
           </button>
         </div>
+        <select
+          value={photo.style ?? ""}
+          onChange={handleStyleSelectChange}
+          onClick={handleStyleSelectClick}
+          onKeyDown={handleStyleSelectKeyDown}
+          disabled={isUpdatingStyle}
+          aria-label="Photo style"
+          className={styles.styleBadge}
+        >
+          <option value="">Unsorted</option>
+          {ARTIST_STYLES.map((styleOption) => (
+            <option key={styleOption} value={styleOption}>
+              {styleOption}
+            </option>
+          ))}
+        </select>
       </div>
     </SortableGridItem>
   );

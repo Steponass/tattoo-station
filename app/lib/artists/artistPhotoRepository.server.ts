@@ -407,3 +407,36 @@ export async function deleteArtistPhotoRow({
 }): Promise<void> {
   await database.prepare(DELETE_ARTIST_PHOTO_SQL).bind(photoId).run();
 }
+
+const UPDATE_ARTIST_PHOTO_STYLE_SQL = `
+  UPDATE artist_photos
+  SET style = ?
+  WHERE id = ? AND artist_id = ?
+`;
+
+/**
+ * Rewrites the style tag on one photo, scoped by artist. Existence and
+ * ownership are checked in the same statement via `meta.changes`: a photo
+ * that doesn't exist or belongs to another artist affects zero rows, which
+ * the caller treats the same as "not found" — same rationale as
+ * `findArtistPhotoForDeletion`, folded into a single write instead of a
+ * separate read.
+ */
+export async function updateArtistPhotoStyleRow({
+  database,
+  photoId,
+  artistId,
+  style,
+}: {
+  database: D1Database;
+  photoId: number;
+  artistId: number;
+  style: string | null;
+}): Promise<{ updated: boolean }> {
+  const result = await database
+    .prepare(UPDATE_ARTIST_PHOTO_STYLE_SQL)
+    .bind(style, photoId, artistId)
+    .run();
+
+  return { updated: result.meta.changes > 0 };
+}

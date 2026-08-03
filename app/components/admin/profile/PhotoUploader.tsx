@@ -54,6 +54,13 @@ type PhotoUploaderProps = {
   currentPhotoCount: number;
   surface?: import("~/lib/artists/uploadArtistPhoto").UploadSurface;
   onPhotoUploaded: (photo: UploadedPhoto) => void;
+  /**
+   * When set, this uploader is acting on behalf of an admin editing another
+   * artist's photos (/admin/artists/:id/*). `category` becomes required in
+   * that mode — the admin upload branch has no role to derive it from.
+   */
+  targetArtistIdForAdmin?: number;
+  category?: import("~/lib/artists/artistPhotoCategories").ArtistPhotoCategory;
 };
 
 type UploadProgress = {
@@ -67,7 +74,13 @@ type UploadFailure = {
 };
 
 export default function PhotoUploader(props: PhotoUploaderProps) {
-  const { currentPhotoCount, surface = "main", onPhotoUploaded } = props;
+  const {
+    currentPhotoCount,
+    surface = "main",
+    onPhotoUploaded,
+    targetArtistIdForAdmin,
+    category,
+  } = props;
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -102,7 +115,14 @@ export default function PhotoUploader(props: PhotoUploaderProps) {
     const failuresAccumulator: UploadFailure[] = [];
 
     for (const file of filesToUpload) {
-      const uploadResult = await uploadArtistPhoto({ file, surface });
+      const uploadResult =
+        targetArtistIdForAdmin !== undefined && category !== undefined
+          ? await uploadArtistPhoto({
+              file,
+              targetArtistIdForAdmin,
+              category,
+            })
+          : await uploadArtistPhoto({ file, surface });
 
       if (uploadResult.ok) {
         onPhotoUploaded(uploadResult.photo);

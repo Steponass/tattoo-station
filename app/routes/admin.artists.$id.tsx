@@ -1,6 +1,6 @@
 // app/routes/admin.artists.$id.tsx
 
-import { data, redirect } from "react-router";
+import { data, Link, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
@@ -138,6 +138,17 @@ export default function AdminArtistEditPage({
           </p>
         </div>
       )}
+
+      <nav aria-label="Artist photo sections" className={styles.sectionNav}>
+        <Link to={`/admin/artists/${targetArtistId}/photos`} className={styles.sectionLink}>
+          Photos
+        </Link>
+        {artistProfile.role !== "piercing" && (
+          <Link to={`/admin/artists/${targetArtistId}/flash`} className={styles.sectionLink}>
+            Flash
+          </Link>
+        )}
+      </nav>
 
       <ArtistProfileForm
         artistProfile={artistProfile}
