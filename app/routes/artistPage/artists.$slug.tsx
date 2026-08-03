@@ -55,8 +55,7 @@ type ArtistAvatarView = {
 
 /**
  * Builds the avatar view only when the key and both dimensions are present
- * (they travel together by invariant). Null for seeded artists today, since
- * avatar upload is not built yet.
+ * (they travel together by invariant). 
  *
  * Assumes avatars are served by the portfolio delivery route; revisit that
  * assumption when avatar upload lands and confirm the key prefix matches.

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFetcher } from "react-router";
-import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import styles from "./ArtistProfileForm.module.css";
 
 /**
@@ -80,6 +80,33 @@ type AvatarFieldProps = {
   };
   targetArtistIdForAdmin?: number;
 };
+
+const AVATAR_THUMBNAIL_SIZES = "128px";
+
+type AvatarThumbnailProps = {
+  objectKey: string;
+  width: number | null;
+  height: number | null;
+};
+
+function AvatarThumbnail({ objectKey, width, height }: AvatarThumbnailProps) {
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey,
+    sizes: AVATAR_THUMBNAIL_SIZES,
+  });
+
+  return (
+    <img
+      src={src}
+      srcSet={srcSet}
+      sizes={sizes}
+      width={width ?? undefined}
+      height={height ?? undefined}
+      alt="Current avatar"
+      className={styles.thumbnail}
+    />
+  );
+}
 
 export default function AvatarField(props: AvatarFieldProps) {
   const { initialAvatar, targetArtistIdForAdmin } = props;
@@ -164,13 +191,11 @@ export default function AvatarField(props: AvatarFieldProps) {
   return (
     <div className={styles.root}>
       <div className={styles.thumbnailArea}>
-        {hasAvatar ? (
-          <img
-            src={buildPortfolioImageUrl(displayedAvatar.objectKey!)}
-            width={displayedAvatar.width ?? undefined}
-            height={displayedAvatar.height ?? undefined}
-            alt="Current avatar"
-            className={styles.thumbnail}
+        {displayedAvatar.objectKey !== null ? (
+          <AvatarThumbnail
+            objectKey={displayedAvatar.objectKey}
+            width={displayedAvatar.width}
+            height={displayedAvatar.height}
           />
         ) : (
           <div className={styles.thumbnailPlaceholder} aria-hidden="true">

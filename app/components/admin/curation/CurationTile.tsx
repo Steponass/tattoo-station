@@ -1,7 +1,7 @@
 // app/components/admin/curation/CurationTile.tsx
 
 import { useEffect, useState } from "react";
-import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { SortableGridItem } from "~/components/admin/sortable/SortableGrid";
 import styles from "./CurationTile.module.css";
 
@@ -36,6 +36,44 @@ export type CurationTilePhoto = {
   height: number;
   artistDisplayName: string;
 };
+
+/**
+ * All three curation variants share the same visual tile — a filled square
+ * with an image and an artist label. Only the affordance differs (draggable,
+ * clickable, blocked). Extracting the image markup keeps each variant
+ * component focused on its own interaction shape and avoids repeating the
+ * responsive-attributes wiring three times.
+ *
+ * The curation grid is `auto-fill, minmax(9rem, 1fr)` inside the admin's
+ * split-view pane — same layout as PhotoTile, so the sizes value follows
+ * the same reasoning.
+ */
+const CURATION_TILE_SIZES = "(max-width: 60rem) 33vw, 200px";
+
+type CurationImageProps = {
+  photo: CurationTilePhoto;
+};
+
+function CurationImage({ photo }: CurationImageProps) {
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: CURATION_TILE_SIZES,
+  });
+
+  return (
+    <img
+      src={src}
+      srcSet={srcSet}
+      sizes={sizes}
+      width={photo.width}
+      height={photo.height}
+      alt=""
+      loading="lazy"
+      className={styles.image}
+      draggable={false}
+    />
+  );
+}
 
 // ---------------------------------------------------------------------------
 // PlacedCurationTile
@@ -87,15 +125,7 @@ export function PlacedCurationTile(props: PlacedCurationTileProps) {
   return (
     <SortableGridItem itemId={photo.photoId}>
       <div className={styles.tile} data-mutating={isRemoving}>
-        <img
-          src={buildPortfolioImageUrl(photo.objectKey)}
-          width={photo.width}
-          height={photo.height}
-          alt=""
-          loading="lazy"
-          className={styles.image}
-          draggable={false}
-        />
+        <CurationImage photo={photo} />
         <div className={styles.actions}>
           <button
             type="button"
@@ -144,15 +174,7 @@ export function PlaceableCurationTile(props: PlaceableCurationTileProps) {
         className={styles.placeableButton}
       >
         <div className={styles.tile} data-mutating={isAdding}>
-          <img
-            src={buildPortfolioImageUrl(photo.objectKey)}
-            width={photo.width}
-            height={photo.height}
-            alt=""
-            loading="lazy"
-            className={styles.image}
-            draggable={false}
-          />
+        <CurationImage photo={photo} />
           {isAdding && (
             <div className={styles.addingOverlay} aria-hidden="true">
               Adding…
@@ -185,15 +207,7 @@ export function BlockedCurationTile(props: BlockedCurationTileProps) {
         title={blockedHint}
         aria-label={`${photo.artistDisplayName}: ${blockedHint}`}
       >
-        <img
-          src={buildPortfolioImageUrl(photo.objectKey)}
-          width={photo.width}
-          height={photo.height}
-          alt=""
-          loading="lazy"
-          className={styles.image}
-          draggable={false}
-        />
+        <CurationImage photo={photo} />
         <div className={styles.blockedOverlay} aria-hidden="true">
           {blockedHint}
         </div>
