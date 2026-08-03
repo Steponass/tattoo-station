@@ -9,6 +9,7 @@ import { buildArtistProfilePath } from "~/data/roster.format";
 import { useAccordionAnimation } from "~/components/Accordion/useAccordionAnimation";
 import { RosterNumber } from "./RosterNumber";
 import { RosterPreviewGrid } from "./RosterPreviewGrid";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import NavButton from "~/components/Button/NavButton";
 import styles from "./Roster.module.css";
 
@@ -21,6 +22,8 @@ interface RosterItemProps {
   onDisclosureSettled?: () => void;
 }
 
+const AVATAR_SIZES = "300px";
+
 /** Renders nothing when the artist has no avatar yet; the summary's flex row
  *  simply closes the gap rather than reserving space for a missing image. */
 function RosterAvatarImage({ avatar }: { avatar: RosterAvatar | null }) {
@@ -28,10 +31,17 @@ function RosterAvatarImage({ avatar }: { avatar: RosterAvatar | null }) {
     return null;
   }
 
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: avatar.objectKey,
+    sizes: AVATAR_SIZES,
+  });
+
   return (
     <img
       className={styles.roster_avatar}
-      src={avatar.url}
+      src={src}
+      srcSet={srcSet}
+      sizes={sizes}
       alt=""
       width={avatar.width}
       height={avatar.height}

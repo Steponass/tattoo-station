@@ -10,7 +10,6 @@ import {
   type RosterPreviewPhotoRecord,
 } from "~/lib/artists/artistPhotoRepository.server";
 import { resolveLocale, type ArtistRosterEntry } from "~/lib/artists/artistTypes";
-import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
 import type {
   RosterArtist,
   RosterAvatar,
@@ -38,7 +37,7 @@ function groupPreviewPhotosByArtist(
 
     photos.push({
       id: record.id,
-      url: buildPortfolioImageUrl(record.objectKey),
+      objectKey: record.objectKey,
       width: record.width,
       height: record.height,
     });
@@ -65,7 +64,7 @@ function buildAvatar(artist: ArtistRosterEntry): RosterAvatar | null {
   }
 
   return {
-    url: buildPortfolioImageUrl(profileImageKey),
+    objectKey: profileImageKey,
     width: profileImageWidth,
     height: profileImageHeight,
   };

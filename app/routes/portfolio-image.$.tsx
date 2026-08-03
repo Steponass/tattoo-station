@@ -12,13 +12,14 @@ import type { Route } from "./+types/portfolio-image.$";
 const SERVABLE_KEY_PREFIX = "masters/";
 
 /**
- * Interim delivery for portfolio masters on the workers.dev subdomain, which
- * cannot use /cdn-cgi/image transforms. Serves the full-resolution master and
- * lets the browser downscale. When the custom domain is live, delivery moves to
- * a /cdn-cgi/image width-ladder URL builder and this route can be retired.
+ * Transform origin for portfolio masters. Every public image URL on the site
+ * is a /cdn-cgi/image/ variant that fetches from this route on cache miss —
+ * so the route stays in the pipeline rather than being retired, serving as
+ * the authoritative source of master bytes for the transform layer.
  *
- * A long, immutable cache is safe because object keys are UUID-based: a given
- * key's bytes never change, and replacing a photo means a new key.
+ * A one-year immutable cache header is safe because object keys are
+ * UUID-based: a given key's bytes never change, and replacing a photo means
+ * a new key. Transform edge cache is downstream and has its own TTL.
  */
 export async function loader({ params, context }: Route.LoaderArgs) {
   const objectKey = params["*"] ?? "";
