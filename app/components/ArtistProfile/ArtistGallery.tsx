@@ -5,6 +5,8 @@ import type {
   LightboxLabels,
   LightboxPhoto,
 } from '~/components/Lightbox/lightboxPhoto'
+import { buildPortfolioImageAttributes } from '~/lib/media/portfolioImageAttributes'
+import { buildPortfolioImageUrl } from '~/lib/media/portfolioImageUrl'
 import styles from './ArtistGallery.module.css'
 
 /**
@@ -13,7 +15,7 @@ import styles from './ArtistGallery.module.css'
  */
 export interface PortfolioImage {
   id: number
-  src: string
+  objectKey: string
   width: number
   height: number
 }
@@ -35,13 +37,22 @@ interface PortfolioTileProps {
   photo: PortfolioImage
 }
 
+const PORTFOLIO_TILE_SIZES = '(max-width: 720px) 100vw, 400px'
+
 /** Gallery images are decorative (no per-image alt, by decision), so alt is
  * intentionally empty. */
 function PortfolioTile({ photo }: PortfolioTileProps) {
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: PORTFOLIO_TILE_SIZES,
+  })
+
   return (
     <LightboxTrigger photoId={photo.id} className={styles.artist_image_wrapper}>
       <img
-        src={photo.src}
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
         alt=''
         width={photo.width}
         height={photo.height}
@@ -63,7 +74,7 @@ function toLightboxPhoto(
 ): LightboxPhoto {
   return {
     id: photo.id,
-    src: photo.src,
+    src: buildPortfolioImageUrl(photo.objectKey),
     width: photo.width,
     height: photo.height,
     artist,

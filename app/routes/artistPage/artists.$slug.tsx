@@ -10,7 +10,7 @@ import {
   findArtistPhotos,
   type ArtistPhotoRecord,
 } from "~/lib/artists/artistPhotoRepository.server";
-import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import ArtistGallery, {
   type PortfolioImage,
 } from "~/components/ArtistProfile/ArtistGallery";
@@ -25,7 +25,7 @@ type GalleryGroups = {
 function toPortfolioImage(record: ArtistPhotoRecord): PortfolioImage {
   return {
     id: record.id,
-    src: buildPortfolioImageUrl(record.objectKey),
+    objectKey: record.objectKey,
     width: record.width,
     height: record.height,
   };
@@ -48,7 +48,7 @@ function buildGalleryGroups(records: ArtistPhotoRecord[]): GalleryGroups {
 }
 
 type ArtistAvatarView = {
-  src: string;
+  objectKey: string;
   width: number;
   height: number;
 };
@@ -73,7 +73,7 @@ function buildAvatarView(artist: ArtistProfile): ArtistAvatarView | null {
   }
 
   return {
-    src: buildPortfolioImageUrl(profileImageKey),
+    objectKey: profileImageKey,
     width: profileImageWidth,
     height: profileImageHeight,
   };
@@ -125,14 +125,23 @@ interface ArtistAvatarProps {
   avatar: ArtistAvatarView | null;
 }
 
+const ARTIST_AVATAR_SIZES = "(max-width: 1000px) 50vw, 500px";
+
 function ArtistAvatar({ avatar }: ArtistAvatarProps) {
   if (avatar === null) {
     return null;
   }
 
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: avatar.objectKey,
+    sizes: ARTIST_AVATAR_SIZES,
+  });
+
   return (
     <img
-      src={avatar.src}
+      src={src}
+      srcSet={srcSet}
+      sizes={sizes}
       alt=""
       width={avatar.width}
       height={avatar.height}
