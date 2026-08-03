@@ -15,6 +15,7 @@ import {
 import { flushSync } from "react-dom";
 import type { LightboxLabels, LightboxPhoto } from "./lightboxPhoto";
 import { useLightboxState } from "./useLightboxState";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import styles from "./Lightbox.module.css";
 
 /* -------------------------------------------------------------------------- */
@@ -135,6 +136,8 @@ interface LightboxProps {
   showArtistLink?: boolean;
   children: ReactNode;
 }
+
+const LIGHTBOX_HERO_SIZES = "100vw";
 
 /**
  * Wraps a gallery. Renders its `children` as-is (so gallery layout is
@@ -460,6 +463,11 @@ function LightboxContents(props: LightboxContentsProps) {
     viewTransitionName: heroTransitionName,
   };
 
+  const heroImageAttributes = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: LIGHTBOX_HERO_SIZES,
+  });
+
   return (
     <div className={styles.contents}>
       <button
@@ -483,7 +491,9 @@ function LightboxContents(props: LightboxContentsProps) {
       </button>
 
       <img
-        src={photo.src}
+        src={heroImageAttributes.src}
+        srcSet={heroImageAttributes.srcSet}
+        sizes={heroImageAttributes.sizes}
         alt={photo.alt ?? ""}
         width={photo.width}
         height={photo.height}

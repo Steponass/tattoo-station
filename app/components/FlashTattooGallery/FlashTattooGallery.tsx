@@ -1,7 +1,6 @@
 // app/components/FlashTattooGallery/FlashTattooGallery.tsx
 
 import { useMemo } from 'react'
-import { buildPortfolioImageUrl } from '~/lib/media/portfolioImageUrl'
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { Lightbox, LightboxTrigger } from '~/components/Lightbox/Lightbox'
 import type { LightboxLabels, LightboxPhoto } from '~/components/Lightbox/lightboxPhoto'
@@ -108,7 +107,7 @@ function FlashTile({ photo }: FlashTileProps) {
 function toLightboxPhoto(photo: FlashGalleryPhoto): LightboxPhoto {
   return {
     id: photo.photoId,
-    src: buildPortfolioImageUrl(photo.objectKey),
+    objectKey: photo.objectKey,
     width: photo.width,
     height: photo.height,
     alt: `Flash design by ${photo.artistDisplayName}`,

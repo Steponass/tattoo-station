@@ -6,7 +6,6 @@ import type {
   LightboxPhoto,
 } from '~/components/Lightbox/lightboxPhoto'
 import { buildPortfolioImageAttributes } from '~/lib/media/portfolioImageAttributes'
-import { buildPortfolioImageUrl } from '~/lib/media/portfolioImageUrl'
 import styles from './ArtistGallery.module.css'
 
 /**
@@ -74,7 +73,7 @@ function toLightboxPhoto(
 ): LightboxPhoto {
   return {
     id: photo.id,
-    src: buildPortfolioImageUrl(photo.objectKey),
+    objectKey: photo.objectKey,
     width: photo.width,
     height: photo.height,
     artist,

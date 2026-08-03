@@ -9,7 +9,6 @@ import type {
   LightboxLabels,
   LightboxPhoto,
 } from "~/components/Lightbox/lightboxPhoto";
-import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import styles from "./LandingGallery.module.css";
 
@@ -192,7 +191,7 @@ export default function LandingGallery(props: LandingGalleryProps) {
 function toLightboxPhoto(photo: LandingGalleryPhoto): LightboxPhoto {
   return {
     id: photo.photoId,
-    src: buildPortfolioImageUrl(photo.objectKey),
+    objectKey: photo.objectKey,
     width: photo.width,
     height: photo.height,
     alt: `Work by ${photo.artistDisplayName}`,

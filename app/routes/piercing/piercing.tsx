@@ -18,7 +18,6 @@ import {
   type ArtistPhotoRecord,
 } from "~/lib/artists/artistPhotoRepository.server";
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
-import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 
 /**
@@ -102,7 +101,7 @@ function toLightboxPhoto(
 ): LightboxPhoto {
   return {
     id: photo.id,
-    src: buildPortfolioImageUrl(photo.objectKey),
+    objectKey: photo.objectKey,
     width: photo.width,
     height: photo.height,
     artist,
