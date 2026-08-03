@@ -36,7 +36,7 @@
 		}
 	],
 	  "vars": {
-    "TEAM_DOMAIN": "https://steponass.cloudflareaccess.com.cloudflareaccess.com"
+    "TEAM_DOMAIN": "https://steponass.cloudflareaccess.com"
   }
 	/**
 	 * Smart Placement
