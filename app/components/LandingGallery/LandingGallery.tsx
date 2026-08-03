@@ -229,7 +229,6 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
           alt={`Work by ${photo.artistDisplayName}`}
           width={photo.width}
           height={photo.height}
-          loading="lazy"
         />
       </div>
     </LightboxTrigger>
