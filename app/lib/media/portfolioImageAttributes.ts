@@ -21,7 +21,7 @@ const CLOUDFLARE_TRANSFORM_PREFIX = "/cdn-cgi/image";
  * is the visual/bytes middle-of-road we're starting with, single value
  * across every surface.
  */
-const SHARED_TRANSFORM_OPTIONS = "format=auto,quality=78";
+const SHARED_TRANSFORM_OPTIONS = "format=auto%2Cquality=85";
 
 /**
  * Fixed width ladder for srcset. Bounds the count of unique transform
@@ -82,7 +82,7 @@ function buildTransformUrl({
   originPath: string;
   width: number;
 }): string {
-  const options = `${SHARED_TRANSFORM_OPTIONS},width=${width}`;
+  const options = `${SHARED_TRANSFORM_OPTIONS}%2Cwidth=${width}`;
 
   return `${CLOUDFLARE_TRANSFORM_PREFIX}/${options}${originPath}`;
 }
