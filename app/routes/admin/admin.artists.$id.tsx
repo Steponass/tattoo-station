@@ -6,7 +6,7 @@ import { resolveActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import { handleArtistProfilePatchRequest } from "~/lib/artists/artistProfilePatch.server";
 import ArtistProfileForm from "~/components/admin/profile/ArtistProfileForm";
-import type { Route } from "./+types/admin.artists.$id";
+import type { Route } from "../+types/admin.artists.$id";
 import DeleteArtistPanel from "~/components/admin/profile/DeleteArtistPanel";
 import styles from "./admin.artists.$id.module.css";
 

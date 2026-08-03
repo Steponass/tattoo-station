@@ -9,7 +9,7 @@ import { findArtistPhotosByCategory } from "~/lib/artists/artistPhotoRepository.
 import { SortableGrid } from "~/components/admin/sortable/SortableGrid";
 import PhotoTile from "~/components/admin/profile/PhotoTile";
 import PhotoUploader from "~/components/admin/profile/PhotoUploader";
-import type { Route } from "./+types/admin.me.flash";
+import type { Route } from "../+types/admin.me.flash";
 import styles from "./admin.me.photos.module.css";
 
 /**

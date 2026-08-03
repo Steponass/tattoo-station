@@ -13,7 +13,7 @@ import {
   SortableGridItem,
 } from "~/components/admin/sortable/SortableGrid";
 import { Link } from "react-router";
-import type { Route } from "./+types/admin._index";
+import type { Route } from "../+types/admin._index";
 import styles from "./admin._index.module.css";
 
 export async function loader({ request, context }: Route.LoaderArgs) {

@@ -11,7 +11,7 @@ import {
   type CurateGalleryFailureCode,
   type CurateGalleryOperation,
 } from "~/lib/gallery/curateGallery.server";
-import type { Route } from "./+types/api.curate-gallery";
+import type { Route } from "../+types/api.curate-gallery";
 
 /**
  * Admin-only. One endpoint covers all three curation operations (add, remove,

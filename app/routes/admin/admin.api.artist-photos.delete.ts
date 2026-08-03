@@ -6,7 +6,7 @@ import {
   deleteArtistPhoto,
   type DeleteArtistPhotoFailureCode,
 } from "~/lib/artists/deleteArtistPhoto.server";
-import type { Route } from "./+types/api.artist-photos.delete";
+import type { Route } from "../+types/api.artist-photos.delete";
 
 /**
  * Deletes one of the caller's photos. Artist-only, actor-pinned — the artist

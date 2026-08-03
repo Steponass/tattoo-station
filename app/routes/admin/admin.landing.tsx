@@ -17,7 +17,7 @@ import {
 } from "~/components/admin/curation/CurationTile";
 import CurationFilters from "~/components/admin/curation/CurationFilters";
 import type { PhotoCategoryFilter } from "~/components/admin/curation/photoCategoryFilter";
-import type { Route } from "./+types/admin.landing";
+import type { Route } from "../+types/admin.landing";
 import styles from "./admin.landing.module.css";
 
 const CURRENT_GALLERY = "landing" as const;

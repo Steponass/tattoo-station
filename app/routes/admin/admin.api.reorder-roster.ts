@@ -6,7 +6,7 @@ import {
   reorderRoster,
   type ReorderRosterFailureCode,
 } from "~/lib/artists/reorderRoster.server";
-import type { Route } from "./+types/api.reorder-roster";
+import type { Route } from "../+types/api.reorder-roster";
 
 /**
  * Admin-only. Rewrites the sort_order on artists.

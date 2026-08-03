@@ -7,7 +7,7 @@ import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.serv
 import { handleArtistProfilePatchRequest } from "~/lib/artists/artistProfilePatch.server";
 import ArtistProfileForm from "~/components/admin/profile/ArtistProfileForm";
 
-import type { Route } from "./+types/admin.me";
+import type { Route } from "../+types/admin.me";
 import NavButton from "~/components/Button/NavButton";
 import styles from './admin.me.module.css'
 

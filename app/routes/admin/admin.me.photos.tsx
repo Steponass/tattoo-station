@@ -11,7 +11,7 @@ import type { ArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import { SortableGrid } from "~/components/admin/sortable/SortableGrid";
 import PhotoTile from "~/components/admin/profile/PhotoTile";
 import PhotoUploader from "~/components/admin/profile/PhotoUploader";
-import type { Route } from "./+types/admin.me.photos";
+import type { Route } from "../+types/admin.me.photos";
 import styles from "./admin.me.photos.module.css";
 
 export async function loader({ request, context }: Route.LoaderArgs) {

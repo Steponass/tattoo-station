@@ -10,7 +10,7 @@ import {
 } from "~/lib/artists/createArtist.server";
 import { TextField } from "~/components/admin/form/FormFields";
 import { useField } from "~/hooks/useField";
-import type { Route } from "./+types/admin.artists.new";
+import type { Route } from "../+types/admin.artists.new";
 import styles from "./admin.artists.new.module.css";
 
 /**

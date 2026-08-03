@@ -3,7 +3,7 @@
 import { data, Outlet } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
-import type { Route } from "./+types/admin";
+import type { Route } from "../+types/admin";
 import Testimonials from "~/components/Testimonials/Testimonials";
 
 /**
