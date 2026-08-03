@@ -28,10 +28,13 @@
 
 .tab_panels {
   display: grid;
+  width: 100%;
+  flex-basis: 100%;
 }
 
 .tab_panel {
   grid-area: 1 / 1;
+  width: 100%;
   padding: var(--space-24px);
   margin-inline: auto;
 /* inactive by default */

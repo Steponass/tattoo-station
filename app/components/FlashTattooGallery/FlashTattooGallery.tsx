@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { buildPortfolioImageUrl } from '~/lib/media/portfolioImageUrl'
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { Lightbox, LightboxTrigger } from '~/components/Lightbox/Lightbox'
 import type { LightboxLabels, LightboxPhoto } from '~/components/Lightbox/lightboxPhoto'
 import styles from './FlashTattooGallery.module.css'
@@ -45,6 +46,8 @@ export type FlashGalleryPhoto = {
   artistSlug: string
 }
 
+const FLASH_TILE_SIZES = "(max-width: 720px) 100vw, 400px";
+
 type FlashTattooGalleryProps = {
   photos: readonly FlashGalleryPhoto[]
   labels: LightboxLabels
@@ -66,23 +69,39 @@ export default function FlashTattooGallery(props: FlashTattooGalleryProps) {
     <Lightbox photos={lightboxPhotos} labels={labels}>
       <section className={styles.flash_tattoo_gallery}>
         {photos.map((photo) => (
-          <LightboxTrigger
-            key={photo.photoId}
-            photoId={photo.photoId}
-            className={styles.artist_image_wrapper}
-          >
-            <img
-              src={buildPortfolioImageUrl(photo.objectKey)}
-              alt={`Flash design by ${photo.artistDisplayName}`}
-              width={photo.width}
-              height={photo.height}
-              className={styles.artist_image}
-              loading="lazy"
-            />
-          </LightboxTrigger>
+          <FlashTile key={photo.photoId} photo={photo} />
         ))}
       </section>
     </Lightbox>
+  )
+}
+
+interface FlashTileProps {
+  photo: FlashGalleryPhoto
+}
+
+function FlashTile({ photo }: FlashTileProps) {
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: FLASH_TILE_SIZES,
+  })
+
+  return (
+    <LightboxTrigger
+      photoId={photo.photoId}
+      className={styles.artist_image_wrapper}
+    >
+      <img
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        alt={`Flash design by ${photo.artistDisplayName}`}
+        width={photo.width}
+        height={photo.height}
+        className={styles.artist_image}
+        loading="lazy"
+      />
+    </LightboxTrigger>
   )
 }
 

@@ -19,6 +19,7 @@ import {
 } from "~/lib/artists/artistPhotoRepository.server";
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
 import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 
 /**
  * A gallery photo as this page renders it — a delivery URL plus the stored
@@ -26,7 +27,7 @@ import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
  */
 interface GalleryPhoto {
   id: number;
-  url: string;
+  objectKey: string;
   width: number;
   height: number;
 }
@@ -34,7 +35,7 @@ interface GalleryPhoto {
 function toGalleryPhoto(record: ArtistPhotoRecord): GalleryPhoto {
   return {
     id: record.id,
-    url: buildPortfolioImageUrl(record.objectKey),
+    objectKey: record.objectKey,
     width: record.width,
     height: record.height,
   };
@@ -101,12 +102,14 @@ function toLightboxPhoto(
 ): LightboxPhoto {
   return {
     id: photo.id,
-    src: photo.url,
+    src: buildPortfolioImageUrl(photo.objectKey),
     width: photo.width,
     height: photo.height,
     artist,
   };
 }
+
+const PIERCING_TILE_SIZES = "(max-width: 720px) 100vw, 400px";
 
 export default function piercing({ loaderData }: Route.ComponentProps) {
   const { piercingArtistSlug, photos } = loaderData;
@@ -204,20 +207,7 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
         >
           <div className={styles.piercing_gallery_grid}>
             {photos.map((photo) => (
-              <LightboxTrigger
-                key={photo.id}
-                photoId={photo.id}
-                className={styles.artist_image_wrapper}
-              >
-                <img
-                  src={photo.url}
-                  alt=""
-                  width={photo.width}
-                  height={photo.height}
-                  className={styles.artist_image}
-                  loading="lazy"
-                />
-              </LightboxTrigger>
+              <PiercingTile key={photo.id} photo={photo} />
             ))}
           </div>
         </Lightbox>
@@ -227,5 +217,34 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
         <Accordion items={second_accordion}/>
       </section>
     </main>
+  );
+}
+
+interface PiercingTileProps {
+  photo: GalleryPhoto;
+}
+
+function PiercingTile({ photo }: PiercingTileProps) {
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: PIERCING_TILE_SIZES,
+  });
+
+  return (
+    <LightboxTrigger
+      photoId={photo.id}
+      className={styles.artist_image_wrapper}
+    >
+      <img
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        alt=""
+        width={photo.width}
+        height={photo.height}
+        className={styles.artist_image}
+        loading="lazy"
+      />
+    </LightboxTrigger>
   );
 }

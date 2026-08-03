@@ -10,6 +10,7 @@ import type {
   LightboxPhoto,
 } from "~/components/Lightbox/lightboxPhoto";
 import { buildPortfolioImageUrl } from "~/lib/media/portfolioImageUrl";
+import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import styles from "./LandingGallery.module.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -71,8 +72,6 @@ export default function LandingGallery(props: LandingGalleryProps) {
     () => photos.map(toLightboxPhoto),
     [photos],
   );
-
-
   
   const landingGalleryContainerRef = useRef<HTMLDivElement>(null);
   const landingGalleryTopRef = useRef<HTMLDivElement>(null);
@@ -208,8 +207,15 @@ type LandingGalleryTileProps = {
   photo: LandingGalleryPhoto;
 };
 
+const LANDING_TILE_SIZES = "280px";
+
 function LandingGalleryTile(props: LandingGalleryTileProps) {
   const { photo } = props;
+
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: LANDING_TILE_SIZES,
+  });
 
   return (
     <LightboxTrigger
@@ -218,7 +224,9 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
     >
       <div className={styles.placeholder}>
         <img
-          src={buildPortfolioImageUrl(photo.objectKey)}
+          src={src}
+          srcSet={srcSet}
+          sizes={sizes}
           alt={`Work by ${photo.artistDisplayName}`}
           width={photo.width}
           height={photo.height}
