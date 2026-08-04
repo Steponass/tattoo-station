@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: center; */
   text-align: center;
   gap: var(--space-16px);
   & h2 {
@@ -10,8 +9,14 @@
   }
 }
 
-/* Page-level override layered on top of NavButton's base styles */
-.nav_button {
-  min-width: 200px;
-  margin-block-start: var(--space-8px);
+.hero_section::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  inset: 0;
+  width: 100%;
+  height: 500px;
+    background:   linear-gradient(hsla(143, 25%, 9%, 0.85), hsla(143, 25%, 9%, 0.85)),
+  url("/StudioPhoto001_edited_webp.webp") center center/cover no-repeat;
+  z-index: -1;
 }
