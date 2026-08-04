@@ -15,7 +15,7 @@ import type { ArtistPhotoCategory } from "./artistPhotoCategories";
  * Per-artist portfolio cap. Bounds storage cost and forces curation — a wall of
  * 200 photos serves neither the artist nor the visitor. Raise deliberately.
  */
-export const MAX_PORTFOLIO_PHOTOS_PER_ARTIST = 50;
+export const MAX_PORTFOLIO_PHOTOS_PER_ARTIST = 100;
 
 /**
  * Gap between sort_order values, matching the seed's 10/20/30 spacing, so a
