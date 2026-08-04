@@ -15,6 +15,7 @@ export type UploadedArtistPhoto = {
   objectKey: string;
   width: number;
   height: number;
+  style: string | null;
 };
 
 export type ArtistPhotoUploadOutcome =

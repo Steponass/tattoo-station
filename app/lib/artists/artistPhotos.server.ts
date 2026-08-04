@@ -39,6 +39,7 @@ export type StoredArtistPhoto = {
   height: number;
   byteSize: number;
   sortOrder: number;
+  style: string | null;
 };
 
 export type StoreArtistPhotoResult =
@@ -180,6 +181,7 @@ export async function storeArtistPhoto({
       height,
       byteSize,
       sortOrder,
+      style
     },
   };
 }

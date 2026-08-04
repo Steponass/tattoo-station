@@ -7,7 +7,7 @@ import {
   deleteArtist,
   type DeleteArtistFailureCode,
 } from "~/lib/artists/deleteArtist.server";
-import type { Route } from "../+types/admin.artists.$id.delete";
+import type { Route } from "./+types/admin.artists.$id.delete";
 
 /**
  * Admin-only delete for a single artist. Action-only route: no default

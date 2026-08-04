@@ -7,7 +7,7 @@ import {
   updateArtistPhotoStyle,
   type UpdateArtistPhotoStyleFailureCode,
 } from "~/lib/artists/updateArtistPhotoStyle.server";
-import type { Route } from "../+types/api.artist-photos.style";
+import type { Route } from "./+types/admin.api.artist-photos.style";
 
 /**
  * Changes the style tag on a photo. Reachable by both admins (targeting any

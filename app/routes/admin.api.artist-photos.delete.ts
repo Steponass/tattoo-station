@@ -6,7 +6,7 @@ import {
   deleteArtistPhoto,
   type DeleteArtistPhotoFailureCode,
 } from "~/lib/artists/deleteArtistPhoto.server";
-import type { Route } from "../+types/api.artist-photos.delete";
+import type { Route } from "./+types/admin.api.artist-photos.delete";
 
 /**
  * Deletes a photo. Reachable by both admins (targeting any artist via the

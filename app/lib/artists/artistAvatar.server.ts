@@ -21,6 +21,7 @@ export type StoredArtistAvatar = {
   width: number;
   height: number;
   byteSize: number;
+  
 };
 
 export type StoreArtistAvatarResult =

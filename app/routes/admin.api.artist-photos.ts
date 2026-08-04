@@ -7,7 +7,7 @@ import {
 } from "~/lib/artists/artistPhotos.server";
 import { isArtistStyle, type ArtistStyle } from "~/lib/artists/artistStyles";
 import type { ArtistPhotoUploadOutcome } from "~/lib/artists/uploadArtistPhoto";
-import type { Route } from "../+types/api.artist-photos";
+import type { Route } from "./+types/admin.api.artist-photos";
 import { isArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";

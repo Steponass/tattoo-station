@@ -7,7 +7,7 @@ import {
   type StoreArtistAvatarFailureCode,
 } from "~/lib/artists/artistAvatar.server";
 import type { ArtistAvatarUploadOutcome } from "~/lib/artists/uploadArtistAvatar";
-import type { Route } from "../+types/api.artist-avatar";
+import type { Route } from "./+types/admin.api.artist-avatar";
 
 const MAX_AVATAR_UPLOAD_BYTES = 25 * 1024 * 1024;
 

@@ -9,7 +9,7 @@ import {
   type ReorderArtistPhotosCategoryGate,
   type ReorderArtistPhotosFailureCode,
 } from "~/lib/artists/reorderArtistPhotos.server";
-import type { Route } from "../+types/api.artist-photos.reorder";
+import type { Route } from "./+types/admin.api.artist-photos.reorder";
 
 /**
  * Rewrites the order of an artist's photos in one category.

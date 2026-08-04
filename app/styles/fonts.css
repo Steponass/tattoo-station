@@ -46,15 +46,15 @@
   --fontsize-h2: clamp(4.16rem, 3.26vi + 3.43rem, 6.36rem);
   --fontsize-h1: clamp(5.53rem, 5.12vi + 4.38rem, 8.99rem); */
 
-  /* https://www.fluid-type-scale.com/calculate?minFontSize=16&minWidth=360&minRatio=1.25&maxFontSize=18&maxWidth=1440&maxRatio=1.414&steps=body-s%2C+body%2C+h6%2C+h5%2C+h4%2C+h3%2C+h2%2C+h1&baseStep=body&prefix=fontsize&useContainerWidth=false&includeFallbacks=false&useRems=true&remValue=16&decimals=2&previewFont=Hepta+Slab&previewText=Almost+before+we+knew+it%2C+we+had+left+the+ground&previewWidth=1280 */
---fontsize-body-s: clamp(0.8rem, -0.01vi + 0.8rem, 0.8rem);
+  /* https://www.fluid-type-scale.com/calculate?minFontSize=16&minWidth=360&minRatio=1.2&maxFontSize=18&maxWidth=1440&maxRatio=1.333&steps=body-s%2C+body%2C+h6%2C+h5%2C+h4%2C+h3%2C+h2%2C+h1&baseStep=body&prefix=fontsize&useContainerWidth=false&includeFallbacks=false&useRems=true&remValue=16&decimals=2&previewFont=Hepta+Slab&previewText=Almost+before+we+knew+it%2C+we+had+left+the+ground&previewWidth=1280 */
+--fontsize-body-s: clamp(0.83rem, 0.02vi + 0.83rem, 0.84rem);
 --fontsize-body: clamp(1rem, 0.19vi + 0.96rem, 1.13rem);
---fontsize-h6: clamp(1.25rem, 0.5vi + 1.14rem, 1.59rem);
---fontsize-h5: clamp(1.56rem, 1.02vi + 1.33rem, 2.25rem);
---fontsize-h4: clamp(1.95rem, 1.82vi + 1.54rem, 3.18rem);
---fontsize-h3: clamp(2.44rem, 3.05vi + 1.76rem, 4.5rem);
---fontsize-h2: clamp(3.05rem, 4.9vi + 1.95rem, 6.36rem);
---fontsize-h1: clamp(3.81rem, 7.67vi + 2.09rem, 8.99rem);
+--fontsize-h6: clamp(1.2rem, 0.44vi + 1.1rem, 1.5rem);
+--fontsize-h5: clamp(1.44rem, 0.83vi + 1.25rem, 2rem);
+--fontsize-h4: clamp(1.73rem, 1.39vi + 1.42rem, 2.66rem);
+--fontsize-h3: clamp(2.07rem, 2.19vi + 1.58rem, 3.55rem);
+--fontsize-h2: clamp(2.49rem, 3.33vi + 1.74rem, 4.73rem);
+--fontsize-h1: clamp(2.99rem, 4.93vi + 1.88rem, 6.31rem);
 }
 
 :where(span) {font-size: var(--fontsize-body-s)}

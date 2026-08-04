@@ -47,6 +47,7 @@ type UploadedPhoto = {
   id: number;
   objectKey: string;
   width: number;
+  style: string | null;
   height: number;
 };
 
