@@ -71,10 +71,34 @@ export async function uploadArtistPhoto(
     requestBody.set("surface", input.surface ?? "main");
   }
 
-  const response = await fetch(ARTIST_PHOTO_UPLOAD_PATH, {
-    method: "POST",
-    body: requestBody,
-  });
+  let response: Response;
 
-  return (await response.json()) as ArtistPhotoUploadOutcome;
+  try {
+    response = await fetch(ARTIST_PHOTO_UPLOAD_PATH, {
+      method: "POST",
+      body: requestBody,
+    });
+  } catch {
+    return {
+      ok: false,
+      failureCode: "network_error",
+      detail: "The upload request failed to reach the server.",
+    };
+  }
+
+  // A 5xx from the platform itself (rather than this route's handler) can
+  // arrive as an HTML error page instead of JSON — e.g. a Worker CPU/subrequest
+  // limit or an unhandled exception upstream of our JSON-only response
+  // contract. `.json()` would throw a SyntaxError on that body; without this
+  // guard, that throw propagates out of the caller's upload loop and aborts
+  // the rest of the batch instead of being recorded as one file's failure.
+  try {
+    return (await response.json()) as ArtistPhotoUploadOutcome;
+  } catch {
+    return {
+      ok: false,
+      failureCode: "server_error",
+      detail: `The server returned an unexpected response (status ${response.status}).`,
+    };
+  }
 }

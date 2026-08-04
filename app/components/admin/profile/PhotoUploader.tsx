@@ -24,7 +24,7 @@ import styles from "./PhotoUploader.module.css";
  * losing the third one shouldn't discard the seven queued after it.
  */
 
-const MAX_PORTFOLIO_PHOTOS_PER_ARTIST = 50;
+const MAX_PORTFOLIO_PHOTOS_PER_ARTIST = 100;
 
 const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp,image/heic,image/heif";
 
@@ -39,6 +39,8 @@ const FAILURE_MESSAGES: Record<string, string> = {
   persist_failed: "The upload didn't complete. Please try again.",
   artist_not_found: "Your account could not be found. Refresh and try again.",
   forbidden: "You aren't allowed to do that.",
+  network_error: "Couldn't reach the server. Check your connection and try again.",
+  server_error: "The server had a problem with this upload. Please try again.",
 };
 
 const GENERIC_FAILURE_MESSAGE = "Something went wrong with that file.";
