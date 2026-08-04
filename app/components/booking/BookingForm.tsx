@@ -18,7 +18,7 @@ import {
 } from "~/lib/booking/bookingConstants";
 import {
   bookingFormReducer,
-  initialBookingFormState,
+  buildInitialBookingFormState,
   type BookingFormState,
 } from "~/lib/booking/bookingFormReducer";
 import type {
@@ -27,6 +27,7 @@ import type {
   FieldErrorCode,
 } from "~/lib/booking/bookingSubmissionTypes";
 import { filterArtistsForCategory } from "~/lib/booking/filterArtistsForCategory";
+import type { ArtistPreselection } from "~/lib/booking/resolveArtistPreselection";
 import { useBookingFormValidation } from "~/lib/booking/useBookingFormValidation";
 import { usePhotoSelection } from "~/lib/booking/usePhotoSelection";
 import type { PhotoEntry } from "~/lib/booking/usePhotoSelection";
@@ -411,17 +412,19 @@ export function BookingForm({
   turnstileSiteKey,
   serverFieldErrorCodes,
   fetcher,
+  initialSelection,
 }: {
   artists: readonly BookableArtist[];
   turnstileSiteKey: string;
   serverFieldErrorCodes: BookingFieldErrorCodes;
   fetcher: FetcherWithComponents<unknown>;
+  initialSelection: ArtistPreselection;
 }) {
   const content = useIntlayer("BookingForm");
 
   const [formState, dispatchFormAction] = useReducer(
     bookingFormReducer,
-    initialBookingFormState,
+    buildInitialBookingFormState(initialSelection),
   );
 
   const photos = usePhotoSelection();

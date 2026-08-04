@@ -196,7 +196,14 @@ export default function ArtistProfileRoute({
                 </svg>
               </LocalizedLink>
             ) : null}
-            <LocalizedLink to="/booking">Rezervuoti</LocalizedLink>
+            <LocalizedLink
+              to={{
+                pathname: "/booking",
+                search: `?artist=${encodeURIComponent(artist.slug)}`,
+              }}
+            >
+              Rezervuoti
+            </LocalizedLink>
           </div>
         </article>
         <ArtistGallery
@@ -207,7 +214,14 @@ export default function ArtistProfileRoute({
         />
         <div className={styles.bottom_nav}>
           <LocalizedLink to="/artists">Meistrai</LocalizedLink>
-          <LocalizedLink to="/booking">Rezervuoti</LocalizedLink>
+          <LocalizedLink
+            to={{
+              pathname: "/booking",
+              search: `?artist=${encodeURIComponent(artist.slug)}`,
+            }}
+          >
+            Rezervuoti
+          </LocalizedLink>
         </div>
       </section>
     </main>

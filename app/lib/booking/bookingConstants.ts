@@ -1,3 +1,5 @@
+import type { ArtistRole } from "~/lib/artists/artistTypes";
+
 /**
  * Static option data for the booking form.
  *
@@ -108,4 +110,16 @@ export function categoryAllowsUnspecifiedArtist(
   serviceCategory: ServiceCategory,
 ): boolean {
   return CATEGORIES_ALLOWING_UNSPECIFIED_ARTIST.includes(serviceCategory);
+}
+
+/**
+ * The service category implied by an artist's role, used to preselect the
+ * booking form when arriving from that artist's page or a photo of their
+ * work. Mirrors `mainPhotoCategoryForRole`'s role default: 'both' artists
+ * default to tattoo, since that's the service their own page represents.
+ */
+export function defaultServiceCategoryForArtistRole(
+  role: ArtistRole,
+): ServiceCategory {
+  return role === "piercing" ? "piercing" : "tattoo";
 }

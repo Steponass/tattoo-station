@@ -1,4 +1,5 @@
 import type { ServiceCategory, ServiceType } from "./bookingConstants";
+import type { ArtistPreselection } from "./resolveArtistPreselection";
 
 /**
  * The three interdependent selections in the booking form.
@@ -19,6 +20,26 @@ export const initialBookingFormState: BookingFormState = {
   serviceType: null,
   artistSelection: null,
 };
+
+/**
+ * Seeds the reducer with an artist (and its implied service category)
+ * resolved from a `?artist=` link, or the plain blank state when there is
+ * none. `serviceType` is never preselected — the link only carries category
+ * and artist, both derived from who the visitor was looking at.
+ */
+export function buildInitialBookingFormState(
+  preselection: ArtistPreselection,
+): BookingFormState {
+  if (preselection === null) {
+    return initialBookingFormState;
+  }
+
+  return {
+    serviceCategory: preselection.serviceCategory,
+    serviceType: null,
+    artistSelection: preselection.artistSelection,
+  };
+}
 
 export type BookingFormAction =
   | { type: "serviceCategorySelected"; serviceCategory: ServiceCategory }

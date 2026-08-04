@@ -13,12 +13,14 @@ import {
 
 export type BookableArtistRow = {
   id: number;
+  slug: string;
   display_name: string;
   role: ArtistRole;
 };
 
 export type BookableArtist = {
   id: number;
+  slug: string;
   displayName: string;
   role: ArtistRole;
 };
@@ -58,6 +60,7 @@ function parseArtistStyles(rawStyles: string | null): string[] {
 const SELECT_BOOKABLE_ARTISTS_SQL = `
   SELECT
     artists.id,
+    artists.slug,
     artists.display_name,
     artists.role
   FROM artists
@@ -76,6 +79,7 @@ export async function findBookableArtists({
 
   return queryResult.results.map((row) => ({
     id: row.id,
+    slug: row.slug,
     displayName: row.display_name,
     role: row.role,
   }));

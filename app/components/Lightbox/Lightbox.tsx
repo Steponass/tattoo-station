@@ -13,9 +13,11 @@ import {
   type ReactNode,
 } from "react";
 import { flushSync } from "react-dom";
+import type { To } from "react-router";
 import type { LightboxLabels, LightboxPhoto } from "./lightboxPhoto";
 import { useLightboxState } from "./useLightboxState";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
+import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 import styles from "./Lightbox.module.css";
 
 /* -------------------------------------------------------------------------- */
@@ -452,7 +454,7 @@ function LightboxContents(props: LightboxContentsProps) {
   const shouldShowArtistLink =
     showArtistLink && photo.artist !== undefined;
 
-  const bookingHref = buildBookingHref(photo);
+  const bookingTo = buildBookingTo(photo);
 
   const heroTransitionName =
     heroNamePhase === "openMorph"
@@ -514,17 +516,19 @@ function LightboxContents(props: LightboxContentsProps) {
 
       <footer className={styles.footer}>
         {shouldShowArtistLink && photo.artist !== undefined ? (
-          <a
-            href={`/artists/${photo.artist.slug}`}
+          <LocalizedLink
+            to={`/artists/${photo.artist.slug}`}
             className={`${styles.artist_link} chamfer chamfer-xs punch`}
           >
            {photo.artist.displayName}
-          </a>
+          </LocalizedLink>
         ) : null }
-        <a href={bookingHref} 
-        className={`${styles.booknow_link} chamfer chamfer-xs punch`}>
+        <LocalizedLink
+          to={bookingTo}
+          className={`${styles.booknow_link} chamfer chamfer-xs punch`}
+        >
           {labels.bookNow}
-        </a>
+        </LocalizedLink>
       </footer>
     </div>
   );
@@ -536,11 +540,14 @@ function LightboxContents(props: LightboxContentsProps) {
  * option. When there's no artist context, we send the visitor to the
  * plain booking page and let them choose.
  */
-function buildBookingHref(photo: LightboxPhoto): string {
+function buildBookingTo(photo: LightboxPhoto): To {
   if (photo.artist === undefined) {
-    return "/booking";
+    return { pathname: "/booking" };
   }
-  return `/booking?artist=${encodeURIComponent(photo.artist.slug)}`;
+  return {
+    pathname: "/booking",
+    search: `?artist=${encodeURIComponent(photo.artist.slug)}`,
+  };
 }
 
 /* -------------------------------------------------------------------------- */

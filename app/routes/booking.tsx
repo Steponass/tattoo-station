@@ -16,6 +16,7 @@ import type {
 } from "~/lib/booking/bookingSubmissionTypes";
 import { readOptionalText } from "~/lib/booking/formDataReaders";
 import { generateBookingReference } from "~/lib/booking/generateBookingReference";
+import { resolveArtistPreselection } from "~/lib/booking/resolveArtistPreselection";
 import { sendBookingNotifications } from "~/lib/booking/server/notifications.server";
 import { validateBookingSubmission } from "~/lib/booking/validateBookingSubmission";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
@@ -45,14 +46,19 @@ type ArtistContactResolution =
   | { status: "not_specified" }
   | { status: "invalid" };
 
-export async function loader({ context }: Route.LoaderArgs) {
+export async function loader({ context, request }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
 
   const artists = await findBookableArtists({ database: env.DB });
+  const requestedArtistSlug = new URL(request.url).searchParams.get("artist");
 
   return {
     artists,
     turnstileSiteKey: env.TURNSTILE_SITE_KEY,
+    artistPreselection: resolveArtistPreselection({
+      artists,
+      requestedArtistSlug,
+    }),
   };
 }
 
@@ -192,7 +198,7 @@ export async function action({
 }
 
 export default function BookingRoute({ loaderData }: Route.ComponentProps) {
-  const { artists, turnstileSiteKey } = loaderData;
+  const { artists, turnstileSiteKey, artistPreselection } = loaderData;
   const fetcher = useFetcher<BookingActionResult>();
 
   const submissionResult = fetcher.data;
@@ -212,10 +218,12 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
       */}
       <div inert={submissionResult?.ok === true}>
         <BookingForm
+          key={artistPreselection?.artistSelection ?? "none"}
           artists={artists}
           turnstileSiteKey={turnstileSiteKey}
           serverFieldErrorCodes={fieldErrorCodes}
           fetcher={fetcher}
+          initialSelection={artistPreselection}
         />
       </div>
 
