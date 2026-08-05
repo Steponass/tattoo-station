@@ -2,28 +2,11 @@ import { useEffect, useRef } from "react";
 import styles from "./Process.module.css";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useIntlayer } from "react-intlayer";
 gsap.registerPlugin(ScrollTrigger);
 
-const processSteps = [
-  {
-    number: "01",
-    text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate, pariatur.",
-  },
-  {
-    number: "02",
-    text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate, pariatur.",
-  },
-  {
-    number: "03",
-    text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate, pariatur.",
-  },
-  {
-    number: "04",
-    text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate, pariatur.",
-  },
-];
-
 export default function Process() {
+  const { heading, steps: processSteps } = useIntlayer("Process");
   const processContainerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const tracklineRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -193,7 +176,7 @@ export default function Process() {
   return (
     <section className={styles.section_process}>
       <div className={styles.process_container} ref={processContainerRef}>
-        <h2 className={styles.section_heading}>Process</h2>
+        <h2 className={styles.section_heading}>{heading}</h2>
         <div className={styles.process_wrapper}>
         <div className={styles.process_track} ref={trackRef}>
           <div
@@ -226,7 +209,7 @@ export default function Process() {
           {processSteps.map((step, index) => (
             <div
               className={styles.process_step_marker}
-              key={step.number}
+              key={String(step.number)}
               ref={(el) => {
                 stepMarkerRefs.current[index] = el;
               }}
@@ -239,11 +222,12 @@ export default function Process() {
           {processSteps.map((step, index) => (
             <div
               className={styles.process_step}
-              key={step.number}
+              key={String(step.number)}
               ref={(el) => {
                 stepRefs.current[index] = el;
               }}
             >
+              <h4 className={styles.process_step_title}>{step.title}</h4>
               <p>{step.text}</p>
             </div>
           ))}

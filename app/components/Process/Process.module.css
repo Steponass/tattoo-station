@@ -113,3 +113,8 @@
     text-align: center;
   }
 }
+
+.process_step_title {
+  text-align: center;
+  margin-block-end: var(--space-8px);
+}

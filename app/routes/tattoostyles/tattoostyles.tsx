@@ -45,12 +45,24 @@ export default function tattoostyles() {
             />
             <p>{content.neoTraditionalDescription}</p>
           </div>
-          {/* <div className="pimpa bg-amber-50 h-4 w-full"></div> */}
           {/* No photos wired yet — the gallery renders its placeholder
               tiles until a loader supplies style-tagged photos. */}
           <StyleGallery labels={lightboxLabels} />
         </div>
       </article>
+      {content.styles.map((style, index) => (
+        <article key={index} className={styles.tattoostyle_article}>
+          <h2 className="text-3xl">{style.heading}</h2>
+          <div className={styles.description_and_gallery_container}>
+            <div className={styles.tattoostyle_description}>
+              <p>{style.description}</p>
+            </div>
+            {/* No photos wired yet — the gallery renders its placeholder
+                tiles until a loader supplies style-tagged photos. */}
+            <StyleGallery labels={lightboxLabels} />
+          </div>
+        </article>
+      ))}
     </main>
   );
 }
