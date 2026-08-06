@@ -126,8 +126,8 @@ export default function Header() {
               aria-hidden="true"
             >
               {/* <rect x="0" y="0" width="66" height="20" /> */}
-              <rect x="33" y="0" width="66" height="20" />
-              <rect x="66" y="40" width="66" height="20" />
+              <rect x="20" y="-10" width="76" height="22" />
+              <rect x="50" y="30" width="76" height="22" />
             </svg>
           </button>
         </div>

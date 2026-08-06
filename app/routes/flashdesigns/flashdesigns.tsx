@@ -44,6 +44,15 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 // Intlayer end
 
+// SPLITFLAP BOARD
+export const handle = {
+  titleBoard: {
+    show: true,
+    labelKey: "flash",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+  },
+};
+
 export default function flashdesigns({ loaderData }: Route.ComponentProps) {
   const { placedPhotos } = loaderData;
 

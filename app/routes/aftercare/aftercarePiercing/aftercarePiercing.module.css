@@ -1,18 +1,29 @@
 #piercing_aftercare_main {
-  margin-inline: auto;
+  display: flex;
+  column-gap: var(--space-l-xl);
   margin-block: var(--space-xl-2xl);
-  width: min(800px, 90%);
   margin-inline: auto;
+  @media (max-width: 870px) {
+    flex-direction: column;
+  }
 }
 
 .aftercare_heading {
-  font-size: var(--fontsize-h3)
+  text-align: center;
+  font-size: var(--fontsize-h3);
+  margin-bottom: 0.5em;
 }
 
 .aftercare_list {
   list-style: decimal;
-  max-width: 65ch;
   list-style-position: inside;
+  max-width: 60ch;
+  margin-inline: auto;
+  flex: 1;
+}
+
+.aftercare_list li:last-child{
+  margin-bottom: 2em;
 }
 
 .aftercare_list svg {
@@ -33,6 +44,7 @@
 }
 
 .aftercare_list li {
+  margin-bottom: 1em;
 }
 
 #no_swimming_icon, #no_hot {

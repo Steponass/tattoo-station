@@ -1,5 +1,4 @@
 import { t, type Dictionary } from "intlayer";
-import type faq from "~/routes/faq/faq";
 
 const pageTitleBoardContent = {
   key: "page-title-board",
@@ -33,8 +32,12 @@ const pageTitleBoardContent = {
       en: "Tattoo styles",
     }),
     flash: t({
-      lt: "Laisvi eskizai",
+      lt: "Eskizai",
       en: "Flash designs",
+    }),
+    booking: t({
+      lt: "Rezervuok",
+      en: "Booking",
     }),
     privacy: t({
       lt: "Privatumas",

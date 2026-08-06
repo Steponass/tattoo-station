@@ -6,10 +6,8 @@
   --split-flap-cell-gap: calc(var(--split-flap-glyph-font-size) * 0.02);
 
   --split-flap-word-gap: calc(var(--split-flap-cell-width) * 0.6);
-  --split-flap-surface: black;
-  --split-flap-surface-deep: black;
   --split-flap-ink: var(--color-text-strong);
-  --split-flap-chamfer: 4px;
+  --split-flap-chamfer: 6px;
   --split-flap-font: ui-monospace, "JetBrains Mono", "Roboto Mono", monospace;
 }
 
@@ -72,7 +70,7 @@
 
 .halfTop {
   top: 0;
-  /* background: linear-gradient(180deg, #222 0%, var(--split-flap-surface) 90%); */
+  background: var(--color-flap-top);
 }
 
 .halfBottom {

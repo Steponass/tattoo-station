@@ -12,33 +12,33 @@ const processContent = {
         number: "01",
         title: t({
           en: "Get in touch",
-          lt: "Susisiekti",
+          lt: "Susisiek",
         }),
         text: t({
-          en: "Send us a message and briefly tell us about your tattoo idea.",
+          en: "Drop us a message and tell us about your tattoo idea.",
           lt: "Parašyk mums ir trumpai papasakok savo tatuiruotės idėją.",
         }),
       },
       {
         number: "02",
         title: t({
-          en: "Let's discuss your idea",
-          lt: "Aptarkime idėją",
+          en: "We'll discuss your idea",
+          lt: "Aptarsime idėją",
         }),
         text: t({
-          en: "We'll help you choose the right artist and go over the design, size, placement, and price together.",
-          lt: "Kartu išrinksime meistrą, aptarsime dizainą, dydį, vietą ir kainą.",
+          en: "We'll choose the right artist and go over the design, size, placement, and price.",
+          lt: "Išrinksime meistrą, aptarsime dizainą, dydį, vietą ir kainą.",
         }),
       },
       {
         number: "03",
         title: t({
           en: "Book your appointment",
-          lt: "Rezervuoti laiką",
+          lt: "Rezervuok laiką",
         }),
         text: t({
-          en: "We'll find a time that works for you and reserve your session.",
-          lt: "Suderinsime tau tinkamą vizito laiką ir rezervuosime jį.",
+          en: "We'll find a time that works for you and book your session.",
+          lt: "Suderinsime tau tinkamą vizito laiką ir jį rezervuosime.",
         }),
       },
       {

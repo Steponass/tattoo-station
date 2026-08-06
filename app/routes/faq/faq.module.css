@@ -1,4 +1,17 @@
+.faq_main::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    width: 100%;
+    height: 200%;
+    background:   linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
+  url("/Station_Platform_Ceiling.webp") center center/cover no-repeat;
+  z-index: -1;
+}
+
 .section_faq {
+  height: max-content;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-m-l);
@@ -7,6 +20,7 @@
     grid-template-columns: 1fr;
     align-content: center;
   }
+
 }
 
 .accordion_wrapper {
@@ -14,7 +28,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   & h2 {
     font-size: var(--fontsize-h4);
     margin-bottom: 0.5em;

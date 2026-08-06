@@ -45,7 +45,7 @@ body {
 
 main {
   margin-block: var(--space-xl-2xl);
-  width: min(1280px, 100%);
+  width: min(1440px, 92%);
   margin-inline: auto;
   container-type: inline-size;
   @media (width < 780px) {

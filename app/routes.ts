@@ -11,7 +11,7 @@ export default [
     route("artists", "routes/artists/artists.tsx"),
     route("artists/:slug", "routes/artistPage/artists.$slug.tsx"),
     route("media/*", "routes/media.$.tsx"),
-    route("booking", "routes/booking.tsx"),
+    route("booking", "routes/booking/booking.tsx"),
     route("api/booking-photos", "routes/api.booking-photos.ts"),
     route("piercing", "routes/piercing/piercing.tsx"),
     route("aftercare", "routes/aftercare/aftercare.tsx"),

@@ -29,6 +29,15 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 // Intlayer end
 
+// SPLITFLAP BOARD
+export const handle = {
+  titleBoard: {
+    show: true,
+    labelKey: "styles",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+  },
+};
+
 export default function tattoostyles() {
   const content = useIntlayer("tattoostyles");
   const lightboxLabels = useLightboxLabels();

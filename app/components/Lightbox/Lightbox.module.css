@@ -180,7 +180,7 @@
 ::view-transition-group(*),
 ::view-transition-old(*),
 ::view-transition-new(*) {
-  animation-duration: 400ms;
+  animation-duration: 300ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -226,11 +226,11 @@
 }
 
 ::view-transition-old(lightbox-hero) {
-  animation: lightbox-hero-slide-out 320ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: lightbox-hero-slide-out 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 ::view-transition-new(lightbox-hero) {
-  animation: lightbox-hero-slide-in 320ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: lightbox-hero-slide-in 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .contents button {

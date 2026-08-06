@@ -42,7 +42,7 @@ export default function faq() {
   const { items: booking } = useIntlayer("faq-booking");
 
   return (
-    <main>
+    <main className={styles.faq_main}>
       <section className={styles.section_faq}>
         <div className={styles.directions_container}>
           <div className={styles.directions_wrapper}>

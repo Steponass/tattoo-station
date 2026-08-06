@@ -82,6 +82,14 @@ function buildTransformUrl({
   originPath: string;
   width: number;
 }): string {
+  // The /cdn-cgi/image/ transform is a Cloudflare edge feature — it only
+  // exists once the site is actually proxied through Cloudflare. Local dev
+  // (`react-router dev`) has no such proxy in front of it, so the transform
+  // path 404s there; fall back to the untransformed origin route instead.
+  if (import.meta.env.DEV) {
+    return originPath;
+  }
+
   const options = `${SHARED_TRANSFORM_OPTIONS}%2Cwidth=${width}`;
 
   return `${CLOUDFLARE_TRANSFORM_PREFIX}/${options}${originPath}`;

@@ -62,6 +62,15 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   };
 }
 
+// SPLITFLAP BOARD
+export const handle = {
+  titleBoard: {
+    show: true,
+    labelKey: "booking",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+  },
+};
+
 /**
  * Attribution fields are populated client-side from the landing URL's query
  * string. Absent values are expected and are not validation failures.
@@ -209,7 +218,7 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
     submissionResult?.ok === false ? submissionResult.fieldErrors : {};
 
   return (
-    <>
+    <main>
       {/*
         The form stays mounted underneath the confirmation, so the stamp lands
         on the request it confirms rather than on an empty page. It is inert
@@ -235,6 +244,6 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
           />
         </Suspense>
       )}
-    </>
+      </main>
   );
 }

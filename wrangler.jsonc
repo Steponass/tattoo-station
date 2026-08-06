@@ -19,7 +19,10 @@
 			"binding": "DB",
 			"database_name": "tattoo-station-db",
 			"database_id": "e657146a-ccae-4d0a-b613-4e298a92e996",
-			"migrations_dir": "migrations"
+			"migrations_dir": "migrations",
+			// Dev talks to the real production D1 database — there is no local/prod
+			// isolation. Any writes made during local dev land in prod.
+			"remote": true
 		},
 	],
 	// NOTE: Images has no local emulation — "remote": true is required even in
@@ -32,7 +35,8 @@
 	"r2_buckets": [
 		{
 			"bucket_name": "tattoo-station-media",
-			"binding": "MEDIA"
+			"binding": "MEDIA",
+			"remote": true
 		}
 	],
 	  "vars": {
