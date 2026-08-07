@@ -3,6 +3,9 @@
   padding-block: var(--space-m-l);
   view-transition-name: splitflap;
   overflow-x: hidden;
+  @media (max-width: 800px) {
+    margin-block-start: -12px;
+  }
 }
 
 

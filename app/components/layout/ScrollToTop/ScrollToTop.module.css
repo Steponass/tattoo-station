@@ -27,3 +27,7 @@
     color: var(--color-focus);
   }
 }
+
+.scrollToTop.visible svg {
+  filter: drop-shadow(var(--shadow-make-icon-more-visible));
+}

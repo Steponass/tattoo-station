@@ -14,7 +14,6 @@ scrollbar-color: var(--color-secondary) var(--color-bg-raised);
 
 .landing_gallery_tile {
   min-width: 280px;
-  @media (max-width: 768px) {
-    min-width: 100px;
-  }
+  max-width: 320px;
+  aspect-ratio: 0.8;
 }

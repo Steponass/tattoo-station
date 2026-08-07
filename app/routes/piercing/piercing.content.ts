@@ -94,6 +94,10 @@ const piercingContent = {
       lt: "Mano piercing’o kelionė prasidėjo dar paauglystėje - pradėjau nuo auskarų vėrimo sau pačiai, tada draugams, o galų gale tai išaugo iki darbo studijoje. Labiausiai šiame man patinka matyti žmonių šypsenas pamačius rezultatą, ir girdėti žodžius “tikrai neskaudėjo taip, kaip tikėjausi”. Tai mane džiugina ir motyvuoja.\n\nVadinu save chameleonu, nes dirbant tikrai galiu prisitaikyti prie kiekvieno žmogaus ir atsižvelgti į jo poreikius tuo metu - galiu užhype’int, arba kaip tik nuramint, plepėti visą laiką ar susikaupus patylėti, apkabinti arba duoti erdvės pabūt su savimi ir pakvėpuoti.\n\nRenkantis tikslią vėrimo vietą atsižvelgiu į du dalykus: estetiką ir anatomiją. Man svarbu ne tik, kad auskaras gražiai atrodytų ir puoštų, bet kad prisitaikytų prie kiekvieno žmogaus kūno linijų ir sklandžiai gytų.\n\nKolekcionuoju tatuiruotes ir atvirukus, auginu pačią mieliausią katę pasaulyje, klausau daug ir įvairios muzikos.",
       en: "My piercing journey started back in my teenage years - I began by piercing my own ears, then my friends', and eventually it grew into working at a studio. What I love most is seeing people's smiles when they see the result, and hearing them say \"that really didn't hurt as much as I expected.\" That's what makes me happy and keeps me motivated.\n\nI call myself a chameleon, because when I work I can genuinely adapt to each person and meet their needs in the moment - I can hype someone up, or just as easily calm them down, chat the whole time or sit quietly with them if they're focused, give a hug or simply give them space to be with themselves and breathe.\n\nWhen choosing the exact placement of a piercing, I consider two things: aesthetics and anatomy. It matters to me not just that the piece looks beautiful and flattering, but that it suits the lines of each person's body and heals smoothly.\n\nI collect tattoos and postcards, I'm raising the sweetest cat in the world, and I listen to a lot of varied music.",
     }),
+    faqHeading: t({
+      lt: "DUK",
+      en: "FAQ",
+    }),
   },
 } satisfies Dictionary;
 

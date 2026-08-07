@@ -85,11 +85,10 @@ export default function RosterItem({
         <summary className={styles.roster_summary} onClick={handleSummaryClick}>
           <div className={styles.roster_no_and_avatar_container}>
             <RosterNumber position={position} />
-
             <RosterAvatarImage avatar={artist.avatar} />
           </div>
           <div className={styles.roster_identity}>
-            <h4 className={styles.roster_name}>{artist.name}</h4>
+            <h3 className={styles.roster_name}>{artist.name}</h3>
             <span className={styles.roster_styles}>{stylesLabel}</span>
           </div>
         </summary>

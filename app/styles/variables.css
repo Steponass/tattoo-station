@@ -20,7 +20,7 @@
   --color-error:       hsl(356, 80%, 66%);
   --color-secondary:   hsl(201, 43%, 25%);
   --color-text-strong: hsl(143, 3%, 97%);
-  --color-text-weak:   hsl(143, 5%, 80%);
+  --color-text-weak:   hsl(143, 5%, 70%);
   --color-text-weakest: hsl(143, 3%, 40%);
   --color-stroke-strong: hsl(143, 10%, 30%);
   --color-stroke-weak:  hsl(143, 5%, 20%);
@@ -61,7 +61,7 @@
 
 
   /* SHADOWS */
-
+  --shadow-make-icon-more-visible: 0 0 5px hsla(0, 0%, 0%, 0.4);
 
 
   /* TRANSITIONS */

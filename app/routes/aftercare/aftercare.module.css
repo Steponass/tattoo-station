@@ -57,8 +57,10 @@
   aspect-ratio: 1;
   position: relative;
   transition: all 0.5s ease-in;
+  @media (hover: hover) {
   &:hover {
-    transform: rotateY(360deg);
+    transform: rotateY(180deg);
+  }
   }
 }
 

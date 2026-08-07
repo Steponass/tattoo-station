@@ -107,7 +107,7 @@ main {
 }
 
 section {
-  margin-block: var(--space-xl-2xl);
+  /* margin-block: var(--space-xl-2xl); */
 }
 
 button {

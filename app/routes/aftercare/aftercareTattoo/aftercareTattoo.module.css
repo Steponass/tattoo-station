@@ -1,8 +1,8 @@
-h1 {
+#tattoo_aftercare_main h1 {
   font-size: var(--fontsize-h2);
 }
 
-h2 {
+#tattoo_aftercare_main h2 {
   font-size: var(--fontsize-h4);
   break-after: avoid;
   break-before: avoid;

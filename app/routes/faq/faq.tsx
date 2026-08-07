@@ -43,24 +43,25 @@ export default function faq() {
 
   return (
     <main className={styles.faq_main}>
-      <section className={styles.section_faq}>
-        <div className={styles.directions_container}>
+              <div className={styles.directions_container}>
           <div className={styles.directions_wrapper}>
-          <h6>{aftercare_directions}</h6>
           <NavButton buttonText={buttonTextAftercare} to={"/aftercare"} />
           </div>
           <div className={styles.directions_wrapper}>
-          <h6>{piercing_directions}</h6>
-          <NavButton buttonText={buttonTextPiercing} to={"/piercing"} />
+          <NavButton 
+          buttonText={buttonTextPiercing} 
+          to={"/piercing/#piercing_faq"} />
           </div>
+        </div>
+      <section className={styles.section_faq}>
+
+         <div className={styles.accordion_wrapper}>
+          <h2>{designHeading}</h2>
+          <Accordion items={design} />
         </div>
         <div className={styles.accordion_wrapper}>
           <h2>{beforeHeading}</h2>
           <Accordion items={before} />
-        </div>
-        <div className={styles.accordion_wrapper}>
-          <h2>{designHeading}</h2>
-          <Accordion items={design} />
         </div>
         <div className={styles.accordion_wrapper}>
           <h2>{bookingHeading}</h2>

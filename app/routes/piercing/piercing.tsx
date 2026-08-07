@@ -5,6 +5,7 @@ import { data } from "react-router";
 import type { Route } from "./+types/piercing";
 import styles from "./piercing.module.css";
 import Accordion from "~/components/Accordion/Accordion";
+import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 import { Lightbox, LightboxTrigger } from "~/components/Lightbox/Lightbox";
 import type {
   LightboxArtistLink,
@@ -145,8 +146,27 @@ export default function piercing({ loaderData }: Route.ComponentProps) {
     [content.piercingService7, content.piercingPrice7],
   ];
 
-const { items: first_accordion } = useIntlayer("faq-piercing1");
+const { items: first_accordion, aftercareLinkLabel } = useIntlayer("faq-piercing1");
 const { items: second_accordion } = useIntlayer("faq-piercing2");
+
+// The first item's answer ends mid-sentence, pointing readers to the
+// dedicated piercing aftercare page rather than repeating that copy here.
+const first_accordion_items = first_accordion.map((item, index) =>
+  index === 0
+    ? {
+        ...item,
+        answer: (
+          <>
+            {item.answer}
+            <LocalizedLink to="aftercare/aftercarePiercing">
+              {aftercareLinkLabel}
+            </LocalizedLink>
+            .
+          </>
+        ),
+      }
+    : item,
+);
 
   return (
     <main>
@@ -211,8 +231,9 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
           </div>
         </Lightbox>
       </section>
-      <section className={styles.section_piercing_faq}>
-        <Accordion items={first_accordion} />
+      <section className={styles.section_piercing_faq} id="piercing_faq">
+        <h2>{content.faqHeading}</h2>
+        <Accordion items={first_accordion_items} />
         <Accordion items={second_accordion}/>
       </section>
     </main>

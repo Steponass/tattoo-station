@@ -17,6 +17,8 @@
     flex-direction: row;
     align-items: stretch;
     height: auto;
+    gap: var(--space-16px);
+    padding-inline: var(--space-16px);
   }
 }
 
@@ -29,7 +31,7 @@
     flex-direction: row;
     justify-content: center;
     gap: var(--space-12px);
-    width: var(--space-24px);
+    width: var(--space-32px);
     flex-shrink: 0;
     margin-block: 0;
     padding-block: 0;
@@ -73,6 +75,10 @@
   background-color: var(--color-accent);
   will-change: transform;
   z-index: 2;
+  @media (max-width: 768px) {
+    width: var(--space-32px);
+    height: var(--space-32px);
+  }
 }
 
 .process_step_marker {
@@ -87,6 +93,10 @@
   z-index: 1;
   display: grid;
   place-content: center;
+  @media (max-width: 768px) {
+    width: var(--space-32px);
+    height: var(--space-32px);
+  }
 }
 
 .process_steps {
@@ -105,6 +115,8 @@
   min-height: 240px;
   place-content: center;
   opacity: 0.5;
+  padding-inline: var(--space-16px);
+  padding-block: var(--space-16px);
   @media (max-width: 768px) {
     width: 100%;
     min-height: 160px;

@@ -3,6 +3,12 @@ import { t, type Dictionary } from "intlayer";
 const faqPiercing1Content = {
   key: "faq-piercing1",
   content: {
+    // Rendered as an inline link appended to the first item's answer,
+    // pointing to /aftercare/aftercarePiercing — see piercing.tsx.
+    aftercareLinkLabel: t({
+      lt: "čia",
+      en: "here",
+    }),
     items: [
       {
         question: t({
@@ -10,8 +16,8 @@ const faqPiercing1Content = {
           en: "How do I take care of it?",
         }),
         answer: t({
-          lt: "[nuoroda į /aftercare/piercing]",
-          en: "[link to /aftercare/piercing]",
+          lt: "Pilną priežiūros instrukciją rasite ",
+          en: "You'll find the full aftercare instructions ",
         }),
       },
       {

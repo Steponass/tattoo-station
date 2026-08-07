@@ -19,7 +19,6 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-s-m);
-  
 }
 
 .tab_label {
@@ -27,8 +26,10 @@
   font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
   font-size: var(--fontsize-h6);
   padding: var(--space-16px);
+  min-width: 220px;
   background-color: var(--color-bg-raised);
   transition: all 0.2s ease-in-out;
+  text-align: center;
 }
 
 /* ---- Active tab label ---- */
@@ -64,6 +65,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   /* grid-auto-rows: auto; */
-  column-gap: 16px;
-  row-gap: 32px;
+  column-gap: var(--space-xs-s);
+  row-gap: var(--space-xs-s);
+  row-rule: 4px double var(--color-stroke-weak);
+  column-rule: 4px double var(--color-stroke-weak);
 }

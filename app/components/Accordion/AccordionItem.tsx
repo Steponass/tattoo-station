@@ -1,10 +1,10 @@
-import { useRef, type MouseEvent } from "react";
+import { useRef, type MouseEvent, type ReactNode } from "react";
 import { useAccordionAnimation } from "./useAccordionAnimation";
 import styles from "./Accordion.module.css";
 
 type AccordionItemProps = {
   question: string;
-  answer: string;
+  answer: ReactNode;
 };
 
 export default function AccordionItem({

@@ -1,5 +1,4 @@
 .flash_tattoo_gallery {
-  margin-block: 96px;
   width: min(1440px, 96%);
   margin-inline: auto;
   display: grid;

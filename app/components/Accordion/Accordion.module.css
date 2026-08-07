@@ -66,3 +66,7 @@
   padding-inline-end: var(--space-12px);
 }
 
+.accordion_answer a {
+  text-decoration: underline;
+  transition: all 0.2s ease-in-out;
+}

@@ -89,6 +89,8 @@ export default function Process() {
           xPercent: -50,
           yPercent: -50,
           scale: 1,
+          x: 0,
+          y: 0,
           top: isVertical ? 0 : crossAxisCenter,
           left: isVertical ? crossAxisCenter : 0,
         });
@@ -96,10 +98,11 @@ export default function Process() {
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: processContainer,
-            start: "top 10%",
+            start: isVertical ? "top 3%" : "top 10%",
             end: "+=100%",
             scrub: 1,
             pin: true,
+            anticipatePin: 1,
           },
         });
 

@@ -11,13 +11,16 @@
 
 
 .artist_photo {
-  max-height: 512px;
-  aspect-ratio: 0.8;
+  width: min(512px, 100%);
+  height: max(640px, 70vh);
   object-fit: cover;
+  @media (max-width: 520px) {
+    max-height: 400px;
+  }
 }
 
 .artist_text {
-  max-width: 60ch;
+  /* max-width: 60ch; */
   & h1 {
     font-size: var(--fontsize-h3);
   }

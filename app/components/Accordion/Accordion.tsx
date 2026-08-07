@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react'
 import AccordionItem from './AccordionItem'
 import styles from './Accordion.module.css'
 type AccordionProps = {
   items: {
     question: string
-    answer: string
+    answer: ReactNode
   }[]
 }
 
@@ -14,7 +15,7 @@ export default function Accordion({ items }: AccordionProps) {
         <AccordionItem
           key={index}
           question={String(accordionItem.question)}
-          answer={String(accordionItem.answer)}
+          answer={accordionItem.answer}
         />
       ))}
     </div>

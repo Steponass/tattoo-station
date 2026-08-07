@@ -16,6 +16,7 @@ import { flushSync } from "react-dom";
 import type { To } from "react-router";
 import type { LightboxLabels, LightboxPhoto } from "./lightboxPhoto";
 import { useLightboxState } from "./useLightboxState";
+import { useSwipeNavigation } from "./useSwipeNavigation";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 import styles from "./Lightbox.module.css";
@@ -298,6 +299,13 @@ export function Lightbox(props: LightboxProps) {
     [openWithTransition],
   );
 
+  const swipeHandlers = useSwipeNavigation({
+    onPrevious: goToPreviousWithTransition,
+    onNext: goToNextWithTransition,
+    hasPrevious,
+    hasNext,
+  });
+
   /* ------------------ Dialog element imperative sync ------------------ */
 
   // Effect: open the dialog when a photo is selected.
@@ -402,6 +410,7 @@ export function Lightbox(props: LightboxProps) {
             onPrevious={goToPreviousWithTransition}
             onNext={goToNextWithTransition}
             onClose={close}
+            swipeHandlers={swipeHandlers}
           />
         )}
       </dialog>
@@ -430,6 +439,7 @@ interface LightboxContentsProps {
   onPrevious: () => void;
   onNext: () => void;
   onClose: () => void;
+  swipeHandlers: ReturnType<typeof useSwipeNavigation>;
 }
 
 /**
@@ -449,6 +459,7 @@ function LightboxContents(props: LightboxContentsProps) {
     onPrevious,
     onNext,
     onClose,
+    swipeHandlers,
   } = props;
 
   const shouldShowArtistLink =
@@ -471,7 +482,7 @@ function LightboxContents(props: LightboxContentsProps) {
   });
 
   return (
-    <div className={styles.contents}>
+    <div className={styles.contents} {...swipeHandlers}>
       <button
         type="button"
         onClick={onClose}
