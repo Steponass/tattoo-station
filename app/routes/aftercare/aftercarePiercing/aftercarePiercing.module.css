@@ -44,7 +44,7 @@
 }
 
 .aftercare_list li {
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 #no_swimming_icon, #no_hot {
@@ -57,10 +57,6 @@
 #toothbrush, #cotton_swab {
   float: left;
   margin-right: var(--space-12px);
-}
-
-#toothbrush {
-  margin-top: var(--space-32px);
 }
 
 #cotton_swab {

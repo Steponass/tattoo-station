@@ -1,10 +1,9 @@
-import styles from './aftercareTattoo.module.css'
-
 // Intlayer start
 import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/aftercareTattoo";
+import styles from './aftercareTattoo.module.css'
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const { lang } = params;
@@ -50,6 +49,7 @@ export default function aftercareTattoo() {
       <h2 className={styles.aftercare_intro_heading}>{introHeading}</h2>
       <p className={styles.aftercare_intro_para}>{introPara}</p>
 
+<div className={styles.tattoo_aftercare_section_container}>
       <section className={styles.aftercare_section}>
         <h2 className={styles.aftercare_heading}>{section1Heading}</h2>
         <p>{section1Para1}</p>
@@ -136,6 +136,7 @@ export default function aftercareTattoo() {
         <p>{section13Para1}</p>
         <p>{section13Para2}</p>
       </section>
+      </div>
     </main>
   )
 }

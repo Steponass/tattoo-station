@@ -30,6 +30,9 @@ interface ArtistGalleryProps {
    * full-screen on an artist's page.
    */
   artist: LightboxArtistLink
+  worksHeading: string
+  tattoosTabLabel: string
+  flashTabLabel: string
 }
 
 interface PortfolioTileProps {
@@ -47,7 +50,7 @@ function PortfolioTile({ photo }: PortfolioTileProps) {
   })
 
   return (
-    <LightboxTrigger photoId={photo.id} className={styles.artist_image_wrapper}>
+    <LightboxTrigger photoId={photo.id} className='gallery-image-wrapper'>
       <img
         src={src}
         srcSet={srcSet}
@@ -55,7 +58,7 @@ function PortfolioTile({ photo }: PortfolioTileProps) {
         alt=''
         width={photo.width}
         height={photo.height}
-        className={styles.artist_image}
+        className='gallery-image'
       />
     </LightboxTrigger>
   )
@@ -80,7 +83,15 @@ function toLightboxPhoto(
   }
 }
 
-export default function ArtistGallery({ tattooPhotos, flashPhotos, labels, artist }: ArtistGalleryProps) {
+export default function ArtistGallery({
+  tattooPhotos,
+  flashPhotos,
+  labels,
+  artist,
+  worksHeading,
+  tattoosTabLabel,
+  flashTabLabel,
+}: ArtistGalleryProps) {
   const tattooLightboxPhotos = useMemo(
     () => tattooPhotos.map((photo) => toLightboxPhoto(photo, artist)),
     [tattooPhotos, artist],
@@ -92,7 +103,7 @@ export default function ArtistGallery({ tattooPhotos, flashPhotos, labels, artis
 
   return (
     <section className={styles.artist_gallery_section}>
-      <h2>Works</h2>
+      <h2>{worksHeading}</h2>
       <div className={styles.tabs}>
         <input
           type='radio'
@@ -101,14 +112,14 @@ export default function ArtistGallery({ tattooPhotos, flashPhotos, labels, artis
           defaultChecked
           className={styles.tab_input}
         />
-        <label htmlFor={styles.tattoos_tab} className={styles.tab_label}>Tatuiruotės</label>
+        <label htmlFor={styles.tattoos_tab} className={styles.tab_label}>{tattoosTabLabel}</label>
         <input
           type='radio'
           name='tattoos_tab'
           id={styles.flashdesigns_tab}
           className={styles.tab_input}
         />
-        <label htmlFor={styles.flashdesigns_tab} className={styles.tab_label}>Laisvi eskizai</label>
+        <label htmlFor={styles.flashdesigns_tab} className={styles.tab_label}>{flashTabLabel}</label>
 
         <div className={styles.tab_panels}>
           {/* The visitor is already on this artist's page, so the lightbox's

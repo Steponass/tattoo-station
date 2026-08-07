@@ -1,5 +1,10 @@
+.artist_gallery_section {
+    margin-block: var(--space-xl-2xl);
+}
+
 .artist_gallery_section h2 {
   font-size: var(--fontsize-h3);
+  margin-block-end: 0.5em;
 }
 
 .tab_input {
@@ -13,17 +18,23 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-m-l);
+  gap: var(--space-s-m);
+  
 }
 
 .tab_label {
   cursor: pointer;
+  font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
+  font-size: var(--fontsize-h6);
   padding: var(--space-16px);
+  background-color: var(--color-bg-raised);
+  transition: all 0.2s ease-in-out;
 }
 
 /* ---- Active tab label ---- */
 .tab_input:checked + .tab_label {
-  color: var(--color-accent-3);
+  /* color: var(--color-text); */
+  background-color: var(--color-accent);
 }
 
 .tab_panels {
@@ -35,7 +46,6 @@
 .tab_panel {
   grid-area: 1 / 1;
   width: 100%;
-  padding: var(--space-24px);
   margin-inline: auto;
 /* inactive by default */
   visibility: hidden;
@@ -56,45 +66,4 @@
   /* grid-auto-rows: auto; */
   column-gap: 16px;
   row-gap: 32px;
-}
-
-.artist_image_wrapper {
-  position: relative;
-  max-height: min-content;
-  aspect-ratio: 0.8;
-  background-color: var(--color-accent);
-  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
-  transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --chamfer: 16px;
-
-  @media (hover: hover) {
-    &:hover {
-      clip-path: polygon(
-        0 0,
-        calc(100% - var(--chamfer)) 0,
-        100% var(--chamfer),
-        100% 100%,
-        0 100%
-      );
-
-      .artist_image {
-        clip-path: polygon(
-          0 0,
-          calc(100% - var(--chamfer) - 6px) 0,
-          100% calc(var(--chamfer) + 6px),
-          100% 100%,
-          0 100%
-        );
-      }
-    }
-  }
-}
-
-.artist_image {
-  object-fit: cover;
-  width: 100%;
-  max-height: min-content;
-  aspect-ratio: 0.8;
-  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
-  transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }

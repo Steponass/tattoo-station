@@ -7,11 +7,6 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-m-l);
   align-items: start;
-  /* background:   linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
-  url("/Guilloche_1_grayscale.avif") center center/cover no-repeat; */
-  background:   linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
-  url("/Bookingform_bg.webp") center center/cover no-repeat;
-
   @media (max-width: 700px) {
     grid-template-columns: repeat(2, 1fr);
   };

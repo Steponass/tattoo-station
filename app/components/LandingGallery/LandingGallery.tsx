@@ -96,18 +96,17 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
   return (
     <LightboxTrigger
       photoId={photo.photoId}
-      className={styles.landing_gallery_tile}
+      className={`${styles.landing_gallery_tile} gallery-image-wrapper`}
     >
-      <div className={styles.image_wrapper}>
-        <img
-          src={src}
-          srcSet={srcSet}
-          sizes={sizes}
-          alt={`Work by ${photo.artistDisplayName}`}
-          width={photo.width}
-          height={photo.height}
-        />
-      </div>
+      <img
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        alt={`Work by ${photo.artistDisplayName}`}
+        width={photo.width}
+        height={photo.height}
+        className='gallery-image'
+      />
     </LightboxTrigger>
   );
 }

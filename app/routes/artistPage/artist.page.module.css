@@ -1,30 +1,39 @@
-.artist_section {
-  width: min(1440px, 96%);
-  margin-block: 24px;
-  margin-inline: auto;
+.artist_details {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  gap: var(--space-m-l);
+  margin-inline: 0 auto;
+  width: min(1024px, 100%);
+  @media (max-width: 860px) {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
-.artist_details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: auto;
-  justify-content: center;
-}
 
 .artist_photo {
-  max-width: 500px;
-  /* aspect-ratio: 0.7; */
-  height: auto;
+  max-height: 512px;
+  aspect-ratio: 0.8;
+  object-fit: cover;
 }
 
 .artist_text {
-  margin-top: 32px;
+  max-width: 60ch;
   & h1 {
-    font-size: var(--fontsize-h2);
+    font-size: var(--fontsize-h3);
   }
+}
+
+.style_label {
+  font-size: var(--fontsize-h6);
+  color: var(--color-text-weak);
+  margin-block-end: 1em;
+}
+
+.insta_and_book_container {
+  display: flex;
+  gap: var(--space-24px);
+  align-items: center;
+  margin-block-start: var(--space-m-l);
 }
 
 .bottom_nav {

@@ -4,4 +4,18 @@ h1 {
 
 h2 {
   font-size: var(--fontsize-h4);
+  break-after: avoid;
+  break-before: avoid;
+  margin-bottom: 0.33em;
+}
+
+.tattoo_aftercare_section_container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  column-gap: var(--space-l-xl);
+  
+}
+
+.aftercare_section {
+  margin-block: var(--space-m-l);
 }

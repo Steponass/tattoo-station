@@ -12,17 +12,9 @@ scrollbar-color: var(--color-secondary) var(--color-bg-raised);
 }
 
 
-.image_wrapper {
+.landing_gallery_tile {
   min-width: 280px;
-  aspect-ratio: 0.8;
   @media (max-width: 768px) {
     min-width: 100px;
   }
-}
-
-.image_wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }

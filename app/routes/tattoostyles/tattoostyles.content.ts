@@ -11,18 +11,6 @@ const tattoostylesContent = {
       lt: "Susipažinkite su tatuiruočių stiliais, kuriuos atliekame studijoje",
       en: "Explore the tattoo styles we work in at the studio",
     }),
-    neoTraditionalHeading: t({
-      lt: "Neo-traditional",
-      en: "Neo-traditional",
-    }),
-    neoTraditionalDescription: t({
-      lt: "Šis stilius derina ryškias linijas su modernia iliustracija, kurdamas išraiškingus ir sodrius dizainus.",
-      en: "This style pairs bold linework with modern illustration, creating expressive and richly saturated designs.",
-    }),
-    neoTraditionalImageAlt: t({
-      lt: "Neo-traditional stiliaus kregždės iliustracija",
-      en: "Neo-traditional style swallow illustration",
-    }),
     styles: [
       {
         heading: t({
@@ -44,6 +32,16 @@ const tattoostylesContent = {
           en: "A timeless style with strong lines and limited colors. Built to last and stay clear over time.",
         }),
       },
+      { 
+        heading: t({
+          lt: "Neo-traditional",
+          en: "Neo-traditional",
+        }),
+        description: t({
+          lt: "Šis stilius derina ryškias linijas su modernia iliustracija, kurdamas išraiškingus ir sodrius dizainus.",
+          en: "This style pairs bold linework with modern illustration, creating expressive and richly saturated designs.",
+    })
+  },
       {
         heading: t({
           lt: "Fine Line",

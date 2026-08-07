@@ -43,33 +43,17 @@ export default function tattoostyles() {
   const lightboxLabels = useLightboxLabels();
 
   return (
-    <main>
-      <article className={styles.tattoostyle_article}>
-        <h2 className="text-3xl">{content.neoTraditionalHeading}</h2>
-        <div className={styles.description_and_gallery_container}>
-          <div className={styles.tattoostyle_description}>
-            <img
-              src="/illustrations/Neo_traditional_swallow.webp"
-              alt={String(content.neoTraditionalImageAlt)}
-            />
-            <p>{content.neoTraditionalDescription}</p>
-          </div>
-          {/* No photos wired yet — the gallery renders its placeholder
-              tiles until a loader supplies style-tagged photos. */}
-          <StyleGallery labels={lightboxLabels} />
-        </div>
-      </article>
+    <main id={styles.tattoostyles_main}>
       {content.styles.map((style, index) => (
         <article key={index} className={styles.tattoostyle_article}>
-          <h2 className="text-3xl">{style.heading}</h2>
-          <div className={styles.description_and_gallery_container}>
-            <div className={styles.tattoostyle_description}>
+            <div className={styles.tattoostyle_heading_and_description}>
+              <h2>{style.heading}</h2>
               <p>{style.description}</p>
             </div>
+
             {/* No photos wired yet — the gallery renders its placeholder
                 tiles until a loader supplies style-tagged photos. */}
             <StyleGallery labels={lightboxLabels} />
-          </div>
         </article>
       ))}
     </main>

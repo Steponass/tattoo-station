@@ -48,14 +48,14 @@ export default function StyleGallery(props: StyleGalleryProps) {
           <LightboxTrigger
             key={photo.id}
             photoId={photo.id}
-            className={styles.style_gallery_tile}
+            className={`${styles.style_gallery_tile} gallery-image-wrapper`}
           >
             <img
               src={photo.src}
               alt={photo.alt ?? ''}
               width={photo.width}
               height={photo.height}
-              className={styles.style_gallery_image}
+              className='gallery-image'
               loading='lazy'
             />
           </LightboxTrigger>

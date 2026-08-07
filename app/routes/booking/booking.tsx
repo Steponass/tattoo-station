@@ -20,8 +20,8 @@ import { resolveArtistPreselection } from "~/lib/booking/resolveArtistPreselecti
 import { sendBookingNotifications } from "~/lib/booking/server/notifications.server";
 import { validateBookingSubmission } from "~/lib/booking/validateBookingSubmission";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-
 import type { Route } from "./+types/booking";
+import styles from './booking.module.css'
 
 const BookingConfirmation = lazy(() =>
   import("~/components/booking/BookingConfirmation").then((module) => ({
@@ -218,7 +218,7 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
     submissionResult?.ok === false ? submissionResult.fieldErrors : {};
 
   return (
-    <main>
+    <main id={styles.booking_main}>
       {/*
         The form stays mounted underneath the confirmation, so the stamp lands
         on the request it confirms rather than on an empty page. It is inert

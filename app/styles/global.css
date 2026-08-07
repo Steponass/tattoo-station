@@ -4,22 +4,29 @@
    clip-path is the workaround. The base class does the clipping,
    the modifiers only set the size — use both: class="chamfer chamfer-s" */
 .chamfer {
-  --c: 15px; /* chamfer size */
-  clip-path: polygon(
-    var(--c) 0,
-    calc(100% - var(--c)) 0,
-    100% var(--c),
-    100% calc(100% - var(--c)),
-    calc(100% - var(--c)) 100%,
-    var(--c) 100%,
-    0 calc(100% - var(--c)),
-    0 var(--c)
-  );
+  --c: 15px;
+  /* chamfer size */
+  clip-path: polygon(var(--c) 0,
+      calc(100% - var(--c)) 0,
+      100% var(--c),
+      100% calc(100% - var(--c)),
+      calc(100% - var(--c)) 100%,
+      var(--c) 100%,
+      0 calc(100% - var(--c)),
+      0 var(--c));
 }
 
-.chamfer-l  { --c: 15px; }
-.chamfer-s  { --c: 8px; }
-.chamfer-xs { --c: 4px; }
+.chamfer-l {
+  --c: 15px;
+}
+
+.chamfer-s {
+  --c: 8px;
+}
+
+.chamfer-xs {
+  --c: 4px;
+}
 
 /* Side hole punches, "ticket stub" style. Composes with .chamfer.
    Each layer fills the box and is opaque except for its own circle;
@@ -27,17 +34,62 @@
    NOTE: `mask` is a shorthand that resets mask-composite, so the
    composite declaration has to stay after it. */
 .punch {
-  --p: 6px; /* punch radius */
+  --p: 6px;
+  /* punch radius */
   mask:
-    radial-gradient(circle var(--p) at 0    50%, #0000 98%, #000),
+    radial-gradient(circle var(--p) at 0 50%, #0000 98%, #000),
     radial-gradient(circle var(--p) at 100% 50%, #0000 98%, #000);
   mask-composite: intersect;
+}
+
+/* Gallery image tile. Apply gallery-image-wrapper to the tile's trigger
+   element and gallery-image to the <img> inside it. On hover, both
+   corners chamfer in tandem — the wrapper clips first, the image clips a
+   bit further in, so the accent background shows through as a mitred
+   border. Used by LandingGallery, StyleGallery, ArtistGallery, and
+   FlashTattooGallery. */
+.gallery-image-wrapper {
+  position: relative;
+  max-height: min-content;
+  aspect-ratio: 0.8;
+  background-color: var(--color-accent);
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --chamfer: 16px;
+
+  @media (hover: hover) {
+    &:hover {
+      clip-path: polygon(0 0,
+          calc(100% - var(--chamfer)) 0,
+          100% var(--chamfer),
+          100% 100%,
+          0 100%);
+
+      .gallery-image {
+        clip-path: polygon(0 0,
+            calc(100% - var(--chamfer) - 6px) 0,
+            100% calc(var(--chamfer) + 6px),
+            100% 100%,
+            0 100%);
+      }
+    }
+  }
+}
+
+.gallery-image {
+  object-fit: cover;
+  width: 100%;
+  max-height: min-content;
+  aspect-ratio: 0.8;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
 body {
   background-color: var(--color-bg-base);
   overflow-x: hidden;
+
   &::selection {
     background-color: var(--color-secondary);
   }
@@ -48,6 +100,7 @@ main {
   width: min(1440px, 92%);
   margin-inline: auto;
   container-type: inline-size;
+
   @media (width < 780px) {
     margin-block-start: 0;
   }
@@ -63,6 +116,34 @@ button {
   letter-spacing: 0.4px;
 }
 
+.button_a {
+  background-color: var(--color-accent);
+}
+
+.button_b {
+  background-color: var(--color-secondary);
+}
+
+.button_a, .button_b {
+  padding: var(--space-12px) var(--space-24px);
+  transition: all 0.24s ease-out;
+  transform-origin: center center;
+  @media (hover: hover) {
+    &:hover {
+    transform: perspective(300px) rotateX(20deg);
+    --p: 6.5px;
+    }
+  }
+}
+
+/* Punch hole widening */
+@property --p {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 6px;
+}
+
+
 :where(a):focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
@@ -72,6 +153,7 @@ button {
   from {
     background-position: 0% 0;
   }
+
   to {
     background-position: 100% 0;
   }

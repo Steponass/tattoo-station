@@ -88,7 +88,7 @@ function FlashTile({ photo }: FlashTileProps) {
   return (
     <LightboxTrigger
       photoId={photo.photoId}
-      className={styles.artist_image_wrapper}
+      className='gallery-image-wrapper'
     >
       <img
         src={src}
@@ -97,7 +97,7 @@ function FlashTile({ photo }: FlashTileProps) {
         alt={`Flash design by ${photo.artistDisplayName}`}
         width={photo.width}
         height={photo.height}
-        className={styles.artist_image}
+        className='gallery-image'
         loading="lazy"
       />
     </LightboxTrigger>

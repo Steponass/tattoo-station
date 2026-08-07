@@ -180,14 +180,14 @@ const { items: second_accordion } = useIntlayer("faq-piercing2");
             <h2>{content.artistName}</h2>
           </div>
         <article className={styles.artist_text}>
-          <img className={styles.piercing_jewelry_1} src="/Piercing_jewelry_1.webp">
+          <img className={styles.piercing_jewelry_1} src="/moon_cropped.webp">
             </img>
           {bioParagraphs.map((paragraph, index) => (
             <>
               {index === bioParagraphs.length - 1 && (
                 <img
                   className={styles.piercing_jewelry_2}
-                  src="/Piercing_jewelry_2.webp"
+                  src="/heart_cropped.webp"
                 />
               )}
               <p key={index} className={styles.artist_bio_paragraph}>

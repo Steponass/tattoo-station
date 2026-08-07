@@ -21,7 +21,6 @@
   font-display: swap;
   src: url('/app/fonts/AtkinsonHyperlegibleNextVF-Variable.woff2') format('woff2-variations');
   /* font's em-box is weird. Might decide to change completely */
-  ascent-override: 90%;
 }
 
 @font-face {
@@ -75,5 +74,5 @@ button, label, legend, input, textarea, address) {
 }
 
 :where(p, li) {
-  line-height: 1.5;
+  line-height: 1.4;
 }
