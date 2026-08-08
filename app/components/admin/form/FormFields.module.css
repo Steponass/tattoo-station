@@ -23,7 +23,7 @@
 
 .error {
   font-size: 0.8125rem;
-  color: #b01e28;
+  color: var(--color-error);
   margin: 0;
 }
 
@@ -62,16 +62,16 @@
 
 .textAreaControl {
   padding: 0.5rem 0.75rem;
-  border: 1px solid currentColor;
-  border-radius: 0;
+  border: 1px solid var(--color-stroke-strong);
+  border-radius: 3px;
   background: transparent;
-  font: inherit;
+  font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
   resize: vertical;
-  min-height: 8rem;
+  min-height: 8lh;
 }
 
 .textAreaControl:focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -99,7 +99,6 @@
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   opacity: 0.7;
   margin: 0;
 }
@@ -107,5 +106,6 @@
 .readOnlyValue {
   font-size: 1rem;
   margin: 0;
-  font-variant-numeric: tabular-nums;
+  color: var(--color-text-strong);
+  border-radius: 2px;
 }

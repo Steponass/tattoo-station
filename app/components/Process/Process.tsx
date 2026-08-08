@@ -98,7 +98,7 @@ export default function Process() {
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: processContainer,
-            start: isVertical ? "top 3%" : "top 10%",
+            start: isVertical ? "top 2%" : "top 10%",
             end: "+=100%",
             scrub: 1,
             pin: true,
@@ -148,7 +148,12 @@ export default function Process() {
           if (stepMarker) {
             timeline.to(
               stepMarker,
-              { scale: 1.25, duration: 0.15, ease: "power3.in" },
+              {
+                scale: 1.25,
+                backgroundColor: "var(--color-secondary)",
+                duration: 0.15,
+                ease: "power3.in",
+              },
               Math.max(0, progress - 0.09),
             );
           }
