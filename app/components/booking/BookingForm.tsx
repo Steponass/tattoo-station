@@ -854,7 +854,8 @@ export function BookingForm({
           data-field-checkbox
           data-invalid={fieldErrors.marketingConsent !== undefined || undefined}
         >
-          <input
+          {/* TODO: Newsletter subscription. Disabled until setup */}
+          {/* <input
             id="marketingConsent"
             type="checkbox"
             name="marketingConsent"
@@ -871,7 +872,7 @@ export function BookingForm({
           <FieldError
             fieldName="marketingConsent"
             message={fieldErrors.marketingConsent}
-          />
+          /> */}
         </div>
 
         <div

@@ -9,6 +9,7 @@ import {
   verifyBookingPhotos
 } from "~/lib/booking/server/bookingPhotos.server";
 import { insertBooking } from "~/lib/booking/server/bookingRepository.server";
+import { checkSpamGuards } from "~/lib/booking/server/checkSpamGuards.server";
 import type { BookingAttribution } from "~/lib/booking/server/bookingRepository.server";
 import type {
   BookingFieldErrorCodes,
@@ -129,26 +130,23 @@ export async function action({
   const { env, ctx } = getCloudflareBindings(context);
   const formData = await request.formData();
 
-    // TEMPORARY: bypass for direct action testing
-  const spamGuardOutcome = { passed: true } as const;
-  
   // Cheapest rejections first: two field reads and one outbound request, all
   // before any parsing, database access, or object storage lookups.
-  // const spamGuardOutcome = await checkSpamGuards({
-  //   formData,
-  //   turnstileSecretKey: env.TURNSTILE_SECRET_KEY,
-  //   remoteIpAddress: request.headers.get("cf-connecting-ip"),
-  // });
+  const spamGuardOutcome = await checkSpamGuards({
+    formData,
+    turnstileSecretKey: env.TURNSTILE_SECRET_KEY,
+    remoteIpAddress: request.headers.get("cf-connecting-ip"),
+  });
 
-  // if (!spamGuardOutcome.passed) {
-  //   console.warn("[booking] rejected by spam guard:", spamGuardOutcome.reason);
+  if (!spamGuardOutcome.passed) {
+    console.warn("[booking] rejected by spam guard:", spamGuardOutcome.reason);
 
-  //   if (spamGuardOutcome.reason === "honeypot") {
-  //     return { ok: true, reference: generateBookingReference() };
-  //   }
+    if (spamGuardOutcome.reason === "honeypot") {
+      return { ok: true, reference: generateBookingReference() };
+    }
 
-  //   return { ok: false, fieldErrors: { form: "invalid_option" } };
-  // }
+    return { ok: false, fieldErrors: { form: "invalid_option" } };
+  }
 
   const validation = validateBookingSubmission(formData);
 

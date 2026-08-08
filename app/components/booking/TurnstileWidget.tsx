@@ -1,5 +1,3 @@
-// app/components/booking/TurnstileWidget.tsx
-
 import { Turnstile } from "@marsidev/react-turnstile";
 
 /**
