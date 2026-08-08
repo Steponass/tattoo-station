@@ -11,14 +11,6 @@ const aftercaretattooContent = {
       lt: "Sužinokite, kaip tinkamai prižiūrėti šviežią tatuiruotę – valymą, kremavimą, apsaugą nuo saulės ir kas yra normalu gyjant.",
       en: "Learn how to properly care for a fresh tattoo — cleaning, creaming, sun protection, and what's normal during healing.",
     }),
-    pageHeading: t({
-      lt: "Tattoo Aftercare",
-      en: "Tattoo Aftercare",
-    }),
-    introHeading: t({
-      lt: "Tatuiruotės priežiūra po seanso",
-      en: "Caring for your tattoo after the session",
-    }),
     introPara: t({
       lt: "Tatuiruotė po seanso yra šviežiai pažeista oda, todėl pirmomis savaitėmis jai reikia švaros, ramybės ir tinkamos priežiūros. Geras sugijimas priklauso ne tik nuo meistro darbo, bet ir nuo to, kaip tatuiruotę prižiūrėsi namuose.",
       en: "A fresh tattoo is essentially a controlled skin injury, so in the first weeks it needs cleanliness, calm, and proper care. Good healing depends not only on the artist’s work, but also on how you take care of your tattoo at home.",
@@ -217,8 +209,8 @@ const aftercaretattooContent = {
     }),
 
     section13Heading: t({
-      lt: "Ir svarbiausia",
-      en: "And most importantly",
+      lt: "… ir svarbiausia",
+      en: "… and most importantly",
     }),
     section13Para1: t({
       lt: "Kiekviena oda gyja šiek tiek kitaip. Neperkrauk tatuiruotės įvairiais produktais, nekrapštyk jos ir nebandyk pagreitinti gijimo.",

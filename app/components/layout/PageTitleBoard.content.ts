@@ -19,6 +19,14 @@ const pageTitleBoardContent = {
       lt: "Priežiūra",
       en: "Aftercare",
     }),
+    aftercareTattoo: t({
+      lt: "Tattoo priežiūra",
+      en: "Tattoo aftercare",
+    }),
+    aftercarePiercing: t({
+      lt: "Auskarų priežiūra",
+      en: "Piercing aftercare",
+    }),
     faq: t({
       lt: "DUK",
       en: "FAQ",

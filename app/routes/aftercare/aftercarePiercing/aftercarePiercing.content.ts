@@ -11,10 +11,6 @@ const aftercarePiercingContent = {
       lt: "Kaip prižiūrėti šviežiai pradurtą auskarą ir burnos ertmės vėrimus.",
       en: "How to care for a fresh piercing and oral piercings.",
     }),
-    heading1: t({
-      lt: "Priežiūra",
-      en: "Aftercare",
-    }),
     aftercare1: t({
       lt: "Šviežiai pravertą auskarą reikia 2 kartus į dieną valyti su Oktisept tirpalu arba specialiu auskarams skirtu druskos tirpalu (Neilmed arba Easy Piercing). Tirpalas užpurškiamas ant vienkartinio vatos tamponėlio (arba ausų krapštuko) ir pravaloma auskaro įvėrimo vieta bei pats auskaras. Jei įvertas ilgesnis auskaras, pirma pastumiam jį į vieną pusę ir nuvalom, tada pastumiam į kitą ir irgi kruopščiai nuvalom. Labai svarbu kruopščiai nuplauti pridžiūvusias išskyras (tai yra iš žaizdos ištekėjusi limfa, kurioje gali daugintis mikroorganizmai).",
       en: "A fresh piercing must be cleaned twice a day with Octisept solution or a dedicated piercing saline solution (Neilmed or Easy Piercing). Spray the solution onto a disposable cotton pad or cotton bud and clean both the piercing site and the jewellery itself. If longer jewellery has been fitted, first slide it to one side and clean, then slide it to the other side and clean thoroughly again. It is very important to thoroughly wash away any dried discharge — this is lymph that has drained from the wound, and microorganisms can multiply in it.",

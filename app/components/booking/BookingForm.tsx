@@ -901,7 +901,7 @@ export function BookingForm({
         </div>
       </section>
 
-      {/* <TurnstileWidget siteKey={turnstileSiteKey} className={styles.full_width} /> */}
+      <TurnstileWidget siteKey={turnstileSiteKey} className={styles.full_width} />
 
       <div className={styles.full_width}>
         <SubmitButton

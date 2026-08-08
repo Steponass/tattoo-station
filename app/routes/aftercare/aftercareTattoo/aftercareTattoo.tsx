@@ -25,6 +25,14 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 // Intlayer end
 
+export const handle = {
+  titleBoard: {
+    show: true,
+    labelKey: "aftercareTattoo",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+  },
+};
+
 export default function aftercareTattoo() {
   const {
     pageHeading, introHeading, introPara,
@@ -45,8 +53,6 @@ export default function aftercareTattoo() {
 
   return (
     <main id={styles.tattoo_aftercare_main}>
-      <h1 className={styles.aftercare_page_heading}>{pageHeading}</h1>
-      <h2 className={styles.aftercare_intro_heading}>{introHeading}</h2>
       <p className={styles.aftercare_intro_para}>{introPara}</p>
 
 <div className={styles.tattoo_aftercare_section_container}>

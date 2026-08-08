@@ -1,15 +1,28 @@
-h2 {
-  font-size: var(--fontsize-h4);
-}
-
-h3 {
-  font-size: var(--fontsize-h5)
-}
-
-article {
-  columns: 2;
+.privacy_section {
+    columns: 2;
   column-gap: var(--space-m-l);
   @media (max-width: 768px) {
     columns: 1;
   }
+}
+
+.privacy_section span {
+  font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
+  color: var(--color-text-weak);
+  font-size: var(--fontsize-body);
+}
+
+.privacy_article h2 {
+  margin-top: var(--space-s-m);
+  font-size: var(--fontsize-h4);
+  margin-block-end: 0.25em;
+}
+
+.privacy_article h3 {
+  margin-block-start: var(--space-m-l);
+  font-size: var(--fontsize-h5)
+}
+
+.privacy_article ul {
+  list-style-type: square;
 }

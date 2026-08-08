@@ -8,12 +8,6 @@
   }
 }
 
-.aftercare_heading {
-  text-align: center;
-  font-size: var(--fontsize-h3);
-  margin-bottom: 0.5em;
-}
-
 .aftercare_list {
   list-style: decimal;
   list-style-position: inside;

@@ -39,18 +39,18 @@ export default function privacypolicy() {
 
   return (
     <main>
-      <section>
-        <p>
+      <section className={styles.privacy_section}>
+        <span>
           {content.lastUpdatedLabel}: {content.lastUpdated}
-        </p>
+        </span>
         <p>{content.intro}</p>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.controllerHeading}</h2>
           <p>{content.controllerBody}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.dataHeading}</h2>
           <h3>{content.bookingDataLabel}</h3>
           <ul>
@@ -66,7 +66,7 @@ export default function privacypolicy() {
           </ul>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.purposeHeading}</h2>
           <p>{content.purposeIntro}</p>
           <ul>
@@ -76,13 +76,13 @@ export default function privacypolicy() {
           </ul>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.retentionHeading}</h2>
           <p>{content.retentionBookingBody}</p>
           <p>{content.retentionOtherBody}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.sharingHeading}</h2>
           <p>{content.sharingIntro}</p>
           <ul>
@@ -93,12 +93,12 @@ export default function privacypolicy() {
           <p>{content.sharingOutro}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.cookiesHeading}</h2>
           <p>{content.cookiesBody}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.rightsHeading}</h2>
           <p>{content.rightsIntro}</p>
           <ul>
@@ -109,22 +109,22 @@ export default function privacypolicy() {
           <p>{content.rightsOutro}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.minorsHeading}</h2>
           <p>{content.minorsBody}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.securityHeading}</h2>
           <p>{content.securityBody}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.changesHeading}</h2>
           <p>{content.changesBody}</p>
         </article>
 
-        <article>
+        <article className={styles.privacy_article}>
           <h2>{content.contactHeading}</h2>
           <address>{content.contactBody}</address>
         </article>

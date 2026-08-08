@@ -26,9 +26,16 @@ export const meta: Route.MetaFunction = ({ params }) => {
 };
 // Intlayer end
 
+export const handle = {
+  titleBoard: {
+    show: true,
+    labelKey: "aftercarePiercing",
+    timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 10 },
+  },
+};
+
 export default function aftercarePiercing() {
   const {
-    heading1,
     heading2,
     aftercare1,
     aftercare2,
@@ -45,7 +52,6 @@ export default function aftercarePiercing() {
   return (
     <main id={styles.piercing_aftercare_main}>
       <div className={styles.aftercare_list_container}>
-      <h2 className={styles.aftercare_heading}>{heading1}</h2>
       <ol className={styles.aftercare_list}>
         <li>
           <svg
