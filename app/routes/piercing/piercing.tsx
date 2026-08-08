@@ -210,7 +210,7 @@ const first_accordion_items = first_accordion.map((item, index) =>
                   src="/heart_cropped.webp"
                 />
               )}
-              <p key={index} className={styles.artist_bio_paragraph}>
+              <p key={index}>
                 {paragraph}
               </p>
             </>

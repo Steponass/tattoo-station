@@ -175,7 +175,7 @@ export default function ArtistProfileRoute({
           <ArtistAvatar avatar={avatar} />
           <div className={styles.artist_text}>
             <h1>{artist.displayName}</h1>
-            {stylesLabel.length > 0 ? <p className={styles.style_label}>{stylesLabel}</p> : null}
+            {stylesLabel.length > 0 ? <span className={styles.style_label}>{stylesLabel}</span> : null}
             <p>{artist.bio}</p>
             <div className={styles.insta_and_book_container}>
               {artist.instagramHandle ? (

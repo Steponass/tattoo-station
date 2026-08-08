@@ -1,7 +1,7 @@
 .artist_details {
   display: flex;
   gap: var(--space-m-l);
-  margin-inline: 0 auto;
+  margin-inline: auto;
   width: min(1024px, 100%);
   @media (max-width: 860px) {
     flex-direction: column;
@@ -27,9 +27,25 @@
 }
 
 .style_label {
-  font-size: var(--fontsize-h6);
+  /* need block for a span */
+  display: block; 
+  font-size: var(--fontsize-body);
   color: var(--color-text-weak);
   margin-block-end: 1em;
+  font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
+}
+
+.artist_text p::first-letter {
+  float: left;
+  font-size: var(--fontsize-h2);
+  line-height: 1;
+  margin-block-end: -16px;
+  margin-inline: 4px;
+  /* padding-inline: 0.3em; */
+  color: var(--color-accent);
+  @media (max-width: 768px) {
+    font-size: var(--fontsize-h1);
+  }
 }
 
 .insta_and_book_container {

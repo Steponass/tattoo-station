@@ -7,6 +7,8 @@
   display: flex;
   width: 100dvw;
   overflow-x: scroll;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
 scrollbar-width: thin;
 scrollbar-color: var(--color-secondary) var(--color-bg-raised);
 }

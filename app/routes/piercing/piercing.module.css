@@ -29,12 +29,18 @@
 }
 
 .artist_text {
+  padding-inline: var(--space-12px);
   margin-block: var(--space-m-l);
   grid-area: text;
   column-width: 40ch;
   min-width: 0;
   column-gap: var(--space-l-xl);
   column-fill: balance;
+}
+
+/* Breaking global setting to keep the shape-outside img where I want it */
+.artist_text:last-child {
+  text-indent: 1em;
 }
 
 .piercing_jewelry_1 {
@@ -123,17 +129,6 @@
   font-size: var(--fontsize-h3);
 }
 
-.artist_bio_paragraph {
-  text-indent: 1.5em;
-  break-inside: avoid;
-  orphans: 3;
-  widows: 3;
-}
-
-.artist_bio_paragraph:not(:last-child) {
-  margin-block-end: var(--space-3xs-2xs);
-}
-
 .section_piercing_gallery h2{
   margin-block-end: var(--space-xs-s);
 }
@@ -144,6 +139,8 @@
   /* grid-auto-rows: auto; */
   column-gap: var(--space-12px);
   row-gap: var(--space-12px);
+    row-rule: 4px double var(--color-stroke-weak);
+  column-rule: 4px double var(--color-stroke-weak);
 }
 
 .artist_image_wrapper {

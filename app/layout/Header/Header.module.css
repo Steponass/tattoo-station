@@ -296,8 +296,12 @@
       transform: scaleX(12);
     }
   /* The wrapper's diagonal clip-path is sized to its own 100px box, so
-     bars growing past it would otherwise be cut off mid-animation. */
-  .header_mobile.open .burger_wrapper {
+     bars growing past it would otherwise be cut off mid-animation.
+     .burger_group carries the same kind of diagonal clip (for its idle
+     shape) and must be released too, or it cuts off the bottom of the
+     growing bars even after the wrapper's own clip is gone. */
+  .header_mobile.open .burger_wrapper,
+  .header_mobile.open .burger_group {
     clip-path: none;
   }
 

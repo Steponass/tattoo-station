@@ -109,7 +109,7 @@
 
 .process_steps {
   display: flex;
-  padding-inline: var(--space-24px);
+  padding-inline: var(--space-8px);
   gap: var(--space-16px);
   overflow-x: hidden;
   align-items: center;
@@ -123,11 +123,11 @@
   min-height: 240px;
   place-content: center;
   opacity: 0.5;
-  padding-inline: var(--space-16px);
-  padding-block: var(--space-16px);
+  padding-inline: var(--space-2xs-xs);
+  padding-block: var(--space-2xs-xs);
   @media (max-width: 768px) {
     width: 100%;
-    min-height: 160px;
+    min-height: 120px;
   }
   & p {
     text-align: center;

@@ -158,3 +158,10 @@ button {
     background-position: 100% 0;
   }
 }
+
+/* Applying to both admin and booking form so keeping it global */
+textarea {
+  field-sizing: content;
+  resize: none;
+  max-height: 10lh;
+}

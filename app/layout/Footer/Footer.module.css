@@ -52,10 +52,10 @@
   padding-block: var(--space-m-l);
   }
 
-  background-image: radial-gradient(circle, #000000 2.5px, transparent 2.5px);
+  background-image: radial-gradient(circle, #000000 4px, transparent 4px);
   background-position: left top;
   background-repeat: repeat-x;
-  background-size: 5.5px 5px;
+  background-size: 9.5px 8px;
 }
 
 /* View Transition block */

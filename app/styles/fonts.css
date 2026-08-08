@@ -76,3 +76,8 @@ button, label, legend, input, textarea, address) {
 :where(p, li) {
   line-height: 1.4;
 }
+
+/* Indent the paragraph PRECEDED by a paragraph */
+p + p {
+  text-indent: 1em;
+}

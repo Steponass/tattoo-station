@@ -15,14 +15,13 @@
 
 .icon_swipe {
   padding: var(--space-8px);
-  rotate: 180deg;
   min-width: var(--space-xl-2xl);
   min-height: var(--space-xl-2xl);
   justify-self: center;
   position: absolute;
   top: 4%;
   left: 50%;
-  transform: translateX(50%);
+  transform: translateX(-50%) rotate(180deg);
   z-index: 1;
   opacity: 0.2;
 }
@@ -33,7 +32,7 @@
 
 @keyframes swipe-shift {
   0% {
-    transform: translateX(50%);
+    transform: translateX(-50%) rotate(180deg);
     opacity: 0.3;
   }
 
@@ -42,7 +41,7 @@
   }
 
   100% {
-    transform: translateX(70%);
+    transform: translateX(-70%) rotate(180deg);
     opacity: 0.3;
   }
 }

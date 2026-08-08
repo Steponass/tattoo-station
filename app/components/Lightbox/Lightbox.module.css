@@ -30,7 +30,7 @@
   height: 100vh;
   max-width: 100dvw;
   max-height: 100dvh;
-  margin: 0;
+  margin-inline: auto;
   padding-block: var(--space-16px);
   /* padding-inline: var(--space-s-m); */
   border: 0;
@@ -55,9 +55,11 @@
 .contents {
   width: 100%;
   height: 100%;
-  display: grid;
-  place-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   touch-action: pan-y;
+  position: relative;
 }
 
 .closeButton {
@@ -68,14 +70,12 @@
   padding: var(--space-8px);
   background: transparent;
   border: 0;
-  font-size: 3rem;
-  line-height: 1;
-  & svg {
-    filter: drop-shadow(var(--shadow-make-icon-more-visible));
-  }
+  view-transition-name: lightbox-close;
 }
 
 .hero {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   min-height: 0;
   min-width: 0;
@@ -85,18 +85,19 @@
 .nextButton {
   position: absolute;
   bottom: 50%;
-  align-self: center;
   padding: var(--space-8px);
   cursor: pointer;
   z-index: 10;
 }
 
 .previousButton {
-  justify-self: start;
+  left: var(--space-s-m);
+  view-transition-name: lightbox-previous;
 }
 
 .nextButton {
-  justify-self: end;
+  right: var(--space-s-m);
+  view-transition-name: lightbox-next;
 }
 
 .previousButton:disabled,
@@ -105,6 +106,7 @@
   cursor: default;
 }
 
+.closeButton svg,
 .previousButton svg,
 .nextButton svg {
   width: var(--space-xl-2xl);
@@ -122,7 +124,7 @@
 
 .footer {
   position: absolute;
-  bottom: var(--space-xl-2xl);
+  bottom: var(--space-24px);
   left: 50%;
   transform: translateX(-50%);
   width: min(80%, 640px);
@@ -144,17 +146,19 @@
   padding: var(--space-8px) var(--space-16px);
   margin-top: var(--space-xs-s);
   opacity: 1;
-  transition: all 5s ease-in-out;
+  transition: opacity 0.8s 5s ease-in-out;
   @starting-style {
     opacity: 0;
   }
 }
 .artist_link {
   background-color: var(--color-accent);
+  view-transition-name: lightbox-artist-link;
 }
 
 .booknow_link {
   background-color: var(--color-secondary);
+  view-transition-name: lightbox-booknow-link;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -181,6 +185,19 @@
 ::view-transition-new(*) {
   animation-duration: 300ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* The root group holds everything without its own view-transition-name —
+   the close/prev/next buttons and footer, none of which visually change
+   between photos. Chrome still cross-fades it by default, and swapping
+   two near-identical snapshots of drop-shadowed SVGs produces a visible
+   flash. Nothing in that group needs to animate, so disable it and let
+   the live DOM show through instantly; only the named .hero group (see
+   below) should actually animate. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 /* -------------------------------------------------------------------------- */
