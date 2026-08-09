@@ -167,12 +167,15 @@ ul[data-photo-list] {
 }
 
 .guide_link {
-  color: var(--color-accent);
-  font-size: var(--fontsize-body-s);
+  color: var(--color-text-weak);
+  font-size: var(--fontsize-body);
+  text-decoration: underline;
+  margin-inline-start: var(--space-8px);
 }
 
 input[id=bodyPlacement],
 input[id=referenceLink],
+input[id=preferredTimes]
 select[id=preferredStyle], 
 input[id=approxSizeCm],
 select[id=budgetRange],
@@ -182,6 +185,10 @@ input[id=customerName],
 input[type=tel],
 input[type=file] {
   min-height: 40px;
+}
+
+.privacy_link {
+  text-decoration: underline;
 }
 
 /* Sits above the header (z-index 10) so the stamp covers the whole page, and

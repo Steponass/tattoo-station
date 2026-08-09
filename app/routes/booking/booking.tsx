@@ -1,10 +1,11 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useFetcher } from "react-router";
 
 import { BookingForm } from "~/components/booking/BookingForm";
 import type { BookingConfirmationContent } from "~/components/booking/BookingConfirmation";
 import { findArtistContactById, findBookableArtists } from "~/lib/artists/artistRepository.server";
 import { ARTIST_ROLES_BY_CATEGORY } from "~/lib/booking/bookingConstants";
+import { clearBookingFormDraft } from "~/lib/booking/bookingFormDraft";
 import {
   verifyBookingPhotos
 } from "~/lib/booking/server/bookingPhotos.server";
@@ -214,6 +215,12 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
   // this action cannot do because it runs without a translation context.
   const fieldErrorCodes: BookingFieldErrorCodes =
     submissionResult?.ok === false ? submissionResult.fieldErrors : {};
+
+  useEffect(() => {
+    if (submissionResult?.ok === true) {
+      clearBookingFormDraft();
+    }
+  }, [submissionResult]);
 
   return (
     <main id={styles.booking_main}>

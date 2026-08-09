@@ -4,6 +4,11 @@
   url("/StudioPhoto003_edited_webp.webp") center center/cover no-repeat;
 }
 
+.process_container {
+  width: min(1280px, 100%);
+  margin-inline: auto;
+}
+
 .section_heading {
   font-size: var(--fontsize-h3);
   text-align: center;
@@ -12,6 +17,7 @@
 }
 
 .process_wrapper {
+
   @media (max-width: 768px) {
     display: flex;
     flex-direction: row;

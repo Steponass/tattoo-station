@@ -1,6 +1,6 @@
 // app/components/booking/BookingForm.tsx
 
-import { useReducer } from "react";
+import { useCallback, useReducer, useState } from "react";
 import { useIntlayer } from "react-intlayer";
 import type { FetcherWithComponents } from "react-router";
 
@@ -9,6 +9,7 @@ import {
   ARTIST_NOT_SPECIFIED,
   BUDGET_RANGES,
   CATEGORIES_ALLOWING_UNSPECIFIED_ARTIST,
+  categoryAllowsUnspecifiedArtist,
   SERVICE_CATEGORIES,
   SERVICE_TYPES_BY_CATEGORY,
   TATTOO_STYLES,
@@ -17,14 +18,20 @@ import {
   type ServiceType,
 } from "~/lib/booking/bookingConstants";
 import {
+  loadBookingFormDraft,
+  saveBookingFormDraft,
+  type BookingFormDraft,
+} from "~/lib/booking/bookingFormDraft";
+import {
   bookingFormReducer,
   buildInitialBookingFormState,
   type BookingFormState,
 } from "~/lib/booking/bookingFormReducer";
-import type {
-  BookingFieldErrorCodes,
-  BookingFieldErrors,
-  FieldErrorCode,
+import {
+  isServiceCategory,
+  type BookingFieldErrorCodes,
+  type BookingFieldErrors,
+  type FieldErrorCode,
 } from "~/lib/booking/bookingSubmissionTypes";
 import { filterArtistsForCategory } from "~/lib/booking/filterArtistsForCategory";
 import type { ArtistPreselection } from "~/lib/booking/resolveArtistPreselection";
@@ -384,9 +391,11 @@ function ArtistField({
  */
 function FirstTimeCheckbox({
   serviceCategory,
+  defaultChecked,
   content,
 }: {
   serviceCategory: ServiceCategory | null;
+  defaultChecked: boolean;
   content: BookingFormContent;
 }) {
   if (serviceCategory === null) {
@@ -401,10 +410,95 @@ function FirstTimeCheckbox({
 
   return (
     <div className={styles.checkbox_field}>
-      <input id="isFirstTime" type="checkbox" name="isFirstTime" value="on" />
+      <input
+        id="isFirstTime"
+        type="checkbox"
+        name="isFirstTime"
+        value="on"
+        defaultChecked={defaultChecked}
+      />
       <label htmlFor="isFirstTime">{content[contentKey]}</label>
     </div>
   );
+}
+
+/**
+ * Restores the artist selection from a saved draft, dropping it if it no
+ * longer names an eligible artist for the (also restored) category — e.g. the
+ * category's roster changed, or the sentinel is no longer permitted.
+ */
+function resolveDraftArtistSelection({
+  draftArtistSelection,
+  serviceCategory,
+  artists,
+}: {
+  draftArtistSelection: string | undefined;
+  serviceCategory: ServiceCategory | null;
+  artists: readonly BookableArtist[];
+}): string | null {
+  if (draftArtistSelection === undefined || serviceCategory === null) {
+    return null;
+  }
+
+  if (draftArtistSelection === ARTIST_NOT_SPECIFIED) {
+    return categoryAllowsUnspecifiedArtist(serviceCategory)
+      ? draftArtistSelection
+      : null;
+  }
+
+  const eligibleArtists = filterArtistsForCategory({ artists, serviceCategory });
+  const isEligible = eligibleArtists.some(
+    (artist) => String(artist.id) === draftArtistSelection,
+  );
+
+  return isEligible ? draftArtistSelection : null;
+}
+
+/**
+ * Seeds the reducer for a fresh mount.
+ *
+ * A URL preselection (`?artist=slug`) is a deliberate, fresh signal and wins
+ * outright over a saved draft for these three fields — `booking.tsx` already
+ * remounts the form with a new `key` when it changes. Otherwise the draft is
+ * restored where it still names a valid option.
+ */
+function resolveInitialFormState({
+  initialSelection,
+  draft,
+  artists,
+}: {
+  initialSelection: ArtistPreselection;
+  draft: BookingFormDraft | null;
+  artists: readonly BookableArtist[];
+}): BookingFormState {
+  const fallback = buildInitialBookingFormState(initialSelection);
+
+  if (initialSelection !== null || draft === null) {
+    return fallback;
+  }
+
+  const serviceCategory =
+    draft.serviceCategory !== undefined && isServiceCategory(draft.serviceCategory)
+      ? draft.serviceCategory
+      : fallback.serviceCategory;
+
+  const permittedServiceTypes: readonly string[] =
+    serviceCategory === null ? [] : SERVICE_TYPES_BY_CATEGORY[serviceCategory];
+
+  const serviceType =
+    draft.serviceType !== undefined &&
+    permittedServiceTypes.includes(draft.serviceType)
+      ? (draft.serviceType as ServiceType)
+      : fallback.serviceType;
+
+  const artistSelection =
+    resolveDraftArtistSelection({
+      draftArtistSelection: draft.artistSelection,
+      serviceCategory,
+      artists,
+    }) ?? fallback.artistSelection;
+
+  return { serviceCategory, serviceType, artistSelection };
 }
 
 export function BookingForm({
@@ -422,14 +516,29 @@ export function BookingForm({
 }) {
   const content = useIntlayer("BookingForm");
 
+  // Read once per mount: a customer returning to the form (same tab, same
+  // browsing session) sees what they already typed.
+  const [draft] = useState(() => loadBookingFormDraft());
+
   const [formState, dispatchFormAction] = useReducer(
     bookingFormReducer,
-    buildInitialBookingFormState(initialSelection),
+    initialSelection,
+    (selection) => resolveInitialFormState({ initialSelection: selection, draft, artists }),
   );
 
   const photos = usePhotoSelection();
 
   const validation = useBookingFormValidation({ serverFieldErrorCodes });
+
+  // Every keystroke and blur both revalidates and re-snapshots the form, the
+  // same delegated bubbling `useBookingFormValidation` already relies on.
+  const handleFormInteraction = useCallback(
+    (event: React.SyntheticEvent<HTMLFormElement>) => {
+      validation.handleRevalidate(event);
+      saveBookingFormDraft(new FormData(event.currentTarget));
+    },
+    [validation.handleRevalidate],
+  );
 
   const fieldErrors = resolveFieldErrorMessages(
     validation.fieldErrorCodes,
@@ -448,8 +557,8 @@ export function BookingForm({
       method="post"
       noValidate
       onSubmit={validation.handleSubmit}
-      onInput={validation.handleRevalidate}
-      onBlur={validation.handleRevalidate}
+      onInput={handleFormInteraction}
+      onBlur={handleFormInteraction}
     >
       <SpamGuardFields draftId={photos.draftId} />
 
@@ -470,6 +579,7 @@ export function BookingForm({
             placeholder={content.namePlaceholder.value}
             autoComplete="name"
             maxLength={35}
+            defaultValue={draft?.customerName ?? ""}
             {...invalidFieldProps("customerName", fieldErrors.customerName)}
           />
           <FieldError
@@ -494,6 +604,7 @@ export function BookingForm({
             placeholder={content.emailPlaceholder.value}
             autoComplete="email"
             maxLength={45}
+            defaultValue={draft?.customerEmail ?? ""}
             {...invalidFieldProps("customerEmail", fieldErrors.customerEmail)}
           />
           <FieldError
@@ -518,6 +629,7 @@ export function BookingForm({
             placeholder={content.phonePlaceholder.value}
             autoComplete="tel"
             maxLength={20}
+            defaultValue={draft?.customerPhone ?? ""}
             {...invalidFieldProps("customerPhone", fieldErrors.customerPhone)}
           />
           <FieldError
@@ -617,6 +729,7 @@ export function BookingForm({
                 name="preferredTimes"
                 placeholder={content.preferredTimesPlaceholder.value}
                 maxLength={40}
+                defaultValue={draft?.preferredTimes ?? ""}
                 {...invalidFieldProps(
                   "preferredTimes",
                   fieldErrors.preferredTimes,
@@ -652,6 +765,7 @@ export function BookingForm({
               rows={4}
               placeholder={content.descriptionPlaceholder.value}
               maxLength={500}
+              defaultValue={draft?.description ?? ""}
               {...invalidFieldProps("description", fieldErrors.description)}
             />
             <FieldError
@@ -680,6 +794,7 @@ export function BookingForm({
                   placeholder={content.bodyPlacementPlaceholder.value}
                   maxLength={30}
                   list={BODY_PLACEMENT_SUGGESTIONS_ID}
+                  defaultValue={draft?.bodyPlacement ?? ""}
                   {...invalidFieldProps(
                     "bodyPlacement",
                     fieldErrors.bodyPlacement,
@@ -699,18 +814,6 @@ export function BookingForm({
             </>
           )}
 
-          <PhotoUploadField
-            field={{
-              name: "photos",
-              label: content.photosLabel.value,
-              hint: content.photosHint.value,
-              errorMessage: fieldErrors.photoKeys,
-            }}
-            photos={photos}
-            resolveMessages={(entry) => resolvePhotoMessages(entry, content)}
-            chooseFilesLabel={content.chooseFilesLabel.value}
-          />
-
           <div
             className={`${styles.field} ${styles.full_width}`}
             data-field
@@ -725,6 +828,7 @@ export function BookingForm({
               inputMode="url"
               placeholder="https://"
               maxLength={200}
+              defaultValue={draft?.referenceLink ?? ""}
               {...invalidFieldProps("referenceLink", fieldErrors.referenceLink)}
             />
             <FieldError
@@ -756,7 +860,7 @@ export function BookingForm({
                 <select
                   id="preferredStyle"
                   name="preferredStyle"
-                  defaultValue=""
+                  defaultValue={draft?.preferredStyle ?? ""}
                   {...invalidFieldProps(
                     "preferredStyle",
                     fieldErrors.preferredStyle,
@@ -793,6 +897,7 @@ export function BookingForm({
                   inputMode="decimal"
                   placeholder={content.approxSizePlaceholder.value}
                   maxLength={60}
+                  defaultValue={draft?.approxSizeCm ?? ""}
                   {...invalidFieldProps(
                     "approxSizeCm",
                     fieldErrors.approxSizeCm,
@@ -817,7 +922,7 @@ export function BookingForm({
                 <select
                   id="budgetRange"
                   name="budgetRange"
-                  defaultValue=""
+                  defaultValue={draft?.budgetRange ?? ""}
                   {...invalidFieldProps("budgetRange", fieldErrors.budgetRange)}
                 >
                   <option value="" disabled>
@@ -845,17 +950,20 @@ export function BookingForm({
 
         <FirstTimeCheckbox
           serviceCategory={formState.serviceCategory}
+          defaultChecked={draft?.isFirstTime === "on"}
           content={content}
         />
 
-        <div
+          {/* TODO: Newsletter subscription. Disabled until setup */}
+
+        {/* <div
           className={styles.checkbox_field}
           data-field
           data-field-checkbox
           data-invalid={fieldErrors.marketingConsent !== undefined || undefined}
         >
-          {/* TODO: Newsletter subscription. Disabled until setup */}
-          {/* <input
+
+          <input
             id="marketingConsent"
             type="checkbox"
             name="marketingConsent"
@@ -872,8 +980,8 @@ export function BookingForm({
           <FieldError
             fieldName="marketingConsent"
             message={fieldErrors.marketingConsent}
-          /> */}
-        </div>
+          />
+        </div> */}
 
         <div
           className={styles.checkbox_field}
@@ -888,11 +996,17 @@ export function BookingForm({
             name="privacyConsent"
             value="on"
             required
+            defaultChecked={draft?.privacyConsent === "on"}
             {...invalidFieldProps("privacyConsent", fieldErrors.privacyConsent)}
           />
           <label htmlFor="privacyConsent">
             {content.privacyConsentPrefix}
-            <a href="#">{content.privacyConsentLinkLabel}</a>
+            <LocalizedLink 
+            to="/privacypolicy"
+            className={styles.privacy_link}
+            >
+            {content.privacyConsentLinkLabel}
+            </LocalizedLink>
             {content.privacyConsentSuffix}
           </label>
           <FieldError

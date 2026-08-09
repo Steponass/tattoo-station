@@ -19,3 +19,29 @@
 .aftercare_section {
   margin-block: var(--space-m-l);
 }
+
+#no_swimming_icon {
+  float: right;
+  max-width: 80px;
+  margin-block-start: var(--space-8px);
+  shape-outside: circle(45%);
+}
+
+#wash_hands {
+  float: right;
+}
+
+#cream {
+  float: right;
+  padding: var(--space-4px);
+}
+
+#sun_icon {
+  float: right;
+  shape-outside: circle(45%);
+  shape-margin: 2px;
+}
+
+#no_swimming_icon, #wash_hands, #cream, #sun_icon {
+  height: calc-size(auto, round(up, size, 1lh));
+}

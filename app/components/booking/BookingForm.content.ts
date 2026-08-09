@@ -48,7 +48,7 @@ const bookingformContent = {
       en: "Appointment",
     }),
     serviceCategoryLegend: t({
-      lt: "Ko atvyksti?*",
+      lt: "Kas domina?*",
       en: "What are you booking for?*",
     }),
     serviceCategoryTattoo: t({
@@ -138,8 +138,8 @@ const bookingformContent = {
       en: "Placement*",
     }),
     bodyPlacementPlaceholder: t({
-      lt: "pvz. dilbis",
-      en: "e.g. Forearm",
+      lt: "pvz. nugara",
+      en: "e.g. shoulder",
     }),
     placementForearm: t({ lt: "Dilbis", en: "Forearm" }),
     placementUpperArm: t({ lt: "Žastas", en: "Upper arm" }),
@@ -208,7 +208,7 @@ const bookingformContent = {
     }),
 
     preferredStyleLabel: t({
-      lt: "Pageidaujamas stilius",
+      lt: "Norimas stilius",
       en: "Preferred style",
     }),
     preferredStylePlaceholderOption: t({
