@@ -166,6 +166,30 @@ ul[data-photo-list] {
    }
 }
 
+div[data-photo-thumbnail-fallback] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-4px);
+  width: 150px;
+  min-height: 100px;
+  padding: var(--space-8px);
+  border: 2px solid var(--color-stroke-strong);
+  border-radius: var(--space-4px);
+  background-color: var(--color-bg-raised);
+
+  & span[data-photo-thumbnail-filename] {
+    color: var(--color-text-strong);
+    font-size: var(--fontsize-body-s);
+    overflow-wrap: break-word;
+  }
+
+  & span[data-photo-thumbnail-note] {
+    color: var(--color-text-weak);
+    font-size: var(--fontsize-body-s);
+  }
+}
+
 .guide_link {
   color: var(--color-text-weak);
   font-size: var(--fontsize-body);

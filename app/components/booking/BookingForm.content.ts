@@ -185,6 +185,10 @@ const bookingformContent = {
       lt: "Nepavyko įkelti. Bandyk dar kartą.",
       en: "Upload failed. Please try again.",
     }),
+    photoPreviewUnavailable: t({
+      lt: "Peržiūra nepasiekiama — vis tiek bus įkelta.",
+      en: "Preview unavailable — will still upload.",
+    }),
     photoTooManyPhotos: t({
       lt: "Galima įkelti iki 5 nuotraukų.",
       en: "You can upload up to 5 photos.",

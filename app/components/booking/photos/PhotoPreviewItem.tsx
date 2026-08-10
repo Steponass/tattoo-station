@@ -9,6 +9,8 @@ export type PhotoStatusMessages = {
   removeLabel: string;
   /** Resolved message for the entry's rejection or failure reason. */
   problemMessage?: string;
+  /** Shown in the thumbnail tile when the browser can't decode the preview (e.g. HEIC). */
+  previewUnavailableNote: string;
 };
 
 export function PhotoPreviewItem({
@@ -24,7 +26,11 @@ export function PhotoPreviewItem({
 }) {
   return (
     <li data-photo-item data-status={entry.status}>
-      <PhotoThumbnail previewUrl={entry.previewUrl} fileName={entry.fileName} />
+      <PhotoThumbnail
+        previewUrl={entry.previewUrl}
+        fileName={entry.fileName}
+        unavailableNote={messages.previewUnavailableNote}
+      />
 
       <PhotoStatusLabel status={entry.status} messages={messages} />
 
@@ -48,19 +54,26 @@ export function PhotoPreviewItem({
 /**
  * HEIC files cannot be rendered by most browsers, so a broken preview is the
  * expected case for iPhone uploads rather than an error. Falls back to the
- * filename once the image fails to decode.
+ * filename plus a short note once the image fails to decode.
  */
 function PhotoThumbnail({
   previewUrl,
   fileName,
+  unavailableNote,
 }: {
   previewUrl: string;
   fileName: string;
+  unavailableNote: string;
 }) {
   const [isPreviewRenderable, setIsPreviewRenderable] = useState(true);
 
   if (!isPreviewRenderable) {
-    return <div data-photo-thumbnail data-photo-thumbnail-fallback aria-hidden />;
+    return (
+      <div data-photo-thumbnail data-photo-thumbnail-fallback>
+        <span data-photo-thumbnail-filename>{fileName}</span>
+        <span data-photo-thumbnail-note>{unavailableNote}</span>
+      </div>
+    );
   }
 
   return (

@@ -242,6 +242,7 @@ function resolvePhotoMessages(
     retryLabel: content.photoRetryLabel.value,
     removeLabel: content.photoRemoveLabel.value,
     problemMessage,
+    previewUnavailableNote: content.photoPreviewUnavailable.value,
   };
 }
 
