@@ -26,6 +26,12 @@ const ADMIN_ADDRESS = "info@tattoostation.lt";
  *
  * Clamps to zero if purgeAfter is somehow already in the past, which would
  * produce an immediately-expired link rather than a negative lifetime.
+ *
+ * Signed independently rather than as a single Promise.all batch: a signing
+ * failure (bad key, misconfigured secret, etc.) must never cost the customer,
+ * admin, and artist their entire notification email over one bad photo link.
+ * Failed photos are logged and simply omitted — the email templates already
+ * render fine with an empty/partial photoUrls list.
  */
 async function buildPhotoUrls({
   photos,
@@ -42,7 +48,7 @@ async function buildPhotoUrls({
   const nowSeconds = Math.floor(Date.now() / 1000);
   const lifetimeSeconds = Math.max(0, purgeAfterSeconds - nowSeconds);
 
-  return Promise.all(
+  const settledUrls = await Promise.allSettled(
     photos.map((photo) =>
       buildSignedMediaUrl({
         signingSecret,
@@ -52,6 +58,18 @@ async function buildPhotoUrls({
       }),
     ),
   );
+
+  return settledUrls.flatMap((result, index) => {
+    if (result.status === "fulfilled") {
+      return [result.value];
+    }
+
+    console.error(
+      `[notifications] failed to sign photo URL for ${photos[index].objectKey}:`,
+      result.reason,
+    );
+    return [];
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -109,116 +127,144 @@ export async function sendBookingNotifications({
   origin: string;
   locale: string | undefined;
 }): Promise<void> {
-  const photoUrls = await buildPhotoUrls({
-    photos,
-    purgeAfter: booking.purgeAfter,
-    signingSecret: env.MEDIA_URL_SIGNING_SECRET,
-    origin,
-  });
+  try {
+    const photoUrls = await buildPhotoUrls({
+      photos,
+      purgeAfter: booking.purgeAfter,
+      signingSecret: env.MEDIA_URL_SIGNING_SECRET,
+      origin,
+    });
 
-  // Build all three email payloads upfront before any sends.
-  const customerEmail = buildCustomerConfirmationEmail({
-    customerName: submission.customerName,
-    reference: booking.reference,
-    submission,
-    locale: locale ?? "en",
-  });
+    // Build all three email payloads upfront before any sends.
+    const customerEmail = buildCustomerConfirmationEmail({
+      customerName: submission.customerName,
+      reference: booking.reference,
+      submission,
+      locale: locale ?? "en",
+    });
 
-  const adminEmail = buildAdminNotificationEmail({
-    customerName: submission.customerName,
-    customerEmail: submission.customerEmail,
-    customerPhone: submission.customerPhone,
-    reference: booking.reference,
-    submission,
-    artistName: artistContact?.displayName ?? null,
-    photoUrls,
-  });
+    const adminEmail = buildAdminNotificationEmail({
+      customerName: submission.customerName,
+      customerEmail: submission.customerEmail,
+      customerPhone: submission.customerPhone,
+      reference: booking.reference,
+      submission,
+      artistName: artistContact?.displayName ?? null,
+      photoUrls,
+    });
 
-  const artistEmail =
-    artistContact !== null
-      ? buildArtistNotificationEmail({
-          artistName: artistContact.displayName,
-          customerName: submission.customerName,
-          customerEmail: submission.customerEmail,
-          customerPhone: submission.customerPhone,
-          reference: booking.reference,
-          submission,
-          photoUrls,
-        })
-      : null;
+    const artistEmail =
+      artistContact !== null
+        ? buildArtistNotificationEmail({
+            artistName: artistContact.displayName,
+            customerName: submission.customerName,
+            customerEmail: submission.customerEmail,
+            customerPhone: submission.customerPhone,
+            reference: booking.reference,
+            submission,
+            photoUrls,
+          })
+        : null;
 
-  // Fire all applicable sends concurrently. allSettled so one failure
-  // never cancels the others — each result is inspected individually.
-  const sendPromises: Promise<SendOutcome>[] = [
-    sendEmail({
-      apiKey: env.RESEND_API_KEY,
-      payload: {
-        to: submission.customerEmail,
-        from: FROM_ADDRESS,
-        replyTo: REPLY_TO_ADDRESS,
-        subject: customerEmail.subject,
-        html: customerEmail.html,
-      },
-    }).then((result) => ({ label: "customer", ...result })),
-
-    sendEmail({
-      apiKey: env.RESEND_API_KEY,
-      payload: {
-        to: ADMIN_ADDRESS,
-        from: FROM_ADDRESS,
-        replyTo: submission.customerEmail,
-        subject: adminEmail.subject,
-        html: adminEmail.html,
-      },
-    }).then((result) => ({ label: "admin", ...result })),
-  ];
-
-  if (artistEmail !== null && artistContact !== null) {
-    sendPromises.push(
+    // Fire all applicable sends concurrently. allSettled so one failure
+    // never cancels the others — each result is inspected individually.
+    const sendPromises: Promise<SendOutcome>[] = [
       sendEmail({
         apiKey: env.RESEND_API_KEY,
         payload: {
-          to: artistContact.email,
+          to: submission.customerEmail,
+          from: FROM_ADDRESS,
+          replyTo: REPLY_TO_ADDRESS,
+          subject: customerEmail.subject,
+          html: customerEmail.html,
+        },
+      }).then((result) => ({ label: "customer", ...result })),
+
+      sendEmail({
+        apiKey: env.RESEND_API_KEY,
+        payload: {
+          to: ADMIN_ADDRESS,
           from: FROM_ADDRESS,
           replyTo: submission.customerEmail,
-          subject: artistEmail.subject,
-          html: artistEmail.html,
+          subject: adminEmail.subject,
+          html: adminEmail.html,
         },
-      }).then((result) => ({ label: "artist", ...result })),
-    );
-  }
+      }).then((result) => ({ label: "admin", ...result })),
+    ];
 
-  const settledResults = await Promise.allSettled(sendPromises);
-
-  // Promise.allSettled only rejects if the promise itself throws, which
-  // sendEmail never does — but we handle it defensively anyway.
-  const outcomes: SendOutcome[] = settledResults.map((result) => {
-    if (result.status === "fulfilled") {
-      return result.value;
+    if (artistEmail !== null && artistContact !== null) {
+      sendPromises.push(
+        sendEmail({
+          apiKey: env.RESEND_API_KEY,
+          payload: {
+            to: artistContact.email,
+            from: FROM_ADDRESS,
+            replyTo: submission.customerEmail,
+            subject: artistEmail.subject,
+            html: artistEmail.html,
+          },
+        }).then((result) => ({ label: "artist", ...result })),
+      );
     }
-    return {
-      label: "unknown",
-      ok: false,
-      detail: result.reason instanceof Error ? result.reason.message : "Unexpected error",
-    };
-  });
 
-  const { status, failureDetail } = resolveNotificationStatus(outcomes);
+    const settledResults = await Promise.allSettled(sendPromises);
 
-  if (status !== "sent") {
-    console.error("[notifications] send failures:", failureDetail);
-  }
-
-  try {
-    await updateNotificationStatus({
-      database: env.DB,
-      bookingId: booking.id,
-      status,
-      failureDetail,
+    // Promise.allSettled only rejects if the promise itself throws, which
+    // sendEmail never does — but we handle it defensively anyway.
+    const outcomes: SendOutcome[] = settledResults.map((result) => {
+      if (result.status === "fulfilled") {
+        return result.value;
+      }
+      return {
+        label: "unknown",
+        ok: false,
+        detail: result.reason instanceof Error ? result.reason.message : "Unexpected error",
+      };
     });
-  } catch (dbError) {
-    // The booking is already persisted — a status update failure is logged
-    // but never rethrown, since there is nothing left to do here.
-    console.error("[notifications] failed to update notification_status:", dbError);
+
+    const { status, failureDetail } = resolveNotificationStatus(outcomes);
+
+    if (status !== "sent") {
+      console.error("[notifications] send failures:", failureDetail);
+    }
+
+    try {
+      await updateNotificationStatus({
+        database: env.DB,
+        bookingId: booking.id,
+        status,
+        failureDetail,
+      });
+    } catch (dbError) {
+      // The booking is already persisted — a status update failure is logged
+      // but never rethrown, since there is nothing left to do here.
+      console.error("[notifications] failed to update notification_status:", dbError);
+    }
+  } catch (error) {
+    // Defense-in-depth: catches anything that throws before the normal
+    // per-outcome status resolution above runs. Without this, a throw here
+    // (this whole function runs inside ctx.waitUntil with no caller to
+    // report to) leaves notification_status stuck on 'pending' forever with
+    // no record of what happened — which is exactly how photo bookings went
+    // silently unnotified when the media signing secret was misconfigured.
+    const detail = error instanceof Error ? error.message : "Unexpected error";
+    console.error(
+      "[notifications] unhandled error while sending booking notifications:",
+      error,
+    );
+
+    try {
+      await updateNotificationStatus({
+        database: env.DB,
+        bookingId: booking.id,
+        status: "failed",
+        failureDetail: detail,
+      });
+    } catch (dbError) {
+      console.error(
+        "[notifications] failed to update notification_status after unhandled error:",
+        dbError,
+      );
+    }
   }
 }

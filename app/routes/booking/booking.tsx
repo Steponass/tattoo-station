@@ -203,6 +203,15 @@ export async function action({
         artistResolution.status === "resolved" ? artistResolution.contact : null,
       origin: new URL(request.url).origin,
       locale,
+    }).catch((error) => {
+      // sendBookingNotifications already catches everything internally and
+      // records notification_status = 'failed' on any exception. This is
+      // belt-and-suspenders in case that guarantee is ever broken by a
+      // future edit — ctx.waitUntil must never carry an unhandled rejection.
+      console.error(
+        "[booking] sendBookingNotifications rejected unexpectedly:",
+        error,
+      );
     }),
   );
 
