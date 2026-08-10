@@ -182,8 +182,7 @@ select[id=budgetRange],
 select[name=artistSelection],
 input[type=email],
 input[id=customerName],
-input[type=tel],
-input[type=file] {
+input[type=tel] {
   min-height: 40px;
 }
 
@@ -220,3 +219,4 @@ input[type=file] {
   color: black;
   margin-block-end: 0.5em;
 }
+

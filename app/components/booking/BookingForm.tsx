@@ -39,7 +39,10 @@ import { useBookingFormValidation } from "~/lib/booking/useBookingFormValidation
 import { usePhotoSelection } from "~/lib/booking/usePhotoSelection";
 import type { PhotoEntry } from "~/lib/booking/usePhotoSelection";
 import { FieldError, fieldErrorElementId } from "./FieldError";
-import { PhotoUploadField } from "./photos/PhotoUploadField";
+import {
+  PhotoUploadField,
+  PHOTO_KEYS_FIELD_NAME,
+} from "./photos/PhotoUploadField";
 import type { PhotoStatusMessages } from "./photos/PhotoPreviewItem";
 import { SpamGuardFields } from "./SpamGuardFields";
 import { SubmitButton } from "./SubmitButton";
@@ -446,7 +449,10 @@ function resolveDraftArtistSelection({
       : null;
   }
 
-  const eligibleArtists = filterArtistsForCategory({ artists, serviceCategory });
+  const eligibleArtists = filterArtistsForCategory({
+    artists,
+    serviceCategory,
+  });
   const isEligible = eligibleArtists.some(
     (artist) => String(artist.id) === draftArtistSelection,
   );
@@ -478,7 +484,8 @@ function resolveInitialFormState({
   }
 
   const serviceCategory =
-    draft.serviceCategory !== undefined && isServiceCategory(draft.serviceCategory)
+    draft.serviceCategory !== undefined &&
+    isServiceCategory(draft.serviceCategory)
       ? draft.serviceCategory
       : fallback.serviceCategory;
 
@@ -523,7 +530,8 @@ export function BookingForm({
   const [formState, dispatchFormAction] = useReducer(
     bookingFormReducer,
     initialSelection,
-    (selection) => resolveInitialFormState({ initialSelection: selection, draft, artists }),
+    (selection) =>
+      resolveInitialFormState({ initialSelection: selection, draft, artists }),
   );
 
   const photos = usePhotoSelection();
@@ -652,7 +660,10 @@ export function BookingForm({
           <div
             role="radiogroup"
             data-radio-group
-            {...invalidFieldProps("serviceCategory", fieldErrors.serviceCategory)}
+            {...invalidFieldProps(
+              "serviceCategory",
+              fieldErrors.serviceCategory,
+            )}
           >
             {SERVICE_CATEGORIES.map((serviceCategory) => {
               const optionId = `serviceCategory-${serviceCategory}`;
@@ -815,12 +826,11 @@ export function BookingForm({
           )}
 
           <div
-            className={`${styles.field} ${styles.full_width}`}
+            className={`${styles.field}`}
             data-field
             data-invalid={fieldErrors.referenceLink !== undefined || undefined}
           >
             <label htmlFor="referenceLink">{content.referenceLinkLabel}</label>
-            <p data-field-hint>{content.referenceLinkHint}</p>
             <input
               id="referenceLink"
               name="referenceLink"
@@ -839,6 +849,26 @@ export function BookingForm({
 
           {formState.serviceCategory === "tattoo" && (
             <>
+              <PhotoUploadField
+                field={{
+                  name: PHOTO_KEYS_FIELD_NAME,
+                  label: content.photosLabel.value,
+                  hint: content.photosHint.value,
+                  errorMessage: fieldErrors.photoKeys,
+                }}
+                photos={{
+                  entries: photos.entries,
+                  uploadedPhotos: photos.uploadedPhotos,
+                  canAddMorePhotos: photos.canAddMorePhotos,
+                  addFiles: photos.addFiles,
+                  removeEntry: photos.removeEntry,
+                  retryEntry: photos.retryEntry,
+                }}
+                resolveMessages={(entry) =>
+                  resolvePhotoMessages(entry, content)
+                }
+                chooseFilesLabel={content.chooseFilesLabel.value}
+              />
               <div
                 className={styles.field}
                 data-field
@@ -954,7 +984,7 @@ export function BookingForm({
           content={content}
         />
 
-          {/* TODO: Newsletter subscription. Disabled until setup */}
+        {/* TODO: Newsletter subscription. Disabled until setup */}
 
         {/* <div
           className={styles.checkbox_field}
@@ -1001,11 +1031,8 @@ export function BookingForm({
           />
           <label htmlFor="privacyConsent">
             {content.privacyConsentPrefix}
-            <LocalizedLink 
-            to="/privacypolicy"
-            className={styles.privacy_link}
-            >
-            {content.privacyConsentLinkLabel}
+            <LocalizedLink to="/privacypolicy" className={styles.privacy_link}>
+              {content.privacyConsentLinkLabel}
             </LocalizedLink>
             {content.privacyConsentSuffix}
           </label>
@@ -1016,7 +1043,10 @@ export function BookingForm({
         </div>
       </section>
 
-      <TurnstileWidget siteKey={turnstileSiteKey} className={styles.full_width} />
+      <TurnstileWidget
+        siteKey={turnstileSiteKey}
+        className={styles.full_width}
+      />
 
       <div className={styles.full_width}>
         <SubmitButton

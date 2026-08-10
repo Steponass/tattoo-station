@@ -202,11 +202,6 @@ const bookingformContent = {
       lt: "Turi nuorodų?",
       en: "Any links?",
     }),
-    referenceLinkHint: t({
-      lt: "Instagram įrašas ar panašiai.",
-      en: "Instagram post or similar.",
-    }),
-
     preferredStyleLabel: t({
       lt: "Norimas stilius",
       en: "Preferred style",
