@@ -71,6 +71,25 @@ export function buildPortfolioImageAttributes({
   };
 }
 
+/**
+ * Builds a single flat image URL for a CSS `background-image` tile —
+ * i.e. a tile with no `<img>` element in the DOM at all. LandingGallery
+ * uses this: iOS Safari can offer its native long-press "lift this
+ * photo" drag/share gesture on an `<img>`, and nothing short of removing
+ * the `<img>` node stops it. No `srcSet`/`sizes` ladder here since
+ * `background-image` has no responsive-image mechanism without
+ * `image-set()`; the "gallery tiles" width tier is a reasonable flat
+ * size for the small tiles this is used for.
+ */
+export function buildPortfolioImageBackgroundUrl({
+  objectKey,
+}: {
+  objectKey: string;
+}): string {
+  const originPath = buildOriginPath(objectKey);
+  return buildTransformUrl({ originPath, width: LADDER_WIDTHS[1] });
+}
+
 function buildOriginPath(objectKey: string): string {
   return `${PORTFOLIO_IMAGE_ROUTE_BASE}/${objectKey}`;
 }

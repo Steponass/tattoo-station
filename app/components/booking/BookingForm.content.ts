@@ -111,7 +111,7 @@ const bookingformContent = {
     }),
 
     preferredTimesLabel: t({
-      lt: "Pageidaujamos dienos / laikas",
+      lt: "Norimos dienos / laikas",
       en: "Preferred dates / times",
     }),
     preferredTimesPlaceholder: t({

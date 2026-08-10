@@ -6,7 +6,8 @@ import type {
   LightboxLabels,
   LightboxPhoto,
 } from "~/components/Lightbox/lightboxPhoto";
-import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
+import { buildPortfolioImageBackgroundUrl } from "~/lib/media/portfolioImageAttributes";
+import { useHorizontalDragScroll } from "./useHorizontalDragScroll";
 import styles from "./LandingGallery.module.css";
 
 
@@ -36,6 +37,9 @@ export default function LandingGallery(props: LandingGalleryProps) {
 
   const { topRowPhotos, bottomRowPhotos } = splitPhotosIntoRows(photos);
 
+  const topRowDrag = useHorizontalDragScroll();
+  const bottomRowDrag = useHorizontalDragScroll();
+
   if (photos.length === 0) {
     return null;
   }
@@ -47,14 +51,12 @@ export default function LandingGallery(props: LandingGalleryProps) {
           className={styles.landing_gallery_container}
           ref={landingGalleryContainerRef}
         >
-          <div className={styles.landing_gallery_top}>
+          <div className={styles.landing_gallery_top} {...topRowDrag}>
             {topRowPhotos.map((photo) => (
               <LandingGalleryTile key={photo.photoId} photo={photo} />
             ))}
           </div>
-          <div
-            className={styles.landing_gallery_bottom}
-          >
+          <div className={styles.landing_gallery_bottom} {...bottomRowDrag}>
             {bottomRowPhotos.map((photo) => (
               <LandingGalleryTile key={photo.photoId} photo={photo} />
             ))}
@@ -83,29 +85,27 @@ type LandingGalleryTileProps = {
   photo: LandingGalleryPhoto;
 };
 
-const LANDING_TILE_SIZES = "280px";
-
 function LandingGalleryTile(props: LandingGalleryTileProps) {
   const { photo } = props;
 
-  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+  const backgroundImageUrl = buildPortfolioImageBackgroundUrl({
     objectKey: photo.objectKey,
-    sizes: LANDING_TILE_SIZES,
   });
 
   return (
     <LightboxTrigger
       photoId={photo.photoId}
       className={`${styles.landing_gallery_tile} gallery-image-wrapper`}
+      ariaLabel={`Work by ${photo.artistDisplayName}`}
     >
-      <img
-        src={src}
-        srcSet={srcSet}
-        sizes={sizes}
-        alt={`Work by ${photo.artistDisplayName}`}
-        width={photo.width}
-        height={photo.height}
-        className='gallery-image'
+      {/* No <img> here on purpose — iOS Safari offers its native
+          long-press "lift this photo" drag/share gesture on <img>
+          elements no matter what draggable/-webkit-* properties are
+          set, so the tile is painted as a background-image instead. */}
+      <span
+        aria-hidden="true"
+        className={styles.landing_gallery_tile_image}
+        style={{ backgroundImage: `url("${backgroundImageUrl}")` }}
       />
     </LightboxTrigger>
   );

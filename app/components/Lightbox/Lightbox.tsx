@@ -579,6 +579,8 @@ interface LightboxTriggerProps {
   photoId: LightboxPhoto["id"];
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
+  ariaLabel?: string;
 }
 
 /**
@@ -597,7 +599,7 @@ interface LightboxTriggerProps {
  * unfolding into the lightbox rather than just the image floating.
  */
 export function LightboxTrigger(props: LightboxTriggerProps) {
-  const { photoId, children, className } = props;
+  const { photoId, children, className, style, ariaLabel } = props;
   const { open } = useLightboxContext();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -611,6 +613,8 @@ export function LightboxTrigger(props: LightboxTriggerProps) {
       type="button"
       onClick={handleClick}
       className={`${styles.trigger} ${className ?? ""}`.trim()}
+      style={style}
+      aria-label={ariaLabel}
     >
       {children}
     </button>

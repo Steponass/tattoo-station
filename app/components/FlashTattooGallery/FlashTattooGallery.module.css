@@ -8,6 +8,10 @@
   row-gap: 32px;
 }
 
+.flash_tattoo_gallery img {
+  max-height: 400px;
+}
+
 .empty_state {
   padding: 4rem 1.5rem;
   text-align: center;
