@@ -186,8 +186,8 @@ export default function ArtistProfileRoute({
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="36px"
-                    height="36px"
+                    width="42px"
+                    height="42px"
                     viewBox="0 0 16 16"
                   >
                     <path

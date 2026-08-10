@@ -58,7 +58,6 @@
   transform: rotate(180deg);
   text-transform: uppercase;
   letter-spacing: 3px;
-  font-family: var(--font-heading);
   font-size: var(--fontsize-body-s);
   color: var(--color-text-weakest);
   white-space: nowrap;
@@ -103,7 +102,6 @@
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-size: var(--fontsize-body-s);
   font-weight: 600;
   color: var(--color-accent-light);
 }

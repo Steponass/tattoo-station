@@ -39,10 +39,10 @@
   float: left;
   font-size: var(--fontsize-h2);
   line-height: 1;
-  margin-block-end: -16px;
+  margin-block-end: -12px;
   margin-inline: 4px;
   /* padding-inline: 0.3em; */
-  color: var(--color-accent);
+  color: var(--color-accent-light);
   @media (max-width: 768px) {
     font-size: var(--fontsize-h1);
   }
@@ -53,6 +53,9 @@
   gap: var(--space-24px);
   align-items: center;
   margin-block-start: var(--space-m-l);
+  & svg {
+    color: red;
+  }
 }
 
 .bottom_nav {
@@ -60,4 +63,8 @@
   display: flex;
   gap: var(--space-16px);
   justify-content: center;
+  & a {
+    min-width: 128px;
+    text-align: center;
+  }
 }

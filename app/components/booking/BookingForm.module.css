@@ -2,7 +2,7 @@
   width: min(768px, 98%);
   margin-inline: auto;
   margin-block: var(--space-xl-2xl);
-  padding: var(--space-s-m);
+  padding-block: var(--space-s-m);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-m-l);
@@ -13,6 +13,9 @@
   @media (max-width: 400px) {
     grid-template-columns: 1fr;
   };
+}
+
+.booking_form > * {
 }
 
 input[type=radio] {
@@ -45,6 +48,10 @@ input, textarea, select, option {
 
 .section {
   display: contents;
+}
+
+.section * {
+  transition: all 0.2s ease-in-out;
 }
 
 .heading {

@@ -1,6 +1,4 @@
-.landing_gallery_container {
-  
-}
+.landing_gallery_container {}
 
 .landing_gallery_top,
 .landing_gallery_bottom {
@@ -9,10 +7,13 @@
   overflow-x: scroll;
   overscroll-behavior-x: contain;
   touch-action: pan-x, pan-y;
-scrollbar-width: thin;
-scrollbar-color: var(--color-secondary) var(--color-bg-raised);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) var(--color-bg-raised);
 }
 
+.landing_gallery_bottom .landing_gallery_tile:first-child {
+  margin-inline-start: -80px;
+}
 
 .landing_gallery_tile {
   min-width: 280px;

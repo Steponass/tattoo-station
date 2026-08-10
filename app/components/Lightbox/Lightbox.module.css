@@ -79,6 +79,7 @@
   object-fit: contain;
   min-height: 0;
   min-width: 0;
+  touch-action: pinch-zoom;
 }
 
 .previousButton,
@@ -102,7 +103,7 @@
 
 .previousButton:disabled,
 .nextButton:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: default;
 }
 
@@ -112,6 +113,10 @@
   width: var(--space-xl-2xl);
   height: 2em;
   filter: drop-shadow(var(--shadow-make-icon-more-visible));
+}
+
+.closeButton svg {
+  height: 2.5em;
 }
 
 .nextButton svg {

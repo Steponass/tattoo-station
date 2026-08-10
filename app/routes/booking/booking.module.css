@@ -1,4 +1,12 @@
-#booking_main {
+#booking_main::before {
+  position: absolute;
+  z-index: -1;
+  content: '';
+  top: 0;
+  left: 0;
+  inset: 0;
+  width: 100vw;
+  height: 250vh;
   background: linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
   url("/Bookingform_bg.webp") center center/cover no-repeat;
 }

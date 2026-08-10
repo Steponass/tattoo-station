@@ -48,18 +48,18 @@ export default function coupon() {
 
         <div className={`${styles.ticket} chamfer chamfer-l punch`}>
           <div className={styles.ticket_stub}>
-            <span className={styles.stub_text}>Tattoo Station</span>
+            <h6 className={styles.stub_text}>Tattoo Station</h6>
           </div>
           <div className={styles.ticket_perforation} aria-hidden="true" />
           <div className={styles.ticket_main}>
-            <span className={styles.eyebrow}>{ticketEyebrow}</span>
+            <h5 className={styles.eyebrow}>{ticketEyebrow}</h5>
             <div className={styles.route}>
-              <span>{routeFrom}</span>
-              <span className={styles.route_arrow} aria-hidden="true">&rarr;</span>
-              <span>{routeTo}</span>
+              <p>{routeFrom}</p>
+              <p className={styles.route_arrow} aria-hidden="true">&rarr;</p>
+              <p>{routeTo}</p>
             </div>
             <NavButton to={COUPON_URL} buttonText={ctaText} newTab />
-            <span className={styles.cta_note}>{ctaNote}</span>
+            <p className={styles.cta_note}>{ctaNote}</p>
           </div>
         </div>
       </section>

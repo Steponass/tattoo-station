@@ -187,7 +187,7 @@
     width: 50%;
     height: 230px;
     background-color: var(--color-bg2);
-    background-image: url(../public//Grid-grey-on-dark.svg);
+    background-image: url(/Grey-Grid-Edited.svg);
     background-blend-mode: soft-light;
     transform: scaleX(0);
     transition: transform 0.35s ease;
@@ -283,7 +283,7 @@
 
   .header_mobile.open .burger_icon {
     transform-origin: center;
-    transform: rotateZ(90deg);
+    transform: translateX(-12px) rotateZ(90deg);
   }
 
   /* Scale factors are tuned so the grown bar length roughly matches the
@@ -308,7 +308,7 @@
   .mobile_nav {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 10;
     display: grid;
     justify-content: center;
     justify-items: center;
