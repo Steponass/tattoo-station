@@ -4,6 +4,9 @@ import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
 import type { Route } from "./+types/coupon";
 import styles from './coupon.module.css'
+import NavButton from "~/components/Button/NavButton";
+
+const COUPON_URL = "https://gift.korta.app/tattoo-station";
 
 // Intlayer start
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -17,7 +20,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
 };
 
 export const meta: Route.MetaFunction = ({ params }) => {
-  const content = getIntlayer("privacypolicy", params.lang);
+  const content = getIntlayer("coupon", params.lang);
 
   return [
     { title: content.title },
@@ -36,9 +39,30 @@ export const handle = {
 };
 
 export default function coupon() {
-  return(
+  const { leadText, ticketEyebrow, routeFrom, routeTo, ctaText, ctaNote } = useIntlayer("coupon");
+
+  return (
     <main>
-      
+      <section className={styles.coupon_section}>
+        <p className={styles.lead}>{leadText}</p>
+
+        <div className={`${styles.ticket} chamfer chamfer-l punch`}>
+          <div className={styles.ticket_stub}>
+            <span className={styles.stub_text}>Tattoo Station</span>
+          </div>
+          <div className={styles.ticket_perforation} aria-hidden="true" />
+          <div className={styles.ticket_main}>
+            <span className={styles.eyebrow}>{ticketEyebrow}</span>
+            <div className={styles.route}>
+              <span>{routeFrom}</span>
+              <span className={styles.route_arrow} aria-hidden="true">&rarr;</span>
+              <span>{routeTo}</span>
+            </div>
+            <NavButton to={COUPON_URL} buttonText={ctaText} newTab />
+            <span className={styles.cta_note}>{ctaNote}</span>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

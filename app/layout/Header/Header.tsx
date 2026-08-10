@@ -37,7 +37,10 @@ export default function Header() {
       <header className={styles.header}>
         <div className={styles.logo}>
           <LocalizedLink to="/">
-            <img src="/TEMP-Logo-from-photo.webp" />
+            <img 
+            src="/TEMP-Logo-from-photo.webp" 
+            alt="Logo of Tatoo Station"
+            />
           </LocalizedLink>
         </div>
         <nav className={styles.nav}>

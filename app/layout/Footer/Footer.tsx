@@ -9,7 +9,10 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles["footer-container"]}>
         <div className={styles["footer-logo-and-descript"]}>
-          <img src="/TEMP-Logo-from-photo.webp" />
+          <img 
+          src="/TEMP-Logo-from-photo.webp"
+          alt="Logo of Tatoo Station"
+          />
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic tenetur
             natus nobis non. Minus rem odit voluptatum sint vel maxime.
