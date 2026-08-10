@@ -32,8 +32,8 @@ const pageTitleBoardContent = {
       en: "FAQ",
     }),
     coupon: t({
-      lt: "Giftcard",
-      en: "Dovanų kuponas",
+      lt: "Dovanų kuponas",
+      en: "Giftcard",
     }),
     styles: t({
       lt: "Tattoo stiliai",

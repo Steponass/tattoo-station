@@ -24,6 +24,7 @@ export default [
     route("privacypolicy", "routes/privacypolicy/privacypolicy.tsx"),
     route("portfolio-image/*", "routes/portfolio-image.$.tsx"),
   ]),
+  route("sitemap.xml", "routes/sitemap.xml.tsx"),
     route("admin", "routes/admin.tsx", [
     index("routes/admin._index.tsx"),
     route("me", "routes/admin.me.tsx"),

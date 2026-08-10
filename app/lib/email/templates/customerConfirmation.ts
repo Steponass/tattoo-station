@@ -88,12 +88,12 @@ const STRINGS: Record<SupportedLocale, LocalizedStrings> = {
     firstTimeYes:        "Yes",
     firstTimeNo:         "No",
     nextSteps:           "Our team will review your request and reach out to discuss availability and next steps.",
-    closing:             "See you soon,",
+    closing:             "See you soon!",
     signature:           "Tattoo Station",
   },
   lt: {
     subject:             "Gavome jūsų rezervacijos užklausą",
-    intro:               "Ačiū, kad kreipėtės. Žemiau pateikiame jūsų užklausos santrauką — netrukus susisieksime ir patvirtinsime detales.",
+    intro:               "Ačiū, kad kreipėtės. Žemiau pateikiame jūsų užklausos santrauką; netrukus susisieksime ir patvirtinsime detales.",
     referenceLabel:      "Numeris",
     serviceLabel:        "Paslauga",
     typeLabel:           "Tipas",
@@ -107,7 +107,7 @@ const STRINGS: Record<SupportedLocale, LocalizedStrings> = {
     firstTimeYes:        "Taip",
     firstTimeNo:         "Ne",
     nextSteps:           "Mūsų komanda peržiūrės jūsų užklausą ir susisieks dėl laisvo laiko bei kitų žingsnių.",
-    closing:             "Iki pasimatymo,",
+    closing:             "Iki pasimatymo!",
     signature:           "Tattoo Station",
   },
 };
@@ -133,8 +133,8 @@ function buildDetailRow(label: string, value: string | null | undefined): string
 
   return `
     <tr>
-      <td style="padding: 6px 16px 6px 0; color: #888888; white-space: nowrap; vertical-align: top;">${label}</td>
-      <td style="padding: 6px 0; vertical-align: top;">${value}</td>
+      <td style="padding: 6px 16px 6px 0; color: hsl(143, 3%, 97%); white-space: nowrap; vertical-align: top;">${label}</td>
+      <td style="padding: 6px 0; vertical-align: top; color: hsl(143, 3%, 97%)">${value}</td>
     </tr>`;
 }
 

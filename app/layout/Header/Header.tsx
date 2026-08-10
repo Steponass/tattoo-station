@@ -37,7 +37,7 @@ export default function Header() {
       <header className={styles.header}>
         <div className={styles.logo}>
           <LocalizedLink to="/">
-            <img src="/public/TEMP-Logo-from-photo.webp" />
+            <img src="/TEMP-Logo-from-photo.webp" />
           </LocalizedLink>
         </div>
         <nav className={styles.nav}>

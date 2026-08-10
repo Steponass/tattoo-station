@@ -7,6 +7,10 @@
 .process_container {
   width: min(1280px, 100%);
   margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .section_heading {
@@ -129,11 +133,12 @@
   min-height: 240px;
   place-content: center;
   opacity: 0.5;
-  padding-inline: var(--space-2xs-xs);
+  padding-inline: var(--space-m-l);
   padding-block: var(--space-2xs-xs);
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     width: 100%;
     min-height: 120px;
+    padding-inline: var(--space-2xs-xs);
   }
   & p {
     text-align: center;
