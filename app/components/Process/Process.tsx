@@ -141,7 +141,9 @@ export default function Process() {
 
           timeline.to(
             step,
-            { opacity: 1, duration: 0.06, ease: "power3.in" },
+            { opacity: 1,
+              duration: 0.2,
+              ease: "power3.in" },
             Math.max(0, progress - 0.03),
           );
 

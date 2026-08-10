@@ -13,6 +13,8 @@ export const DRAFT_ID_FIELD_NAME = "draftId";
 
 export const TURNSTILE_TOKEN_FIELD_NAME = "cf-turnstile-response";
 
+export const LOCALE_FIELD_NAME = "locale";
+
 /**
  * A human cannot complete this form in under three seconds. Checked server-side
  * against the signed-in-plain-text timestamp rendered with the form.

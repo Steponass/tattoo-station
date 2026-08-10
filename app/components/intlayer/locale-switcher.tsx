@@ -18,9 +18,9 @@ export const LocaleSwitcher: FC = () => {
   const pathWithoutLocale = getPathWithoutLocale(pathname);
 
   return (
-    <ol className={styles.locale_switcher}>
+    <div className={styles.locale_switcher}>
       {availableLocales.map((localeItem) => (
-        <li key={localeItem} className="chamfer chamfer-xs">
+        <div key={localeItem} className="chamfer chamfer-xs">
           <Link
             aria-current={localeItem === locale ? "page" : undefined}
             aria-label={`${localeSwitcherLabel.value} ${getLocaleName(localeItem)}`}
@@ -33,8 +33,8 @@ export const LocaleSwitcher: FC = () => {
             </span>
 
           </Link>
-        </li>
+        </div>
       ))}
-    </ol>
+    </div>
   );
 };

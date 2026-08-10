@@ -17,6 +17,7 @@ import type {
   BookingSubmission,
 } from "~/lib/booking/bookingSubmissionTypes";
 import { readOptionalText } from "~/lib/booking/formDataReaders";
+import { LOCALE_FIELD_NAME } from "~/lib/booking/spamGuardConstants";
 import { generateBookingReference } from "~/lib/booking/generateBookingReference";
 import { resolveArtistPreselection } from "~/lib/booking/resolveArtistPreselection";
 import { sendBookingNotifications } from "~/lib/booking/server/notifications.server";
@@ -178,6 +179,8 @@ export async function action({
     return { ok: false, fieldErrors: { artistSelection: "invalid_option" } };
   }
 
+  const locale = readOptionalText(formData, LOCALE_FIELD_NAME);
+
   // Persisted before any notification is attempted, so a mail failure cannot
   // lose the enquiry.
   const persistedBooking = await insertBooking({
@@ -199,6 +202,7 @@ export async function action({
       artistContact:
         artistResolution.status === "resolved" ? artistResolution.contact : null,
       origin: new URL(request.url).origin,
+      locale,
     }),
   );
 

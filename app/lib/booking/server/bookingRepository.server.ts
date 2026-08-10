@@ -16,6 +16,7 @@ export type PersistedBooking = {
   id: string;
   reference: string;
   createdAt: string;
+  purgeAfter: string;
 };
 
 export type NotificationStatus = "pending" | "sent" | "partial" | "failed";
@@ -133,7 +134,7 @@ export async function insertBooking({
     )
     .run();
 
-  return { id: bookingId, reference, createdAt };
+  return { id: bookingId, reference, createdAt, purgeAfter };
 }
 
 const UPDATE_NOTIFICATION_STATUS_SQL = `

@@ -1,4 +1,5 @@
-import {useRef } from "react";
+import { useRef } from "react";
+import { useLocale } from "react-intlayer";
 
 import {
   DRAFT_ID_FIELD_NAME,
@@ -22,6 +23,7 @@ export function SpamGuardFields({
   draftId: string;
 }) {
   const renderedAtRef = useRef<string>(String(Date.now()));
+  const { locale } = useLocale();
 
   return (
     <div style={{ position: "absolute", visibility: "hidden"}} data-spam-guard aria-hidden="true">
@@ -44,6 +46,7 @@ export function SpamGuardFields({
       />
 
       <input type="hidden" name={DRAFT_ID_FIELD_NAME} value={draftId} />
+      <input type="hidden" name="locale" value={locale} />
     </div>
   );
 }
