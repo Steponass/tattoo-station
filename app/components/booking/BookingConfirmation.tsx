@@ -8,6 +8,7 @@ export type BookingConfirmationContent = {
   body: string;
   referenceLabel: string;
   stampText: string;
+  closeLabel: string;
 };
 
 const STAMP_IMPACT_ROTATION_DEGREES = -12;
@@ -15,9 +16,11 @@ const STAMP_IMPACT_ROTATION_DEGREES = -12;
 export function BookingConfirmation({
   reference,
   content,
+  onClose,
 }: {
   reference: string;
   content: BookingConfirmationContent;
+  onClose: () => void;
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -105,6 +108,13 @@ export function BookingConfirmation({
         <div data-confirmation-body>
           <h5 className={styles.confirmation_heading}>{content.heading}</h5>
           <p className={styles.confirmation_body}>{content.body}</p>
+          <button
+            type="button"
+            className={styles.confirmation_close_button}
+            onClick={onClose}
+          >
+            {content.closeLabel}
+          </button>
         </div>
       </div>
     </div>

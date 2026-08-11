@@ -332,10 +332,6 @@ const bookingformContent = {
       lt: "Norint tęsti reikia sutikti su privatumo politika",
       en: "Please agree to the privacy policy to continue",
     }),
-    errorReferenceLinkInvalid: t({
-      lt: "Nuoroda turi prasidėti https://",
-      en: "The link should start with https://",
-    }),
     errorPhotosTooMany: t({
       lt: "Galima įkelti iki 5 nuotraukų",
       en: "You can upload up to 5 photos",

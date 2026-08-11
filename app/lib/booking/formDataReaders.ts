@@ -58,12 +58,3 @@ export function isValidPhoneShape(value: string): boolean {
     digitCount <= PHONE_DIGIT_COUNT_RANGE.maximum
   );
 }
-
-export function isValidHttpUrl(value: string): boolean {
-  try {
-    const parsedUrl = new URL(value);
-    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
-  } catch {
-    return false;
-  }
-}

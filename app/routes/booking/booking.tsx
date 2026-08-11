@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { BookingForm } from "~/components/booking/BookingForm";
@@ -37,6 +37,7 @@ const bookingConfirmationContent: BookingConfirmationContent = {
   body: "Thanks — we've got your booking request and will be in touch shortly to confirm details.",
   referenceLabel: "Reference: ",
   stampText: "RECEIVED",
+  closeLabel: "Close",
 };
 
 export type BookingActionResult =
@@ -223,15 +224,19 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher<BookingActionResult>();
 
   const submissionResult = fetcher.data;
+  const [confirmationDismissed, setConfirmationDismissed] = useState(false);
 
   // Codes rather than messages: the form resolves them to localized copy, which
   // this action cannot do because it runs without a translation context.
   const fieldErrorCodes: BookingFieldErrorCodes =
     submissionResult?.ok === false ? submissionResult.fieldErrors : {};
 
+  const showConfirmation = submissionResult?.ok === true && !confirmationDismissed;
+
   useEffect(() => {
     if (submissionResult?.ok === true) {
       clearBookingFormDraft();
+      setConfirmationDismissed(false);
     }
   }, [submissionResult]);
 
@@ -243,7 +248,7 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
         while confirmed: there is nothing left to edit, and nothing behind an
         overlay should stay reachable by keyboard.
       */}
-      <div inert={submissionResult?.ok === true}>
+      <div inert={showConfirmation}>
         <BookingForm
           key={artistPreselection?.artistSelection ?? "none"}
           artists={artists}
@@ -254,14 +259,15 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
         />
       </div>
 
-      {submissionResult?.ok === true && (
+      {showConfirmation && submissionResult?.ok === true && (
         <Suspense fallback={null}>
           <BookingConfirmation
             reference={submissionResult.reference}
             content={bookingConfirmationContent}
+            onClose={() => setConfirmationDismissed(true)}
           />
         </Suspense>
       )}
-      </main>
+    </main>
   );
 }

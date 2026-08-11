@@ -11,7 +11,6 @@ import {
 import { MAX_PHOTOS_PER_BOOKING } from "./photoConstraints";
 import {
   isValidEmailShape,
-  isValidHttpUrl,
   isValidPhoneShape,
   readCheckbox,
   readOptionalText,
@@ -377,10 +376,6 @@ export function validateBookingSubmission(
     maxLength: FIELD_MAX_LENGTHS.referenceLink,
     errors,
   });
-
-  if (referenceLink !== undefined && !isValidHttpUrl(referenceLink)) {
-    errors.record("referenceLink", "invalid_url");
-  }
 
   const photoKeys = readPhotoKeys({ formData, errors });
 

@@ -232,7 +232,7 @@ input[type=tel] {
   place-items: center;
   overflow-y: auto;
   padding: var(--space-16px);
-  background-color: hsl(143, 20%, 3%, 0.92);
+  background-color: hsl(143, 20%, 3%, 0.85);
   backdrop-filter: blur(6px);
 }
 
@@ -281,11 +281,12 @@ input[type=tel] {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   line-height: 1;
+  color: var(--color-secondary);
   font-size: clamp(1.6rem, 1rem + 3vw, 2.4rem);
   color: var(--stamp-ink);
   /* Slightly offset duplicate in the darker ink shade, mimicking a
      double-struck stamp impression. */
-  text-shadow: 2px 2px 0 var(--color-accent);
+  text-shadow: 2px 2px 0 var(--color-stroke-weak);
 }
 
 .stamp_reference {
@@ -307,5 +308,22 @@ input[type=tel] {
   color: var(--color-text-weak);
   max-width: 40ch;
   margin-inline: auto;
+}
+
+.confirmation_close_button {
+  margin-block-start: var(--space-m-l);
+  padding-block: var(--space-8px);
+  padding-inline: var(--space-16px);
+  color: var(--color-text-strong);
+  background-color: transparent;
+  border: 2px solid var(--color-stroke-strong);
+  border-radius: var(--space-4px);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 }
 
