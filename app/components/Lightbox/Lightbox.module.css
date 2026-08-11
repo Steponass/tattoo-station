@@ -58,7 +58,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  touch-action: pan-y;
+  touch-action: pan-y pinch-zoom;
   position: relative;
 }
 

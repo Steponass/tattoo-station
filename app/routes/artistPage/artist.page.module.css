@@ -53,9 +53,6 @@
   gap: var(--space-24px);
   align-items: center;
   margin-block-start: var(--space-m-l);
-  & svg {
-    color: red;
-  }
 }
 
 .bottom_nav {

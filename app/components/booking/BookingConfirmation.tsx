@@ -83,16 +83,28 @@ export function BookingConfirmation({
       aria-live="polite"
       tabIndex={-1}
     >
-      {/* The circle is the stamp: it is what the timeline slams down, so the
-          animation hooks sit on it and on the text that follows it in. */}
-      <div className={styles.booking_confirmation_container} data-stamp>
-        <h5 className={styles.confirmation_heading}>{content.heading}</h5>
-        <div data-confirmation-body>
-          <p>{content.body}</p>
-          <p>
+      {/* Decorative-only: distorts the worn outer ring (see .stamp_ring::after)
+          so it reads as ink rather than a vector circle. Never applied to
+          text, which stays crisp for legibility. */}
+      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+        <filter id="stamp-grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" />
+        </filter>
+      </svg>
+      <div className={styles.booking_confirmation_container}>
+        {/* The ring is the stamp: it is what the timeline slams down, so the
+            animation hooks sit on it and on the text that follows it in. */}
+        <div className={styles.stamp_ring} data-stamp>
+          <p className={styles.stamp_word}>{content.stampText}</p>
+          <p className={styles.stamp_reference}>
             {content.referenceLabel}
-            <strong>{reference}</strong>
+            {reference}
           </p>
+        </div>
+        <div data-confirmation-body>
+          <h5 className={styles.confirmation_heading}>{content.heading}</h5>
+          <p className={styles.confirmation_body}>{content.body}</p>
         </div>
       </div>
     </div>

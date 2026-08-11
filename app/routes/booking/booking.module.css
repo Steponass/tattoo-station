@@ -5,8 +5,8 @@
   top: 0;
   left: 0;
   inset: 0;
-  width: 100vw;
-  height: 250vh;
+  width: 100%;
+  height: max(100%, 100dvh);
   background: linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
   url("/Bookingform_bg.webp") center center/cover no-repeat;
 }

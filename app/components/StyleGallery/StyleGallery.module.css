@@ -3,6 +3,9 @@
   display: flex;
   gap: var(--space-8px);
   flex-wrap: wrap;
+  @media (max-width: 600px) {
+    justify-content: center;
+  }
 }
 
 .placeholder {
@@ -10,11 +13,15 @@
   width: 164px;
   /* max-height: 500px; */
   aspect-ratio: 0.8;
+  &::after {
+    content: "coming soon";
+    justify-self: center;
+  }
 }
 
 /* A real photo tile occupies the same box the placeholder does. The grid
    column already sets the width; sizing/clipping comes from the
    gallery-image-wrapper/gallery-image global classes (see global.css). */
 .style_gallery_tile {
-  min-width: 100px;
+  min-width: 140px;
 }

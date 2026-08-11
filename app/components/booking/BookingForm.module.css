@@ -221,33 +221,91 @@ input[type=tel] {
   text-decoration: underline;
 }
 
-/* Sits above the header (z-index 10) so the stamp covers the whole page, and
-   swallows pointer events aimed at the form it is confirming. */
+/* Fixed so it covers the viewport regardless of scroll position, above the
+   sticky header (z-index 10), and swallows pointer events aimed at the form
+   it is confirming. */
 .booking_confirmation_overlay {
-  margin-top: -300px;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
   display: grid;
   place-items: center;
+  overflow-y: auto;
+  padding: var(--space-16px);
+  background-color: hsl(143, 20%, 3%, 0.92);
+  backdrop-filter: blur(6px);
 }
 
 .booking_confirmation_container {
-  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m-l);
+  text-align: center;
+}
+
+/* The ink ring. A crisp inner border carries the readable text; a second,
+   larger ring behind it (::after) gets displaced by the grain filter so the
+   pair reads as a slightly worn, hand-struck impression rather than a
+   perfect vector circle. */
+.stamp_ring {
+  --stamp-ink: var(--color-accent-light);
+  position: relative;
+  width: clamp(220px, 45vw, 300px);
   aspect-ratio: 1;
   padding: var(--space-16px);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  text-align: center;
+  gap: var(--space-8px);
   border-radius: 50%;
-  border: 3px solid black;
-  background-color: hsl(10, 51%, 93%);
+  border: 3px solid var(--stamp-ink);
   rotate: -10deg;
-  & p {
-    color: black;
-  }
+}
+
+.stamp_ring::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--stamp-ink);
+  opacity: 0.45;
+  filter: url(#stamp-grain);
+  pointer-events: none;
+}
+
+.stamp_word {
+  font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  font-size: clamp(1.6rem, 1rem + 3vw, 2.4rem);
+  color: var(--stamp-ink);
+  /* Slightly offset duplicate in the darker ink shade, mimicking a
+     double-struck stamp impression. */
+  text-shadow: 2px 2px 0 var(--color-accent);
+}
+
+.stamp_reference {
+  font-size: var(--fontsize-body-s);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--stamp-ink);
+  opacity: 0.85;
+  padding-block-start: var(--space-8px);
+  border-block-start: 1px solid color-mix(in hsl, var(--stamp-ink) 50%, transparent);
 }
 
 .confirmation_heading {
-  color: black;
+  color: var(--color-text-strong);
   margin-block-end: 0.5em;
+}
+
+.confirmation_body {
+  color: var(--color-text-weak);
+  max-width: 40ch;
+  margin-inline: auto;
 }
 

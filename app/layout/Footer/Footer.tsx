@@ -3,7 +3,7 @@ import styles from "./Footer.module.css";
 import { useIntlayer } from "react-intlayer";
 
 export default function Footer() {
-  const { privacypolicy } = useIntlayer("Footer");
+  const { tagline, privacypolicy } = useIntlayer("Footer");
 
   return (
     <footer className={styles.footer}>
@@ -13,10 +13,7 @@ export default function Footer() {
           src="/TEMP-Logo-from-photo.webp"
           alt="Logo of Tatoo Station"
           />
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic tenetur
-            natus nobis non. Minus rem odit voluptatum sint vel maxime.
-          </p>
+          <p>{tagline}</p>
         </div>
         <div className={styles.footer_info}>
           <a
