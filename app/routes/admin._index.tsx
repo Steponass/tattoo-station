@@ -124,6 +124,7 @@ export default function AdminDashboardPage({
             orderedItemIds={orderedArtistIds}
             onOrderChange={handleReorder}
             ariaLabel="Artist roster, drag to reorder"
+            className={styles.rosterGrid}
           >
             {rosterEntries.map((entry) => (
               <RosterEntry key={entry.id} entry={entry} />

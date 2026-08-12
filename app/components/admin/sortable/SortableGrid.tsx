@@ -57,10 +57,12 @@ type SortableGridProps = {
   onOrderChange: (nextOrderedIds: SortableGridItemId[]) => void;
   children: ReactNode;
   ariaLabel: string;
+  className?: string;
 };
 
 export function SortableGrid(props: SortableGridProps) {
-  const { orderedItemIds, onOrderChange, children, ariaLabel } = props;
+  const { orderedItemIds, onOrderChange, children, ariaLabel, className } =
+    props;
 
   /**
    * Sensor configuration. Distance/hold thresholds prevent every click on a
@@ -113,7 +115,11 @@ export function SortableGrid(props: SortableGridProps) {
         items={orderedItemIds as UniqueIdentifier[]}
         strategy={rectSortingStrategy}
       >
-        <ul className={styles.grid} role="list" aria-label={ariaLabel}>
+        <ul
+          className={className ? `${styles.grid} ${className}` : styles.grid}
+          role="list"
+          aria-label={ariaLabel}
+        >
           {children}
         </ul>
       </SortableContext>
