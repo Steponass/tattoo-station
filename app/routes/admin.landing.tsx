@@ -1,6 +1,6 @@
 // app/routes/admin.landing.tsx
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
@@ -85,6 +85,15 @@ export default function AdminLandingPage({ loaderData }: Route.ComponentProps) {
   );
 
   const placedOrderedIds = placedPhotos.map((photo) => photo.photoId);
+
+  /**
+   * LandingGallery.tsx splits placed photos into two rows purely by
+   * position — first half (rounded up) on top, the rest on bottom. Mirror
+   * that split here so the admin can see which row a drag will land a photo
+   * in. Keep this in sync with `splitPhotosIntoRows` in LandingGallery.tsx.
+   */
+  const topRowCount = Math.ceil(placedPhotos.length / 2);
+  const bottomRowCount = placedPhotos.length - topRowCount;
 
   async function handleReorder(nextOrderedIds: number[]) {
     const previousPhotos = photos;
@@ -206,19 +215,26 @@ export default function AdminLandingPage({ loaderData }: Route.ComponentProps) {
               onOrderChange={handleReorder}
               ariaLabel="Photos placed in the landing gallery, drag to reorder"
             >
-              {placedPhotos.map((photo) => (
-                <PlacedCurationTile
-                  key={photo.photoId}
-                  photo={{
-                    photoId: photo.photoId,
-                    objectKey: photo.objectKey,
-                    width: photo.width,
-                    height: photo.height,
-                    artistDisplayName: photo.artistDisplayName,
-                  }}
-                  onRemove={handleRemove}
-                  isRemoving={mutatingPhotoIds.has(photo.photoId)}
-                />
+              {placedPhotos.map((photo, index) => (
+                <Fragment key={photo.photoId}>
+                  {index === 0 && (
+                    <RowDivider label={`Top row · ${topRowCount}`} />
+                  )}
+                  {index === topRowCount && (
+                    <RowDivider label={`Bottom row · ${bottomRowCount}`} />
+                  )}
+                  <PlacedCurationTile
+                    photo={{
+                      photoId: photo.photoId,
+                      objectKey: photo.objectKey,
+                      width: photo.width,
+                      height: photo.height,
+                      artistDisplayName: photo.artistDisplayName,
+                    }}
+                    onRemove={handleRemove}
+                    isRemoving={mutatingPhotoIds.has(photo.photoId)}
+                  />
+                </Fragment>
               ))}
             </SortableGrid>
           )}
@@ -279,6 +295,19 @@ export default function AdminLandingPage({ loaderData }: Route.ComponentProps) {
         </section>
       </div>
     </main>
+  );
+}
+
+/**
+ * Non-draggable marker dropped into the placed grid between the two row
+ * halves. It isn't wrapped in SortableGridItem, so it doesn't register with
+ * dnd-kit and can't be picked up — it's purely a label for the admin.
+ */
+function RowDivider({ label }: { label: string }) {
+  return (
+    <li className={styles.rowDivider} role="presentation">
+      {label}
+    </li>
   );
 }
 

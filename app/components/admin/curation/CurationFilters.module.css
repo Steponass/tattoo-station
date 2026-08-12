@@ -32,6 +32,9 @@
   font-size: 0.875rem;
   color: inherit;
   cursor: pointer;
+  & option {
+    color: black;
+  }
 }
 
 .select:focus-visible {
