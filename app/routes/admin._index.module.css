@@ -48,6 +48,10 @@
   gap: 1rem;
 }
 
+.rosterSection .grid {
+  grid-template-columns: 1fr;
+}
+
 .rosterHeader {
   display: flex;
   justify-content: space-between;
