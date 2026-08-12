@@ -1,13 +1,12 @@
 .roster {
   list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
 .roster_item_wrapper {
   transition: 0.3s all ease-in;
   width: min(900px, 100%);
   margin-inline: auto;
+  margin-block-end: var(--space-m-l);
   @media (hover: hover) {
   &:hover {
     transform: translateY(-4px);
@@ -108,6 +107,9 @@
   display: grid;
   gap: var(--space-m-l);
   justify-items: start;
+  @media ( max-width: 800px) {
+    justify-items: center;
+  }
 }
 
 .roster_no_and_avatar_container {
@@ -153,6 +155,12 @@
 @media (max-width: 800px) {
   .preview_grid {  
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 440px) {
+  .preview_grid {  
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 

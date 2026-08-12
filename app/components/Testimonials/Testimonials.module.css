@@ -71,6 +71,7 @@
 .reset_button {
   padding-block: var(--space-12px);
   padding-inline: var(--space-24px);
+  font-size: var(--fontsize-body);
   color: var(--color-text-strong);
   background-color: var(--color-secondary);
   transition: all 0.2s ease-in;

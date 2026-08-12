@@ -6,14 +6,14 @@ import { useRef, type PointerEvent as ReactPointerEvent } from "react";
  * A horizontal drag shorter than this (in CSS px) is treated as a tap or
  * an imprecise touch, not a swipe.
  */
-const SWIPE_MIN_DISTANCE_PX = 50;
+const SWIPE_MIN_DISTANCE_PX = 40;
 
 /**
  * A drag whose vertical travel exceeds this is treated as a vertical
  * scroll/pan gesture rather than a prev/next swipe, even if it also moved
  * far enough horizontally.
  */
-const SWIPE_MAX_OFF_AXIS_PX = 80;
+const SWIPE_MAX_OFF_AXIS_PX = 90;
 
 interface UseSwipeNavigationInput {
   onPrevious: () => void;

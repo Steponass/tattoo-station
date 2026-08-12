@@ -217,6 +217,10 @@ input[type=tel] {
   min-height: 40px;
 }
 
+input::selection {
+  color: var(--color-text-strong);
+}
+
 .privacy_link {
   text-decoration: underline;
 }

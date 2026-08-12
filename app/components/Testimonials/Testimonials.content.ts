@@ -7,6 +7,14 @@ const testimonialsContent = {
       lt: "Atsiliepimai",
       en: "Testimonials",
     }),
+    resetButtonText: t({
+      lt: "Atstatyti",
+      en: "Reset",
+    }),
+    moreReviewsButtonText: t({
+      lt: "daugiau atsiliepimų",
+      en: "more reviews",
+    }),
     items: [
       {
         text: t({
@@ -58,6 +66,7 @@ const testimonialsContent = {
         name: "Kristina R.",
       },
     ],
+
   },
 } satisfies Dictionary;
 

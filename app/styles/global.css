@@ -149,6 +149,47 @@ button {
   outline-offset: 2px;
 }
 
+/* -------------------------------------------------------------------------- */
+/* .sweep-hover — lit carriages passing in the dark                           */
+/* -------------------------------------------------------------------------- */
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .sweep-hover:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-secondary);
+    text-decoration-thickness: 3px;
+    text-underline-offset: var(--space-4px);
+
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+
+    /* Stripe geometry: these percentages are of the gradient IMAGE, which is
+       400% of the element's width — so a 6% band paints at ~24% of the text.
+       The whole pack must stay inside 25%-75% or it peeks out at rest, which
+       is a 50% budget; widen stripes by trading away carriages, not by
+       spilling past those bounds. Here: 6% lit, 4% dark, four carriages. */
+    background-image: linear-gradient(
+      100deg,
+      var(--color-secondary) 0 30%,
+      var(--color-text-strong) 30% 36%,
+      var(--color-secondary) 36% 40%,
+      var(--color-text-strong) 40% 46%,
+      var(--color-secondary) 56% 60%,
+      var(--color-text-strong) 60% 66%,
+      var(--color-secondary) 66% 72%,
+      var(--color-text-strong) 72% 100%
+    );
+    background-size: 400% 100%;
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+    background-clip: text;
+    -webkit-background-clip: text;
+
+    animation: carriages 0.7s ease-in-out;
+  }
+}
+
 @keyframes carriages {
   from {
     background-position: 0% 0;

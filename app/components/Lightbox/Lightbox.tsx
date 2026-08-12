@@ -538,7 +538,7 @@ function LightboxContents(props: LightboxContentsProps) {
           <LocalizedLink
             key={`artist-${photo.id}`}
             to={`/artists/${photo.artist.slug}`}
-            className={`${styles.artist_link} chamfer chamfer-xs punch`}
+            className={`${styles.artist_link} shadow chamfer chamfer-xs punch`}
           >
             {photo.artist.displayName}
           </LocalizedLink>
@@ -546,7 +546,7 @@ function LightboxContents(props: LightboxContentsProps) {
         <LocalizedLink
           key={`booknow-${photo.id}`}
           to={bookingTo}
-          className={`${styles.booknow_link} chamfer chamfer-xs punch`}
+          className={`${styles.booknow_link} shadow chamfer chamfer-xs punch`}
         >
           {labels.bookNow}
         </LocalizedLink>

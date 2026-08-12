@@ -1,12 +1,12 @@
 .hero_section {
-  /* min-height: 25vh; */
   margin-block-start: var(--space-s-m);
   margin-block-end: var(--space-2xl-3xl);
+  padding-inline: var(--space-xs-s);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-16px);
+  gap: var(--space-24px);
   & h2 {
     font-size: var(--fontsize-h5);
   }
@@ -18,8 +18,12 @@
   bottom: 0;
   inset: 0;
   width: 100%;
-  min-height: 500px;
+  height: 500px;
     background:   linear-gradient(hsla(143, 25%, 9%, 0.85), hsla(143, 25%, 9%, 0.85)),
   url("/StudioPhoto001_edited_webp.webp") center center/cover no-repeat;
   z-index: -1;
+  @media (max-width: 800px) {
+  background:   linear-gradient(hsla(143, 25%, 9%, 0.85), hsla(143, 25%, 9%, 0.85)),
+  url("/studio_mirror_webp.webp") center center/cover no-repeat;
+  }
 }

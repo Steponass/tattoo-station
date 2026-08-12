@@ -18,7 +18,7 @@ const SNAP_EASE = "back.out(1)"
 
 export default function Testimonials() {
 
-  const { items, heading } = useIntlayer("Testimonials")
+  const { items, heading, resetButtonText, moreReviewsButtonText } = useIntlayer("Testimonials")
   const testimonialContainerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const draggablesRef = useRef<Draggable[]>([])
@@ -123,9 +123,9 @@ export default function Testimonials() {
             <div className={styles.testimonials_button_container}>
             <button className={`${styles.reset_button} chamfer chamfer-xs punch`}
                   onClick={handleReset}>
-              Reset
+              {resetButtonText}
             </button>
-            <NavButton buttonText={"more reviews"}
+            <NavButton buttonText={moreReviewsButtonText}
                   newTab
                   to={'https://www.google.com/maps/place/Tattoo+Station+Est.+2020/@54.6721408,25.289544,17z/data=!4m18!1m9!3m8!1s0x46dd95be0ee521f3:0x836264376174f856!2sTattoo+Station+Est.+2020!8m2!3d54.6721408!4d25.289544!9m1!1b1!16s%2Fg%2F11rp447y5d!3m7!1s0x46dd95be0ee521f3:0x836264376174f856!8m2!3d54.6721408!4d25.289544!9m1!1b1!16s%2Fg%2F11rp447y5d?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D'}/>
             </div>

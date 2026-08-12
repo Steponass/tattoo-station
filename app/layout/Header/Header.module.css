@@ -19,7 +19,6 @@
   padding-inline: var(--space-xs-s);
   display: flex;
   justify-content: space-evenly;
-  /* flex-wrap: wrap; */
   text-align: center;
 }
 
@@ -218,7 +217,7 @@
 
   .logo {
     position: relative;
-    z-index: 1;
+    z-index: 11;
     pointer-events: auto;
     width: 100px;
     height: 100px;
@@ -293,7 +292,7 @@
   }
 
     .header_mobile.open .burger_icon rect:nth-child(2) {
-      transform: scaleX(12);
+      transform: translateX(-30px) scaleX(13);
     }
   /* The wrapper's diagonal clip-path is sized to its own 100px box, so
      bars growing past it would otherwise be cut off mid-animation.
@@ -313,12 +312,13 @@
     justify-content: center;
     justify-items: center;
     grid-template-columns: 1fr;
-    gap: var(--space-xs-s);
+    gap: var(--space-s-m);
     padding-block: var(--space-m-l);
     padding-inline: var(--space-xl-2xl);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease-in;
+    font-size: var(--fontsize-h6);
     @media (400px <= width <= 780px) {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto;
@@ -327,7 +327,18 @@
 
   .header_mobile.open .mobile_nav {
     opacity: 1;
-    pointer-events: auto;
     transition-delay: 0.2s;
+  }
+
+  /* pointer-events stays off on the .mobile_nav box itself: its inset:0 box
+     overlaps .burger_group's corner (.header_mobile has no explicit height,
+     so both sit in the same ~100px strip), and the grid's gaps/padding are
+     empty space between the links. Auto on the whole box would let that
+     empty space swallow clicks meant for the burger button underneath —
+     visible but unclickable, since nothing opaque paints there. Scoping
+     auto to the actual children keeps the links clickable without blocking
+     what's behind the gaps. */
+  .header_mobile.open .mobile_nav > * {
+    pointer-events: auto;
   }
 }

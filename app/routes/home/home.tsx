@@ -10,6 +10,7 @@ import Testimonials from "~/components/Testimonials/Testimonials";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { findPlacedPhotos } from "~/lib/gallery/galleryPlacementRepository.server";
 import styles from './home.module.css';
+import ProcessNew from "~/components/ProcessNew/ProcessNew";
 
 export const loader = async ({ params, context }: Route.LoaderArgs) => {
   const { lang: locale } = params;
@@ -48,23 +49,24 @@ export const handle = {
 };
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { buttonTextArtists } = useIntlayer("home");
+  const { subheading, buttonTextArtists } = useIntlayer("home");
   const { landingGalleryPhotos } = loaderData;
   const lightboxLabels = useLightboxLabels();
 
   return (
     <>
       <section className={styles.hero_section}>
-        <h2>One stop. Countless directions</h2>
+        <h2>{subheading}</h2>
         <NavButton
           buttonText={buttonTextArtists}
           to={"/artists"}
         />
       </section>
+
       <LandingGallery photos={landingGalleryPhotos} labels={lightboxLabels} />
 
-      <Process />
-
+      {/* <Process /> */}
+      <ProcessNew />
       <Testimonials />
     </>
   );

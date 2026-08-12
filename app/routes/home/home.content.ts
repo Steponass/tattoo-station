@@ -15,6 +15,10 @@ const homeContent = {
       lt: "Mūsų meistrai",
       en: "Our artists",
     }),
+    subheading: t({
+      lt: "Viena stotelė, begalė krypčių",
+      en: "One stop, countless directions",
+    }),
   },
 } satisfies Dictionary;
 

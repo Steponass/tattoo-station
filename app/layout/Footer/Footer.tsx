@@ -7,29 +7,33 @@ export default function Footer() {
 
   return (
     <footer className={styles.footer}>
-      <div className={styles["footer-container"]}>
-        <div className={styles["footer-logo-and-descript"]}>
-          <img 
-          src="/TEMP-Logo-from-photo.webp"
-          alt="Logo of Tatoo Station"
-          />
+      <div className={styles.footer_container}>
+        <div className={styles.footer_logo_and_descript}>
+          <img src="/TEMP-Logo-from-photo.webp" alt="Logo of Tatoo Station" />
           <p>{tagline}</p>
         </div>
         <div className={styles.footer_info}>
           <a
+            className="sweep-hover"
             href="https://maps.app.goo.gl/kmjisJWycYQpTSkz8"
             target="_blank"
             rel="noopener noreferrer"
           >
             Geležinkelio g. 1, Vilnius
           </a>
-          <p>I&#8202;–&#8202;VII | 11:00 – 18:00</p>
+          <p>I&#8202;–&#8202;VII | 11:00&thinsp;–&thinsp;18:00</p>
         </div>
         <div>
-          <a href="tel:+37065068230" target="_blank" rel="noopener noreferrer">
+          <a
+            className="sweep-hover"
+            href="tel:+37065068230"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             +370 650 682 30
           </a>
           <a
+            className="sweep-hover"
             href="mailto:info@tattoostation.lt"
             target="_blank"
             rel="noopener noreferrer"
@@ -40,8 +44,11 @@ export default function Footer() {
       </div>
       <div className={styles.footer_policy_container}>
         <div>
-          <p>&copy; 2026 Tattoo station</p>
+          <LocalizedNavLink to="/privacypolicy">
+            <p className="sweep-hover">{privacypolicy}</p>
+          </LocalizedNavLink>
         </div>
+
         <div className={styles.social_container}>
           <a
             href="https://www.facebook.com/tattoostation2020/"
@@ -90,9 +97,7 @@ export default function Footer() {
           </svg>
         </div>
         <div>
-          <LocalizedNavLink to="/privacypolicy">
-            <p className={styles.privacy_link}>{privacypolicy}</p>
-          </LocalizedNavLink>
+          <p>&copy; 2026 Tattoo station</p>
         </div>
       </div>
     </footer>

@@ -36,26 +36,34 @@ export const handle = {
 };
 
 export default function faq() {
-  const { aftercare_directions, piercing_directions, buttonTextAftercare, buttonTextPiercing, beforeHeading, designHeading, bookingHeading } = useIntlayer("faq");
+  const {
+    aftercare_directions,
+    piercing_directions,
+    buttonTextAftercare,
+    buttonTextPiercing,
+    beforeHeading,
+    designHeading,
+    bookingHeading,
+  } = useIntlayer("faq");
   const { items: before } = useIntlayer("faq-before");
   const { items: design } = useIntlayer("faq-design");
   const { items: booking } = useIntlayer("faq-booking");
 
   return (
     <main className={styles.faq_main}>
-              <div className={styles.directions_container}>
-          <div className={styles.directions_wrapper}>
+      <div className={styles.directions_container}>
+        <div className={styles.directions_wrapper}>
           <NavButton buttonText={buttonTextAftercare} to={"/aftercare"} />
-          </div>
-          <div className={styles.directions_wrapper}>
-          <NavButton 
-          buttonText={buttonTextPiercing} 
-          to={"/piercing/#piercing_faq"} />
-          </div>
         </div>
+        <div className={styles.directions_wrapper}>
+          <NavButton
+            buttonText={buttonTextPiercing}
+            to={"/piercing/#piercing_faq"}
+          />
+        </div>
+      </div>
       <section className={styles.section_faq}>
-
-         <div className={styles.accordion_wrapper}>
+        <div className={styles.accordion_wrapper}>
           <h2>{designHeading}</h2>
           <Accordion items={design} />
         </div>
