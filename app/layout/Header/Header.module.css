@@ -192,7 +192,7 @@
     transition: transform 0.35s ease;
     z-index: 0;
     @media (width < 400px) {
-      height: 350px;
+      height: 384px;
     }
   }
 

@@ -25,6 +25,25 @@ import Footer from "./layout/Footer/Footer";
 import { PageTitleBoard } from "./components/layout/PageTitleBoard";
 import ScrollToTop from "./components/layout/ScrollToTop/ScrollToTop";
 
+export function links() {
+  return [
+    {
+      rel: "icon",
+      sizes: "32x32",
+      href: "/favicon.ico",
+    },
+    {
+      rel: "icon",
+      type: "image/svg+xml",
+      href: "/favicon.svg",
+    },
+    {
+      rel: "apple-touch-icon",
+      href: "/apple-touch-icon.png",
+    },
+  ];
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const locale = getLocaleFromPath(request.url);
 
@@ -52,6 +71,7 @@ export function Layout({
       <head>
         <meta charSet="utf-8" />
         <meta content="width=device-width, initial-scale=1" name="viewport" />
+        
         <Meta />
         <Links />
       </head>

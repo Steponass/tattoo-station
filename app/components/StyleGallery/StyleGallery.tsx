@@ -1,3 +1,4 @@
+import { buildPortfolioImageAttributes } from '~/lib/media/portfolioImageAttributes'
 import { Lightbox, LightboxTrigger } from '~/components/Lightbox/Lightbox'
 import type {
   LightboxLabels,
@@ -6,22 +7,18 @@ import type {
 import styles from './StyleGallery.module.css'
 
 /**
- * The per-style example grid on /tattoostyles.
+ * The per-style photo grid on /tattoostyles. Photos come from D1
+ * (artist_photos filtered by the `style` column, no curation) and arrive
+ * already mapped to `LightboxPhoto` by the route loader — same convention
+ * as FlashTattooGallery, except the mapping happens one level up here
+ * since this component has no domain-specific photo shape of its own.
  *
- * The page has no photo source yet — nothing writes style-tagged photos to
- * a loader — so `photos` is empty in practice and the grid falls back to
- * the coloured placeholder tiles it has always rendered. The lightbox
- * wiring is in place so that the day a loader passes real photos (most
- * likely `artist_photos` filtered by the `style` column, which already
- * exists), tiles become clickable with no further change here.
- *
- * Photos arrive already mapped to `LightboxPhoto` rather than in a
- * gallery-specific shape: with no data source there is no domain shape to
- * map from, and inventing one now would be guessing. When the source
- * lands, move the mapping in here the way FlashTattooGallery does it.
+ * A style with no tagged photos yet falls back to the coloured placeholder
+ * tiles.
  */
 
-const PLACEHOLDER_TILE_COUNT = 6
+const PLACEHOLDER_TILE_COUNT = 3
+const STYLE_TILE_SIZES = '(max-width: 400px) 45vw, 164px'
 
 type StyleGalleryProps = {
   photos?: readonly LightboxPhoto[]
@@ -44,23 +41,35 @@ export default function StyleGallery(props: StyleGalleryProps) {
   return (
     <Lightbox photos={photos} labels={labels}>
       <div className={styles.style_gallery_container}>
-        {photos.map((photo) => (
-          <LightboxTrigger
-            key={photo.id}
-            photoId={photo.id}
-            className={`${styles.style_gallery_tile} gallery-image-wrapper`}
-          >
-            <img
-              src={photo.src}
-              alt={photo.alt ?? ''}
-              width={photo.width}
-              height={photo.height}
-              className='gallery-image'
-              loading='lazy'
-            />
-          </LightboxTrigger>
+        {photos.slice(0, 8).map((photo) => (
+          <StyleGalleryTile key={photo.id} photo={photo} />
         ))}
       </div>
     </Lightbox>
+  )
+}
+
+function StyleGalleryTile({ photo }: { photo: LightboxPhoto }) {
+  const { src, srcSet, sizes } = buildPortfolioImageAttributes({
+    objectKey: photo.objectKey,
+    sizes: STYLE_TILE_SIZES,
+  })
+
+  return (
+    <LightboxTrigger
+      photoId={photo.id}
+      className={`${styles.style_gallery_tile} gallery-image-wrapper`}
+    >
+      <img
+        src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        alt={photo.alt ?? ''}
+        width={photo.width}
+        height={photo.height}
+        className='gallery-image'
+        loading='lazy'
+      />
+    </LightboxTrigger>
   )
 }

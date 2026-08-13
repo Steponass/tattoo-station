@@ -1,4 +1,5 @@
 import { t, type Dictionary } from "intlayer";
+import type { ArtistStyle } from "~/lib/artists/artistStyles";
 
 const tattoostylesContent = {
   key: "tattoostyles",
@@ -13,6 +14,7 @@ const tattoostylesContent = {
     }),
     styles: [
       {
+        styleKey: "Realism" as ArtistStyle,
         heading: t({
           lt: "Realizmas",
           en: "Realism",
@@ -23,6 +25,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Traditional" as ArtistStyle,
         heading: t({
           lt: "Traditional",
           en: "Traditional",
@@ -32,7 +35,8 @@ const tattoostylesContent = {
           en: "A timeless style with strong lines and limited colors. Built to last and stay clear over time.",
         }),
       },
-      { 
+      {
+        styleKey: "Neo-traditional" as ArtistStyle,
         heading: t({
           lt: "Neo-traditional",
           en: "Neo-traditional",
@@ -43,6 +47,7 @@ const tattoostylesContent = {
     })
   },
       {
+        styleKey: "Fine line" as ArtistStyle,
         heading: t({
           lt: "Fine Line",
           en: "Fine Line",
@@ -53,6 +58,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Watercolor" as ArtistStyle,
         heading: t({
           lt: "Watercolor",
           en: "Watercolor",
@@ -63,6 +69,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Black & grey" as ArtistStyle,
         heading: t({
           lt: "Black & grey",
           en: "Black & grey",
@@ -73,6 +80,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Abstract" as ArtistStyle,
         heading: t({
           lt: "Abstract",
           en: "Abstract",
@@ -83,6 +91,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Geometric" as ArtistStyle,
         heading: t({
           lt: "Geometric",
           en: "Geometric",
@@ -93,6 +102,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Blackwork" as ArtistStyle,
         heading: t({
           lt: "Blackwork",
           en: "Blackwork",
@@ -103,6 +113,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Minimalist" as ArtistStyle,
         heading: t({
           lt: "Minimalism",
           en: "Minimalism",
@@ -113,6 +124,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Dotwork" as ArtistStyle,
         heading: t({
           lt: "Dotwork",
           en: "Dotwork",
@@ -123,6 +135,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Illustrative" as ArtistStyle,
         heading: t({
           lt: "Illustrative",
           en: "Illustrative",
@@ -133,16 +146,7 @@ const tattoostylesContent = {
         }),
       },
       {
-        heading: t({
-          lt: "New School",
-          en: "New School",
-        }),
-        description: t({
-          lt: "Linksmas, išraiškingas ir kupinas charakterio stilius kūrybiškiems sumanymams.",
-          en: "Fun, expressive, and full of personality, perfect for creative ideas.",
-        }),
-      },
-      {
+        styleKey: "Japanese" as ArtistStyle,
         heading: t({
           lt: "Japanese (Irezumi)",
           en: "Japanese (Irezumi)",
@@ -153,6 +157,7 @@ const tattoostylesContent = {
         }),
       },
       {
+        styleKey: "Surrealism" as ArtistStyle,
         heading: t({
           lt: "Surrealism",
           en: "Surrealism",

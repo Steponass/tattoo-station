@@ -4,8 +4,8 @@ const footerContent = {
   key: "Footer",
   content: {
         tagline: t({
-      lt: "Tavo istorijos, mūsų rankų darbas.",
-      en: "Your stories, our craft.",
+      lt: "Tatuiruotės, auskarai ir geros emocijos",
+      en: "Tattoos, piercing, and good vibes",
     }),
         privacypolicy: t({
       lt: "Privatumo politika",

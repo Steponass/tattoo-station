@@ -340,7 +340,7 @@ function AdminIdentityFields(props: AdminIdentityFieldsProps) {
         name="slug"
         label="Slug"
         defaultValue={artistProfile.slug}
-        hint="URL-safe. Lowercase, no spaces. Used in /artists/<slug>."
+        hint="Your page address. Lowercase, no spaces. Used in /artists/<slug>."
         error={errorFor("slug")}
       />
       <RoleField

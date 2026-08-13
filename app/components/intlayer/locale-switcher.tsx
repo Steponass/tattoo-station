@@ -9,6 +9,8 @@ import {
 import { setLocaleInStorage, useIntlayer, useLocale } from "react-intlayer";
 import { Link, useLocation } from "react-router";
 
+import { scrollToTopBeforeTransition } from "./LocalizedLink";
+
 export const LocaleSwitcher: FC = () => {
   const { localeSwitcherLabel } = useIntlayer("locale-switcher");
   const { pathname } = useLocation();
@@ -24,7 +26,10 @@ export const LocaleSwitcher: FC = () => {
           <Link
             aria-current={localeItem === locale ? "page" : undefined}
             aria-label={`${localeSwitcherLabel.value} ${getLocaleName(localeItem)}`}
-            onClick={() => setLocaleInStorage(localeItem, true)}
+            onClick={(event) => {
+              scrollToTopBeforeTransition(event, { viewTransition: true });
+              setLocaleInStorage(localeItem, true);
+            }}
             to={getLocalizedUrl(pathWithoutLocale, localeItem)}
             viewTransition
           >
