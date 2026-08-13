@@ -63,6 +63,7 @@
 }
 
 #tattoo_panel, #flashdesign_panel {
+  height: min-content;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   /* grid-auto-rows: auto; */
