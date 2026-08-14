@@ -45,7 +45,10 @@ export const meta: Route.MetaFunction = ({ params }) => {
 // Intlayer end
 
 export const handle = {
-  titleBoard: { show: true, labelKey: "home" },
+  titleBoard: { 
+    show: true, 
+    labelKey: "home",
+      timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 5 }, },
 };
 
 export default function Home({ loaderData }: Route.ComponentProps) {

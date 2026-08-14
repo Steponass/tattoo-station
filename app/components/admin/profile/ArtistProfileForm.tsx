@@ -237,6 +237,7 @@ export default function ArtistProfileForm(props: ArtistProfileFormProps) {
             label="Bio (English)"
             defaultValue={artistProfile.translations.en?.bio ?? ""}
             maxLength={MAX_BIO_LENGTH}
+            hint="Leave a blank line where you want a paragraph break on the artist page."
             error={errorFor("bio")}
           />
           <TextAreaField
@@ -259,6 +260,7 @@ export default function ArtistProfileForm(props: ArtistProfileFormProps) {
             label="Bio (Lithuanian)"
             defaultValue={artistProfile.translations.lt?.bio ?? ""}
             maxLength={MAX_BIO_LENGTH}
+            hint="Leave a blank line where you want a paragraph break on the artist page."
             error={errorFor("bio")}
           />
           <TextAreaField

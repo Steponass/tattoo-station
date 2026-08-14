@@ -976,9 +976,9 @@ export function BookingForm({
       )}
 
       {/* Consent */}
-      <section data-booking-section="consent" className={styles.section}>
+      <section className={styles.section}>
         <h2 className={styles.heading}>{content.consentHeading}</h2>
-
+        <div className={styles.consent_container}>
         <FirstTimeCheckbox
           serviceCategory={formState.serviceCategory}
           defaultChecked={draft?.isFirstTime === "on"}
@@ -1041,6 +1041,7 @@ export function BookingForm({
             fieldName="privacyConsent"
             message={fieldErrors.privacyConsent}
           />
+        </div>
         </div>
       </section>
 

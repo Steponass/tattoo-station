@@ -22,16 +22,16 @@ const bookingformContent = {
       en: "Full name*",
     }),
     namePlaceholder: t({
-      lt: "Lina",
-      en: "Lina",
+      lt: "",
+      en: "",
     }),
     emailLabel: t({
       lt: "El. paštas*",
       en: "Email*",
     }),
     emailPlaceholder: t({
-      lt: "lina@domenas.lt",
-      en: "lina@domain.com",
+      lt: "",
+      en: "",
     }),
     phoneLabel: t({
       lt: "Telefono numeris*",

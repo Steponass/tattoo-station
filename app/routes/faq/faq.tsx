@@ -4,7 +4,7 @@ import { data } from "react-router";
 import type { Route } from "./+types/faq";
 import styles from "./faq.module.css";
 import Accordion from "~/components/Accordion/Accordion";
-import NavButton from "~/components/Button/NavButton";
+import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 
 // Intlayer start
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -37,8 +37,6 @@ export const handle = {
 
 export default function faq() {
   const {
-    aftercare_directions,
-    piercing_directions,
     buttonTextAftercare,
     buttonTextPiercing,
     beforeHeading,
@@ -53,13 +51,20 @@ export default function faq() {
     <main className={styles.faq_main}>
       <div className={styles.directions_container}>
         <div className={styles.directions_wrapper}>
-          <NavButton buttonText={buttonTextAftercare} to={"/aftercare"} />
+          <LocalizedLink 
+          to={"/aftercare"}
+          className="button_a chamfer chamfer-xs punch"
+          >
+          {buttonTextAftercare}
+          </LocalizedLink>
         </div>
         <div className={styles.directions_wrapper}>
-          <NavButton
-            buttonText={buttonTextPiercing}
-            to={"/piercing/#piercing_faq"}
-          />
+          <LocalizedLink 
+          to={"/aftercare"}
+          className="button_b chamfer chamfer-xs punch"
+          >
+          {buttonTextPiercing}
+          </LocalizedLink>
         </div>
       </div>
       <section className={styles.section_faq}>

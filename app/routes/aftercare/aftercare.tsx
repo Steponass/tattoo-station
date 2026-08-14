@@ -40,7 +40,7 @@ export default function aftercare() {
   const { tattooAftercare, piercingAftercare } = useIntlayer("aftercare");
 
   return (
-    <main>
+    <main id={styles.aftercare_main}>
       <section className={styles.section_aftercare_links}>
       <LocalizedLink to="aftercare/aftercareTattoo" viewTransition>
         <div className={styles.tattoo_aftercare_card}>

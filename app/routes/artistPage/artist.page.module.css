@@ -35,7 +35,7 @@
   font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
 }
 
-.artist_text p::first-letter {
+.artist_text p:first-of-type::first-letter {
   float: left;
   font-size: var(--fontsize-h2);
   line-height: 1;

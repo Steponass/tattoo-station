@@ -8,6 +8,7 @@ import { NavLink } from "react-router";
 import { getDatabase } from "~/lib/cloudflare/cloudflareContext";
 import { resolveLocale, type ArtistProfile } from "~/lib/artists/artistTypes";
 import { findArtistProfileBySlug } from "~/lib/artists/artistRepository.server";
+import { splitBioParagraphs } from "~/lib/artists/splitBioParagraphs";
 import {
   findArtistPhotos,
   type ArtistPhotoRecord,
@@ -159,6 +160,10 @@ export default function ArtistProfileRoute({
 }: Route.ComponentProps) {
   const { artist, avatar, galleryGroups } = loaderData;
   const stylesLabel = artist.styles.join(" · ");
+  const bioParagraphs = useMemo(
+    () => splitBioParagraphs(artist.bio),
+    [artist.bio],
+  );
   const lightboxLabels = useLightboxLabels();
   const content = useIntlayer("artistsPage");
 
@@ -176,7 +181,9 @@ export default function ArtistProfileRoute({
           <div className={styles.artist_text}>
             <h1>{artist.displayName}</h1>
             {stylesLabel.length > 0 ? <span className={styles.style_label}>{stylesLabel}</span> : null}
-            <p>{artist.bio}</p>
+            {bioParagraphs.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
             <div className={styles.insta_and_book_container}>
               {artist.instagramHandle ? (
                 <LocalizedLink
