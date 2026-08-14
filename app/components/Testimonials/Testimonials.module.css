@@ -1,9 +1,11 @@
 .section-testimonials {
   margin-inline: auto;
-  margin-block: var(--space-l-xl);
-  padding-block: var(--space-l-xl);
+  /* margin-block-end: var(--space-l-xl); */
+  padding-block: var(--space-2xl-3xl);
   overflow: hidden;
   position: relative;
+    background:   linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
+  url("/StudioSign.webp") center center/cover no-repeat;
 }
 
 .section_heading {
@@ -47,14 +49,13 @@
 }
 
 .testimonials-container {
-  min-width: 100%;
+  width: 100%;
   min-height: 400px;
   margin-inline: auto;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-bg-raised);
 }
 
 .testimonial_name {
