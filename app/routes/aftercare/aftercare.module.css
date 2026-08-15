@@ -1,3 +1,8 @@
+#aftercare_main {
+  margin-block: 0;
+  width: 100%;
+}
+
 #aftercare_main::before {
   position: absolute;
   z-index: -1;
@@ -15,19 +20,24 @@
   }
 }
 
-
-.section_aftercare_links {
+/* .section_aftercare_links {
   width: min(480px, 100%);
   margin-inline: auto;
   display: flex;
   gap: var(--space-32px);
   justify-content: center;
   margin-block: var(--space-xl-2xl);
+} */
+
+.section_aftercare_links_1 {
+  width: 100dvw;
+  min-height: 65dvh;
+  display: flex;
+  justify-content: center;
+  column-gap: var(--space-3xs-2xs);
 }
 
-
-
-.tattoo_aftercare_wrapper, .piercing_aftercare_wrapper {
+/* .tattoo_aftercare_wrapper, .piercing_aftercare_wrapper {
   width: clamp(140px, 25vw, 240px);
   aspect-ratio: 1;
   display: flex;
@@ -72,4 +82,41 @@
   inset: calc(-1 * var(--backdrop-offset));
   background-color: white;
   --c: calc(64px + var(--backdrop-offset));
+} */
+
+/* Testing new design */
+
+.section_aftercare_links_1 a {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  @media( hover: hover ) {
+  &:hover {
+    backdrop-filter: saturate(1) hue-rotate(80deg);
+  }
+  &:hover ~ a,
+  &:has(~ a:hover) {
+    backdrop-filter: blur(4px);
+  }
+  }
+  & p {
+    font-size: var(--fontsize-h4);
+    font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
+    font-weight: 600;
+    padding-block-end: var(--space-32px);
+  }
+  /* column-rule polyfill: column-rule only paints in a multicol context and is
+     a no-op inside this flex container (this affects all browsers, not just
+     iOS). A real border on the shared edge reproduces the same rule and is
+     universally supported. */
+  &:first-child {
+    border-inline-end: 16px double var(--color-stroke-strong);
+    transition: opacity 0.3s ease, filter 0.3s ease, border 0.7s 0.7s ease-in-out;
+    @starting-style {
+      border-inline-end: 0px none var(--color-stroke-weak);
+    }
+  }
 }
