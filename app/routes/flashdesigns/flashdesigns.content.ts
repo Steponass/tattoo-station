@@ -8,8 +8,8 @@ const flashdesignsContent = {
       en: "Flash designs",
     }),
     description: t({
-      lt: "Pasirink vieną iš mūsų meistrų eskizų",
-      en: "Pick one of our artists' flash designs",
+      lt: "Gali pasirinkti vieną iš mūsų meistrų unikalių eskizų",
+      en: "Pick one of our artists' unique flash designs",
     }),
   },
 } satisfies Dictionary;

@@ -5,7 +5,13 @@
   margin-inline: auto;
   @media (max-width: 870px) {
     flex-direction: column;
+    row-gap: var(--space-l-xl)
   }
+}
+
+.aftercare_heading {
+  font-size: var(--fontsize-h4);
+  margin-block-end: 0.5em;
 }
 
 .aftercare_list {
@@ -16,9 +22,7 @@
   flex: 1;
 }
 
-.aftercare_list li:last-child{
-  margin-bottom: 2em;
-}
+
 
 .aftercare_list svg {
     animation: rotateY linear 1s;

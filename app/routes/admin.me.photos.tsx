@@ -5,7 +5,10 @@ import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
-import { findArtistPhotosByCategory } from "~/lib/artists/artistPhotoRepository.server";
+import {
+  findArtistPhotosByCategory,
+  summarizeArtistPhotos,
+} from "~/lib/artists/artistPhotoRepository.server";
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
 import type { ArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import { SortableGrid } from "~/components/admin/sortable/SortableGrid";
@@ -43,10 +46,19 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     category: mainPhotoCategory,
   });
 
+  // The upload cap spans every category (tattoo/piercing + flash), not just
+  // the category this grid displays, so the uploader needs the artist's
+  // total count rather than photos.length.
+  const summary = await summarizeArtistPhotos({
+    database: env.DB,
+    artistId: actor.artistId,
+  });
+
   return {
     displayName: artistProfile.displayName,
     mainPhotoCategory,
     photos,
+    totalPhotoCount: summary.count,
   };
 }
 
@@ -61,7 +73,12 @@ type Photo = {
 export default function AdminMePhotosPage({
   loaderData,
 }: Route.ComponentProps) {
-  const { displayName, mainPhotoCategory, photos: initialPhotos } = loaderData;
+  const {
+    displayName,
+    mainPhotoCategory,
+    photos: initialPhotos,
+    totalPhotoCount: initialTotalPhotoCount,
+  } = loaderData;
 
   const [photos, setPhotos] = useState<Photo[]>(() =>
     initialPhotos.map((photo) => ({
@@ -71,6 +88,9 @@ export default function AdminMePhotosPage({
       height: photo.height,
       style: photo.style,
     })),
+  );
+  const [totalPhotoCount, setTotalPhotoCount] = useState(
+    initialTotalPhotoCount,
   );
   const [deletingPhotoIds, setDeletingPhotoIds] = useState<Set<number>>(
     () => new Set(),
@@ -92,6 +112,7 @@ export default function AdminMePhotosPage({
 
   function handlePhotoUploaded(uploadedPhoto: Photo) {
     setPhotos((previous) => [...previous, uploadedPhoto]);
+    setTotalPhotoCount((previous) => previous + 1);
   }
 
   async function handleOrderChange(nextOrderedIds: number[]) {
@@ -130,6 +151,7 @@ export default function AdminMePhotosPage({
 
     if (deleteResult.ok) {
       setPhotos((previous) => previous.filter((photo) => photo.id !== photoId));
+      setTotalPhotoCount((previous) => previous - 1);
     } else {
       setDeleteErrorMessage(deleteResult.errorMessage);
     }
@@ -178,7 +200,7 @@ export default function AdminMePhotosPage({
       </header>
 
       <PhotoUploader
-        currentPhotoCount={photos.length}
+        currentPhotoCount={totalPhotoCount}
         onPhotoUploaded={handlePhotoUploaded}
       />
 

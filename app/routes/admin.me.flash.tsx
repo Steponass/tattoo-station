@@ -5,7 +5,10 @@ import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
-import { findArtistPhotosByCategory } from "~/lib/artists/artistPhotoRepository.server";
+import {
+  findArtistPhotosByCategory,
+  summarizeArtistPhotos,
+} from "~/lib/artists/artistPhotoRepository.server";
 import { SortableGrid } from "~/components/admin/sortable/SortableGrid";
 import PhotoTile from "~/components/admin/profile/PhotoTile";
 import PhotoUploader from "~/components/admin/profile/PhotoUploader";
@@ -57,9 +60,18 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     category: "flash",
   });
 
+  // The upload cap spans every category (tattoo/piercing + flash), not just
+  // flash, so the uploader needs the artist's total count rather than
+  // photos.length.
+  const summary = await summarizeArtistPhotos({
+    database: env.DB,
+    artistId: actor.artistId,
+  });
+
   return {
     displayName: artistProfile.displayName,
     photos,
+    totalPhotoCount: summary.count,
   };
 }
 
@@ -74,7 +86,11 @@ type Photo = {
 export default function AdminMeFlashPage({
   loaderData,
 }: Route.ComponentProps) {
-  const { displayName, photos: initialPhotos } = loaderData;
+  const {
+    displayName,
+    photos: initialPhotos,
+    totalPhotoCount: initialTotalPhotoCount,
+  } = loaderData;
 
   const [photos, setPhotos] = useState<Photo[]>(() =>
     initialPhotos.map((photo) => ({
@@ -84,6 +100,9 @@ export default function AdminMeFlashPage({
       height: photo.height,
       style: photo.style,
     })),
+  );
+  const [totalPhotoCount, setTotalPhotoCount] = useState(
+    initialTotalPhotoCount,
   );
   const [deletingPhotoIds, setDeletingPhotoIds] = useState<Set<number>>(
     () => new Set(),
@@ -105,6 +124,7 @@ export default function AdminMeFlashPage({
 
   function handlePhotoUploaded(uploadedPhoto: Photo) {
     setPhotos((previous) => [...previous, uploadedPhoto]);
+    setTotalPhotoCount((previous) => previous + 1);
   }
 
   async function handleOrderChange(nextOrderedIds: number[]) {
@@ -139,6 +159,7 @@ export default function AdminMeFlashPage({
 
     if (deleteResult.ok) {
       setPhotos((previous) => previous.filter((photo) => photo.id !== photoId));
+      setTotalPhotoCount((previous) => previous - 1);
     } else {
       setDeleteErrorMessage(deleteResult.errorMessage);
     }
@@ -187,7 +208,7 @@ export default function AdminMeFlashPage({
       </header>
 
       <PhotoUploader
-        currentPhotoCount={photos.length}
+        currentPhotoCount={totalPhotoCount}
         surface="flash"
         onPhotoUploaded={handlePhotoUploaded}
       />

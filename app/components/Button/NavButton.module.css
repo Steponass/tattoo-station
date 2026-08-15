@@ -10,7 +10,7 @@
   }
 @media (hover: hover) {
   &:hover {
-    transform: perspective(300px) rotateX(20deg);
+    transform: perspective(200px) rotateX(23deg);
     --p: 6.5px;
   }
   }

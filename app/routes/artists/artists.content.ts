@@ -8,8 +8,8 @@ const artistsContent = {
       en: "Our artists",
     }),
     description: t({
-      lt: "Patis gereusi",
-      en: "Ze bestest",
+      lt: "Pažink mūsų ekspertus ir jų darbus",
+      en: "Get to know our experts and their works",
     }),
     buttonTextViewMore: t({
       lt: "Daugiau",

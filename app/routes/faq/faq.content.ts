@@ -8,8 +8,8 @@ const faqContent = {
       en: "FAQ",
     }),
     description: t({
-      lt: "Kaip prižiūrėti tatuiruotes ar piercing'ą",
-      en: "How to look after fresh tattoos or piercings",
+      lt: "Dažnai Užduodami Klausimai apie dizainą, rezervavimą ir kitas temas",
+      en: "Frequently Asked Questions about design, booking, and other topics",
     }),
     aftercare_directions: t({
       lt: "Priežiūros instrukcijos",

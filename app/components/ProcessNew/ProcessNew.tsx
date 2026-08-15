@@ -101,7 +101,7 @@ export default function ProcessNew() {
         <div className={styles.card_stack} ref={stackRef}>
           {processSteps.map((step, index) => (
             <div
-              className={`${styles.card} chamfer chamfer-l`}
+              className={`${styles.card} chamfer chamfer-xl punch punch-xl`}
               key={String(step.number)}
               ref={(el) => {
                 cardRefs.current[index] = el;

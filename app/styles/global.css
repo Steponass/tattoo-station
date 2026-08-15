@@ -16,6 +16,9 @@
       0 var(--c));
 }
 
+.chamfer-xl {
+  --c: 20px;
+}
 .chamfer-l {
   --c: 15px;
 }
@@ -40,6 +43,10 @@
     radial-gradient(circle var(--p) at 0 50%, #0000 98%, #000),
     radial-gradient(circle var(--p) at 100% 50%, #0000 98%, #000);
   mask-composite: intersect;
+}
+
+.punch-xl {
+  --p: 12px;
 }
 
 /* Gallery image tile. Apply gallery-image-wrapper to the tile's trigger

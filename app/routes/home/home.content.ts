@@ -4,12 +4,12 @@ const homeContent = {
   key: "home",
   content: { 
     title: t({
-      lt: "Tattoo Studija Vilniuje",
-      en: "Tattoo Studio in Vilnius",
+      lt: "Tattoo Station",
+      en: "Tattoo Station",
     }),
     description: t({
-      lt: "Profesionalus tattoo aptarnavimas",
-      en: "Professional tattoo service",
+      lt: "Tatuiruočių ir piercing'o paslaugos, jaukiai ir profesionaliai",
+      en: "Tattoo and piercing service, cozy and professional",
     }),
     buttonTextArtists: t({
       lt: "Mūsų meistrai",

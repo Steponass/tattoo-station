@@ -31,7 +31,7 @@ const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp,image/heic,image/h
 const FAILURE_MESSAGES: Record<string, string> = {
   file_too_large: "That file is too large. Try one under 25 MB.",
   empty_file: "That file is empty.",
-  portfolio_full: "You've reached your 50-photo limit.",
+  portfolio_full: `You've reached your ${MAX_PORTFOLIO_PHOTOS_PER_ARTIST}-photo limit.`,
   unreadable_image: "That file doesn't look like a valid image.",
   unsupported_source_format: "That image format isn't supported.",
   transformation_failed: "The image couldn't be processed.",

@@ -158,11 +158,11 @@
   }
 }
 
-@media (max-width: 440px) {
+/* @media (max-width: 440px) {
   .preview_grid {  
     grid-template-columns: repeat(1, 1fr);
   }
-}
+} */
 
 /* Uniform tiles: the 1fr tracks give every cell the same width, and the
    aspect-ratio here turns that into the same height. The ratio belongs on the

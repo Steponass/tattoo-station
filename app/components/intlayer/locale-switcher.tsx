@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { useState } from "react";
 import styles from './locale-switcher.module.css'
 
 import {
@@ -14,21 +15,23 @@ import { scrollToTopBeforeTransition } from "./LocalizedLink";
 export const LocaleSwitcher: FC = () => {
   const { localeSwitcherLabel } = useIntlayer("locale-switcher");
   const { pathname } = useLocation();
-
   const { availableLocales, locale } = useLocale();
-
   const pathWithoutLocale = getPathWithoutLocale(pathname);
+
+  const [ isActive, setActive ] = useState(locale)
 
   return (
     <div className={styles.locale_switcher}>
       {availableLocales.map((localeItem) => (
-        <div key={localeItem} className="chamfer chamfer-xs">
+        <div key={localeItem}
+        className={`chamfer chamfer-s${isActive === localeItem ? ` ${styles.active}` : ""}`}>
           <Link
             aria-current={localeItem === locale ? "page" : undefined}
             aria-label={`${localeSwitcherLabel.value} ${getLocaleName(localeItem)}`}
             onClick={(event) => {
               scrollToTopBeforeTransition(event, { viewTransition: true });
-              setLocaleInStorage(localeItem, true);
+              setLocaleInStorage(localeItem, true)
+              setActive(localeItem);
             }}
             to={getLocalizedUrl(pathWithoutLocale, localeItem)}
             viewTransition

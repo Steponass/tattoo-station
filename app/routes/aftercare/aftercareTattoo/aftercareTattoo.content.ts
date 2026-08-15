@@ -4,12 +4,12 @@ const aftercaretattooContent = {
   key: "aftercareTattoo",
   content: {
     title: t({
-      lt: "Tattoo Aftercare",
+      lt: "Tatuiruočių priežiūra",
       en: "Tattoo Aftercare",
     }),
     description: t({
-      lt: "Sužinokite, kaip tinkamai prižiūrėti šviežią tatuiruotę – valymą, kremavimą, apsaugą nuo saulės ir kas yra normalu gyjant.",
-      en: "Learn how to properly care for a fresh tattoo — cleaning, creaming, sun protection, and what's normal during healing.",
+      lt: "Kaip tinkamai prižiūrėti šviežią tatuiruotę? Valymas, kremavimas, apsauga nuo saulės ir kas yra normalu gyjant.",
+      en: "Learn how to properly care for a fresh tattoo: cleaning, creaming, sun protection, and what's normal during healing.",
     }),
     introPara: t({
       lt: "Tatuiruotė po seanso yra šviežiai pažeista oda, todėl pirmomis savaitėmis jai reikia švaros, ramybės ir tinkamos priežiūros. Geras sugijimas priklauso ne tik nuo meistro darbo, bet ir nuo to, kaip tatuiruotę prižiūrėsi namuose.",

@@ -6,7 +6,6 @@ import gsap from "gsap";
 export type BookingConfirmationContent = {
   heading: string;
   body: string;
-  referenceLabel: string;
   stampText: string;
   closeLabel: string;
 };
@@ -14,11 +13,9 @@ export type BookingConfirmationContent = {
 const STAMP_IMPACT_ROTATION_DEGREES = -12;
 
 export function BookingConfirmation({
-  reference,
   content,
   onClose,
 }: {
-  reference: string;
   content: BookingConfirmationContent;
   onClose: () => void;
   className?: string;
@@ -100,10 +97,6 @@ export function BookingConfirmation({
             animation hooks sit on it and on the text that follows it in. */}
         <div className={styles.stamp_ring} data-stamp>
           <p className={styles.stamp_word}>{content.stampText}</p>
-          <p className={styles.stamp_reference}>
-            {content.referenceLabel}
-            {reference}
-          </p>
         </div>
         <div data-confirmation-body>
           <h5 className={styles.confirmation_heading}>{content.heading}</h5>

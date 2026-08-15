@@ -8,20 +8,34 @@
   min-width: 32px;
   aspect-ratio: 1;
   display: flex;
-  padding: var(--space-8px);
-  transition: transform 0.2s ease-in-out;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4px);
+  transition: transform 0.25s ease-in-out;
   text-transform: uppercase;
+    transform-origin: center center;
+}
+
+.locale_switcher div.active {
+  background-color: var(--color-accent);
+  & span {
+    font-weight: 600;
+  }
 }
 
 .locale_switcher div a {
   display: flex;
-  justify-content: center;
   align-items: center;
-  transition: transform 0.2s ease-in-out;
+  justify-content: center;
+  line-height: 1;
+  transition: transform 0.25s ease-in-out;
+  font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
 }
+
 
 @media (hover: hover) {
   .locale_switcher div:hover {
-    transform: rotateY(180deg);
+    /* transform: rotateX(180deg); */
+        transform: perspective(60px) rotateX(25deg);
   }
 }

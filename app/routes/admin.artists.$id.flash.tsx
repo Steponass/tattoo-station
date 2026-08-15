@@ -5,7 +5,10 @@ import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
-import { findArtistPhotosByCategory } from "~/lib/artists/artistPhotoRepository.server";
+import {
+  findArtistPhotosByCategory,
+  summarizeArtistPhotos,
+} from "~/lib/artists/artistPhotoRepository.server";
 import { SortableGrid } from "~/components/admin/sortable/SortableGrid";
 import PhotoTile from "~/components/admin/profile/PhotoTile";
 import PhotoUploader from "~/components/admin/profile/PhotoUploader";
@@ -58,10 +61,19 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     category: "flash",
   });
 
+  // The upload cap spans every category (tattoo/piercing + flash), not just
+  // flash, so the uploader needs the artist's total count rather than
+  // photos.length.
+  const summary = await summarizeArtistPhotos({
+    database: env.DB,
+    artistId: targetArtistId,
+  });
+
   return {
     displayName: artistProfile.displayName,
     targetArtistId,
     photos,
+    totalPhotoCount: summary.count,
   };
 }
 
@@ -90,7 +102,12 @@ type Photo = {
 export default function AdminArtistFlashPage({
   loaderData,
 }: Route.ComponentProps) {
-  const { displayName, targetArtistId, photos: initialPhotos } = loaderData;
+  const {
+    displayName,
+    targetArtistId,
+    photos: initialPhotos,
+    totalPhotoCount: initialTotalPhotoCount,
+  } = loaderData;
 
   const [photos, setPhotos] = useState<Photo[]>(() =>
     initialPhotos.map((photo) => ({
@@ -100,6 +117,9 @@ export default function AdminArtistFlashPage({
       height: photo.height,
       style: photo.style,
     })),
+  );
+  const [totalPhotoCount, setTotalPhotoCount] = useState(
+    initialTotalPhotoCount,
   );
   const [deletingPhotoIds, setDeletingPhotoIds] = useState<Set<number>>(
     () => new Set(),
@@ -121,6 +141,7 @@ export default function AdminArtistFlashPage({
 
   function handlePhotoUploaded(uploadedPhoto: Photo) {
     setPhotos((previous) => [...previous, uploadedPhoto]);
+    setTotalPhotoCount((previous) => previous + 1);
   }
 
   async function handleOrderChange(nextOrderedIds: number[]) {
@@ -159,6 +180,7 @@ export default function AdminArtistFlashPage({
 
     if (deleteResult.ok) {
       setPhotos((previous) => previous.filter((photo) => photo.id !== photoId));
+      setTotalPhotoCount((previous) => previous - 1);
     } else {
       setDeleteErrorMessage(deleteResult.errorMessage);
     }
@@ -211,7 +233,7 @@ export default function AdminArtistFlashPage({
       </header>
 
       <PhotoUploader
-        currentPhotoCount={photos.length}
+        currentPhotoCount={totalPhotoCount}
         targetArtistIdForAdmin={targetArtistId}
         category="flash"
         onPhotoUploaded={handlePhotoUploaded}

@@ -26,8 +26,8 @@
    active state needs no extra class plumbing in the JSX.
    Direct children only: LocaleSwitcher sits inside .mobile_nav and marks its
    own current-language link with aria-current, which is not a page link. */
-.nav > a[aria-current="page"],
-.mobile_nav > a[aria-current="page"] {
+.nav>a[aria-current="page"],
+.mobile_nav>a[aria-current="page"] {
   text-decoration: underline;
   text-decoration-color: var(--color-accent);
   text-decoration-thickness: 3px;
@@ -35,7 +35,7 @@
   color: var(--color-text-strong);
 }
 
-.header_mobile{
+.header_mobile {
   display: none;
 }
 
@@ -45,11 +45,13 @@
    the text transparent for its whole duration while the (always-on, from
    :where(a) in global.css) underline is still secondary. That reads as a
    secondary flash. Snapping `color` back means the glyphs are just there. */
-.nav > a, .mobile_nav > a {
+.nav>a,
+.mobile_nav>a {
   transition: text-decoration-color 0.1s ease-in;
 }
 
-.nav > a:hover, .mobile_nav > a:hover {
+.nav>a:hover,
+.mobile_nav>a:hover {
   text-decoration: underline;
   text-decoration-color: var(--color-secondary);
   text-decoration-thickness: 3px;
@@ -72,8 +74,9 @@
    settled colour behind. No fill-mode needed — the resting
    background-position declared below IS the settled frame. */
 @media (prefers-reduced-motion: no-preference) {
-  .nav > a:hover,
-  .mobile_nav > a:hover {
+
+  .nav>a:hover,
+  .mobile_nav>a:hover {
     color: transparent;
     -webkit-text-fill-color: transparent;
 
@@ -82,17 +85,15 @@
        The whole pack must stay inside 25%-75% or it peeks out at rest, which
        is a 50% budget; widen stripes by trading away carriages, not by
        spilling past those bounds. Here: 6% lit, 4% dark, four carriages. */
-    background-image: linear-gradient(
-      100deg,
-      var(--color-secondary) 0 30%,
-      var(--color-text-strong) 30% 36%,
-      var(--color-secondary) 36% 40%,
-      var(--color-text-strong) 40% 46%,
-      var(--color-secondary) 56% 60%,
-      var(--color-text-strong) 60% 66%,
-      var(--color-secondary) 66% 72%,
-      var(--color-text-strong) 72% 100%
-    );
+    background-image: linear-gradient(100deg,
+        var(--color-secondary) 0 30%,
+        var(--color-text-strong) 30% 36%,
+        var(--color-secondary) 36% 40%,
+        var(--color-text-strong) 40% 46%,
+        var(--color-secondary) 56% 60%,
+        var(--color-text-strong) 60% 66%,
+        var(--color-secondary) 66% 72%,
+        var(--color-text-strong) 72% 100%);
     background-size: 400% 100%;
     background-repeat: no-repeat;
     background-position: 100% 0;
@@ -109,6 +110,7 @@
   from {
     background-position: 0% 0;
   }
+
   to {
     background-position: 100% 0;
   }
@@ -147,7 +149,9 @@
   view-transition-name: none;
 }
 
-.header, .logo, .burger_wrapper {
+.header,
+.logo,
+.burger_wrapper {
   position: sticky;
   top: 0;
   right: 0;
@@ -184,13 +188,14 @@
     position: absolute;
     top: 0;
     width: 50%;
-    height: 230px;
+    height: 260px;
     background-color: var(--color-bg2);
     background-image: url(/Grey-Grid-Edited.svg);
     background-blend-mode: soft-light;
     transform: scaleX(0);
     transition: transform 0.35s ease;
     z-index: 0;
+
     @media (width < 400px) {
       height: 384px;
     }
@@ -226,9 +231,9 @@
     clip-path: polygon(0 0, 0 100%, 100% 0);
   }
 
-.logo img {
-  max-width: 64px;
-}
+  .logo img {
+    max-width: 64px;
+  }
 
   .burger_group {
     position: relative;
@@ -264,10 +269,11 @@
     pointer-events: auto;
     overflow: visible;
     transition: all 0.3s ease-in;
+
     @media (hover: hover) {
       &:hover {
-      color: var(--color-accent);
-    }
+        color: var(--color-accent);
+      }
     }
   }
 
@@ -291,9 +297,10 @@
     transform: scaleX(13);
   }
 
-    .header_mobile.open .burger_icon rect:nth-child(2) {
-      transform: translateX(-30px) scaleX(13);
-    }
+  .header_mobile.open .burger_icon rect:nth-child(2) {
+    transform: translateX(-30px) scaleX(13);
+  }
+
   /* The wrapper's diagonal clip-path is sized to its own 100px box, so
      bars growing past it would otherwise be cut off mid-animation.
      .burger_group carries the same kind of diagonal clip (for its idle
@@ -319,7 +326,8 @@
     pointer-events: none;
     transition: opacity 0.2s ease-in;
     font-size: var(--fontsize-h6);
-    @media (400px <= width <= 780px) {
+
+    @media (400px <=width <=780px) {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto;
     }
@@ -338,7 +346,7 @@
      visible but unclickable, since nothing opaque paints there. Scoping
      auto to the actual children keeps the links clickable without blocking
      what's behind the gaps. */
-  .header_mobile.open .mobile_nav > * {
+  .header_mobile.open .mobile_nav>* {
     pointer-events: auto;
   }
 }

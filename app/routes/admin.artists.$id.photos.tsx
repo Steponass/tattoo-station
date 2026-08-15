@@ -5,7 +5,10 @@ import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { resolveActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
-import { findArtistPhotosByCategory } from "~/lib/artists/artistPhotoRepository.server";
+import {
+  findArtistPhotosByCategory,
+  summarizeArtistPhotos,
+} from "~/lib/artists/artistPhotoRepository.server";
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
 import type { ArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import { SortableGrid } from "~/components/admin/sortable/SortableGrid";
@@ -57,11 +60,20 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     category: mainPhotoCategory,
   });
 
+  // The upload cap spans every category (tattoo/piercing + flash), not just
+  // the category this grid displays, so the uploader needs the artist's
+  // total count rather than photos.length.
+  const summary = await summarizeArtistPhotos({
+    database: env.DB,
+    artistId: targetArtistId,
+  });
+
   return {
     displayName: artistProfile.displayName,
     mainPhotoCategory,
     targetArtistId,
     photos,
+    totalPhotoCount: summary.count,
   };
 }
 
@@ -95,6 +107,7 @@ export default function AdminArtistPhotosPage({
     mainPhotoCategory,
     targetArtistId,
     photos: initialPhotos,
+    totalPhotoCount: initialTotalPhotoCount,
   } = loaderData;
 
   const [photos, setPhotos] = useState<Photo[]>(() =>
@@ -105,6 +118,9 @@ export default function AdminArtistPhotosPage({
       height: photo.height,
       style: photo.style,
     })),
+  );
+  const [totalPhotoCount, setTotalPhotoCount] = useState(
+    initialTotalPhotoCount,
   );
   const [deletingPhotoIds, setDeletingPhotoIds] = useState<Set<number>>(
     () => new Set(),
@@ -126,6 +142,7 @@ export default function AdminArtistPhotosPage({
 
   function handlePhotoUploaded(uploadedPhoto: Photo) {
     setPhotos((previous) => [...previous, uploadedPhoto]);
+    setTotalPhotoCount((previous) => previous + 1);
   }
 
   async function handleOrderChange(nextOrderedIds: number[]) {
@@ -165,6 +182,7 @@ export default function AdminArtistPhotosPage({
 
     if (deleteResult.ok) {
       setPhotos((previous) => previous.filter((photo) => photo.id !== photoId));
+      setTotalPhotoCount((previous) => previous - 1);
     } else {
       setDeleteErrorMessage(deleteResult.errorMessage);
     }
@@ -217,7 +235,7 @@ export default function AdminArtistPhotosPage({
       </header>
 
       <PhotoUploader
-        currentPhotoCount={photos.length}
+        currentPhotoCount={totalPhotoCount}
         targetArtistIdForAdmin={targetArtistId}
         category={mainPhotoCategory}
         onPhotoUploaded={handlePhotoUploaded}

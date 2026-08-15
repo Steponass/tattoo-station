@@ -23,7 +23,7 @@
 .card_stack {
   position: relative;
   width: min(560px, 90vw);
-  height: clamp(320px, 45vw, 420px);
+  height: clamp(320px, 35vw, 320px);
   margin-block-end: var(--space-l-xl);
 }
 
@@ -37,6 +37,7 @@
   gap: var(--space-8px);
   text-align: center;
   padding: var(--space-m-l);
+  padding-bottom: var(--space-xl-2xl);
   background-color: var(--color-bg-overlay);
   border: 1px solid var(--color-stroke-weak);
   box-shadow: 0 16px 32px var(--color-shadow-dark);
@@ -44,8 +45,8 @@
 }
 
 .card_number {
-  font-size: var(--fontsize-h5);
-  color: var(--color-accent-light);
+  font-size: var(--fontsize-h4);
+  color: var(--color-accent);
 }
 
 .card_title {

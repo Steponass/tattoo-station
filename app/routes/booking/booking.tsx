@@ -1,14 +1,14 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useFetcher } from "react-router";
-
+import { getIntlayer, validatePrefix } from "intlayer";
+import { useIntlayer } from "react-intlayer";
+import { data } from "react-router";
 import { BookingForm } from "~/components/booking/BookingForm";
 import type { BookingConfirmationContent } from "~/components/booking/BookingConfirmation";
 import { findArtistContactById, findBookableArtists } from "~/lib/artists/artistRepository.server";
 import { ARTIST_ROLES_BY_CATEGORY } from "~/lib/booking/bookingConstants";
 import { clearBookingFormDraft } from "~/lib/booking/bookingFormDraft";
-import {
-  verifyBookingPhotos
-} from "~/lib/booking/server/bookingPhotos.server";
+import { verifyBookingPhotos } from "~/lib/booking/server/bookingPhotos.server";
 import { insertBooking } from "~/lib/booking/server/bookingRepository.server";
 import { checkSpamGuards } from "~/lib/booking/server/checkSpamGuards.server";
 import type { BookingAttribution } from "~/lib/booking/server/bookingRepository.server";
@@ -32,14 +32,6 @@ const BookingConfirmation = lazy(() =>
   })),
 );
 
-const bookingConfirmationContent: BookingConfirmationContent = {
-  heading: "Request received",
-  body: "Thanks — we've got your booking request and will be in touch shortly to confirm details.",
-  referenceLabel: "Reference: ",
-  stampText: "RECEIVED",
-  closeLabel: "Close",
-};
-
 export type BookingActionResult =
   | { ok: true; reference: string }
   | { ok: false; fieldErrors: BookingFieldErrorCodes };
@@ -50,8 +42,24 @@ type ArtistContactResolution =
   | { status: "not_specified" }
   | { status: "invalid" };
 
-export async function loader({ context, request }: Route.LoaderArgs) {
+export const meta: Route.MetaFunction = ({ params }) => {
+  const content = getIntlayer("booking", params.lang);
+
+  return [
+    { title: content.title },
+    { content: content.description, name: "description" },
+  ];
+};
+
+export async function loader({ context, request, params }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
+    const { lang: locale } = params;
+
+  const { isValid } = validatePrefix(locale);
+
+  if (!isValid) {
+    throw data("Locale not supported", { status: 404 });
+  }
 
   const artists = await findBookableArtists({ database: env.DB });
   const requestedArtistSlug = new URL(request.url).searchParams.get("artist");
@@ -222,6 +230,20 @@ export async function action({
 export default function BookingRoute({ loaderData }: Route.ComponentProps) {
   const { artists, turnstileSiteKey, artistPreselection } = loaderData;
   const fetcher = useFetcher<BookingActionResult>();
+  const {
+    confirmationHeading,
+    confirmationBody,
+    confirmationReferenceLabel,
+    confirmationStampText,
+    confirmationCloseLabel,
+  } = useIntlayer("booking");
+
+  const bookingConfirmationContent: BookingConfirmationContent = {
+    heading: confirmationHeading.value,
+    body: confirmationBody.value,
+    stampText: confirmationStampText.value,
+    closeLabel: confirmationCloseLabel.value,
+  };
 
   const submissionResult = fetcher.data;
   const [confirmationDismissed, setConfirmationDismissed] = useState(false);
@@ -262,7 +284,7 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
       {showConfirmation && submissionResult?.ok === true && (
         <Suspense fallback={null}>
           <BookingConfirmation
-            reference={submissionResult.reference}
+
             content={bookingConfirmationContent}
             onClose={() => setConfirmationDismissed(true)}
           />
