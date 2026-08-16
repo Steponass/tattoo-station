@@ -75,7 +75,7 @@ button, label, legend, input, textarea, option, address) {
 }
 
 :where(p, li) {
-  line-height: clamp(1.45rem, 0.019vw + 1.446rem, 1.463rem)
+  line-height: clamp(1.4rem, 0.093vw + 1.379rem, 1.463rem);
 }
 
 /* Indent the paragraph PRECEDED by a paragraph */

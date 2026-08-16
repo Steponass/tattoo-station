@@ -113,9 +113,13 @@ main {
   }
 }
 
-section {
-  /* margin-block: var(--space-xl-2xl); */
+#error_main {
+  min-height: 70vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
 }
+
 
 button {
   background: transparent;

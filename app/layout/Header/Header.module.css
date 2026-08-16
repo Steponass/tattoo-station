@@ -14,12 +14,13 @@
 
 .nav {
   margin-inline: auto;
-  gap: var(--space-s-m);
   padding-block: var(--space-16px);
   padding-inline: var(--space-xs-s);
   display: flex;
+  gap: var(--space-s-m);
   justify-content: space-evenly;
   text-align: center;
+  align-items: center;
 }
 
 /* NavLink sets aria-current="page" on the link matching the current URL, so the
@@ -273,11 +274,12 @@
     pointer-events: auto;
     overflow: visible;
     /* closing target: rotate waits for the rects to finish scaling down */
-    transition: color 0.3s ease-in, transform 0.3s 0.3s ease-in;
+    transition: all 0.3s ease-in-out;
 
     @media (hover: hover) {
       &:hover {
-        color: var(--color-accent);
+        color: var(--color-secondary);
+        scale: 1.1;
       }
     }
   }

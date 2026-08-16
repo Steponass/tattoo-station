@@ -20,15 +20,6 @@
   }
 }
 
-/* .section_aftercare_links {
-  width: min(480px, 100%);
-  margin-inline: auto;
-  display: flex;
-  gap: var(--space-32px);
-  justify-content: center;
-  margin-block: var(--space-xl-2xl);
-} */
-
 .section_aftercare_links_1 {
   width: 100dvw;
   min-height: 65dvh;
@@ -37,62 +28,13 @@
   column-gap: var(--space-3xs-2xs);
 }
 
-/* .tattoo_aftercare_wrapper, .piercing_aftercare_wrapper {
-  width: clamp(140px, 25vw, 240px);
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: relative;
-    transition: all 0.5s ease-in;
-  z-index: 1;
-  & p {
-      font-size: var(--fontsize-h5);
-      text-align: center;
-  }
-}
-
-.tattoo_aftercare_wrapper {
-  background-color: var(--color-accent);
-}
-
-.piercing_aftercare_wrapper {
-  background-color: var(--color-secondary);
-}
-
-
-.tattoo_aftercare_card, .piercing_aftercare_card {
-  --backdrop-offset: 6px;
-  width: clamp(140px, 25vw, 240px);
-  aspect-ratio: 1;
-  position: relative;
-  transition: all 0.5s ease-in;
-  @media (hover: hover) {
-  &:hover {
-    transform: rotateY(180deg);
-  }
-  }
-}
-
-.tattoo_aftercare_backdrop, .piercing_aftercare_backdrop {
-  position: absolute;
-  z-index: 0;
-  aspect-ratio: 1;
-  inset: calc(-1 * var(--backdrop-offset));
-  background-color: white;
-  --c: calc(64px + var(--backdrop-offset));
-} */
-
-/* Testing new design */
-
 .section_aftercare_links_1 a {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease-in-out;
   @media( hover: hover ) {
   &:hover {
     backdrop-filter: saturate(1) hue-rotate(80deg);
@@ -115,9 +57,9 @@
      universally supported. */
   &:first-child {
     border-inline-end: 16px double var(--color-stroke-strong);
-    transition: border 0.7s 0.7s ease-in-out;
+    transition: border 0.7s 0.7s ease-in-out backdrop-filter 0.2s ease-in-out;
     @starting-style {
-      border-inline-end: 0px none var(--color-stroke-weak);
+      border-inline-end: 0px none var(--color-stroke-strong);
     }
   }
 }

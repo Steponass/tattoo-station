@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocalizedLink, LocalizedNavLink } from "~/components/intlayer/LocalizedLink";
 import { LocaleSwitcher } from "~/components/intlayer/locale-switcher";
 import styles from "./Header.module.css";
@@ -18,12 +18,16 @@ export default function Header() {
   } = useIntlayer("header");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const burgerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isMenuOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMenuOpen(false);
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+        burgerRef.current?.focus();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -87,7 +91,7 @@ export default function Header() {
         <nav
           id="mobile-nav"
           className={styles.mobile_nav}
-          aria-hidden={!isMenuOpen}
+          inert={!isMenuOpen}
         >
           <LocalizedNavLink to="/artists" onClick={closeMenu}>
             {artists}
@@ -118,6 +122,7 @@ export default function Header() {
 
         <div className={styles.burger_group}>
           <button
+            ref={burgerRef}
             type="button"
             className={styles.burger_wrapper}
             aria-expanded={isMenuOpen}

@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useIntlayer } from "react-intlayer";
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 const RECEDE_Y = 16;
 const RECEDE_SCALE = 0.05;
@@ -79,7 +80,14 @@ export default function ProcessNew() {
 
       build();
 
+      let lastWidth = window.innerWidth;
+
       const handleResize = () => {
+        if (window.innerWidth === lastWidth) {
+          return;
+        }
+        lastWidth = window.innerWidth;
+
         scrollTriggerInstance?.kill();
         gsap.set(cards, { clearProps: "all" });
         build();
