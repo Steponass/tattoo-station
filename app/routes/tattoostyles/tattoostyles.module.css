@@ -1,3 +1,7 @@
+#tattoostyles_main {
+  width: min(1440px, 96%);
+}
+
 .tattoostyle_article {
   width: min(1024px, 100%);
   margin-block-end: var(--space-xl-2xl);
@@ -9,7 +13,7 @@
     font-size: var(--fontsize-h4);
     margin-block-end: var(--space-2xs-xs);
   };
-  @media (max-width: 980px) {
+  @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
     justify-content: center;

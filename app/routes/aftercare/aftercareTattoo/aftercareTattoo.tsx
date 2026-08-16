@@ -1,4 +1,3 @@
-// Intlayer start
 import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
@@ -23,7 +22,6 @@ export const meta: Route.MetaFunction = ({ params }) => {
     { content: content.description, name: "description" },
   ];
 };
-// Intlayer end
 
 export const handle = {
   titleBoard: {

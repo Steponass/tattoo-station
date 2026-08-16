@@ -197,7 +197,7 @@
     z-index: 0;
 
     @media (width < 400px) {
-      height: 384px;
+      height: 400px;
     }
   }
 
@@ -262,13 +262,18 @@
 
   }
 
+  /* transition is split (rather than "all") so open/close can each give
+     rotate and scale their own delay below — closing needs the opposite
+     order from opening, so both the icon and its rects carry two transition
+     rules: one used as the opening target, one as the closing target. */
   .burger_icon {
     width: 40px;
     height: auto;
     color: var(--color-text-strong);
     pointer-events: auto;
     overflow: visible;
-    transition: all 0.3s ease-in;
+    /* closing target: rotate waits for the rects to finish scaling down */
+    transition: color 0.3s ease-in, transform 0.3s 0.3s ease-in;
 
     @media (hover: hover) {
       &:hover {
@@ -283,18 +288,24 @@
   .burger_icon rect {
     transform-box: fill-box;
     transform-origin: center;
-    transition: transform 0.3s 0.3s ease-in-out;
+    /* closing target: scale down starts immediately */
+    transition: transform 0.3s ease-in-out;
   }
 
   .header_mobile.open .burger_icon {
     transform-origin: center;
     transform: translateX(-12px) rotateZ(90deg);
+    /* opening target: rotate starts immediately */
+    transition: color 0.3s ease-in, transform 0.3s ease-in;
   }
 
   /* Scale factors are tuned so the grown bar length roughly matches the
      curtain panel height (.header_mobile::before/::after) it grows into. */
   .header_mobile.open .burger_icon rect {
     transform: scaleX(13);
+    /* opening target: scale waits for the icon rotation to finish */
+    transition: all 0.3s 0.3s ease-in-out;
+    color: var(--color-stroke-strong);
   }
 
   .header_mobile.open .burger_icon rect:nth-child(2) {

@@ -43,7 +43,6 @@
 --fontsize-h3: clamp(2.07rem, 2.19vi + 1.58rem, 3.55rem);
 --fontsize-h2: clamp(2.49rem, 3.33vi + 1.74rem, 4.73rem);
 --fontsize-h1: clamp(2.99rem, 4.93vi + 1.88rem, 6.31rem);
---font-heading: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
 }
 
 
@@ -76,7 +75,7 @@ button, label, legend, input, textarea, option, address) {
 }
 
 :where(p, li) {
-  line-height: 1.4;
+  line-height: clamp(1.45rem, 0.019vw + 1.446rem, 1.463rem)
 }
 
 /* Indent the paragraph PRECEDED by a paragraph */

@@ -92,7 +92,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  transition: all 0.3s ease-in-out;
   @media( hover: hover ) {
   &:hover {
     backdrop-filter: saturate(1) hue-rotate(80deg);
@@ -100,6 +100,7 @@
   &:hover ~ a,
   &:has(~ a:hover) {
     backdrop-filter: blur(4px);
+    opacity: 0.5;
   }
   }
   & p {
@@ -114,7 +115,7 @@
      universally supported. */
   &:first-child {
     border-inline-end: 16px double var(--color-stroke-strong);
-    transition: opacity 0.3s ease, filter 0.3s ease, border 0.7s 0.7s ease-in-out;
+    transition: border 0.7s 0.7s ease-in-out;
     @starting-style {
       border-inline-end: 0px none var(--color-stroke-weak);
     }

@@ -30,11 +30,12 @@ export default function ProcessNew() {
       let scrollTriggerInstance: ScrollTrigger | undefined;
 
       const build = () => {
-        const enterDistance = Math.max(window.innerHeight * 0.6, 400);
+        const enterDistance = Math.max(window.innerHeight * 0.8, 600);
 
         gsap.set(cards, {
           y: enterDistance,
-          scale: 1,
+          scale: 0.9,
+          opacity: 0.75,
           filter: "brightness(1)",
         });
 
@@ -52,7 +53,7 @@ export default function ProcessNew() {
         cards.forEach((card, index) => {
           timeline.to(
             card,
-            { y: 0, scale: 1, filter: "brightness(1)", ease: "power2.out", duration: 1 },
+            { y: 0, scale: 1, opacity: 1, filter: "brightness(1)", ease: "power2.out", duration: 1 },
             index,
           );
 
@@ -66,6 +67,7 @@ export default function ProcessNew() {
                 filter: `brightness(${1 - depth * RECEDE_BRIGHTNESS})`,
                 ease: "power2.out",
                 duration: 1,
+                rotationY: 5
               },
               index,
             );

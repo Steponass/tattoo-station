@@ -20,6 +20,13 @@
   margin-block: var(--space-m-l);
 }
 
+.aftercare_intro_para {
+  max-width: 60ch;
+  text-align: center;
+  justify-self: center;
+  margin-block-end: 2em;
+}
+
 #no_swimming_icon {
   float: right;
   max-width: 80px;

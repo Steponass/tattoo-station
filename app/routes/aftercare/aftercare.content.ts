@@ -12,11 +12,11 @@ const aftercareContent = {
       en: "How to look after fresh tattoos or piercings",
     }),
     tattooAftercare: t({
-      lt: "Tatuiruočių",
+      lt: "Tattoo",
       en: "Tattoo",
     }),
     piercingAftercare: t({
-      lt: "Piercing'o",
+      lt: "Piercing",
       en: "Piercing",
     }),
   },
