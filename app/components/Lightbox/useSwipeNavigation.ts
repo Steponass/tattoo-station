@@ -69,8 +69,10 @@ export function useSwipeNavigation(
     }
   };
 
-  const onPointerCancel = () => {
-    startRef.current = null;
+  const onPointerCancel = (event: ReactPointerEvent<HTMLElement>) => {
+    if (startRef.current?.pointerId === event.pointerId) {
+      startRef.current = null;
+    }
   };
 
   return {

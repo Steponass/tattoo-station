@@ -47,7 +47,7 @@ export const handle = {
   titleBoard: { 
     show: true, 
     labelKey: "home",
-      timing: { characterStaggerSeconds: 0.4, minimumFlapCount: 20 }, },
+      timing: { characterStaggerSeconds: 0.1, minimumFlapCount: 15 }, },
 };
 
 export default function Home({ loaderData }: Route.ComponentProps) {
@@ -66,9 +66,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       </section>
 
       <LandingGallery photos={landingGalleryPhotos} labels={lightboxLabels} />
-
       <Process />
       <Testimonials />
+    
     </>
   );
 }

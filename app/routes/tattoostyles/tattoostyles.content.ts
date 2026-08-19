@@ -35,17 +35,17 @@ const tattoostylesContent = {
           en: "A timeless style with strong lines and limited colors. Built to last and stay clear over time.",
         }),
       },
-      {
-        styleKey: "Neo-traditional" as ArtistStyle,
-        heading: t({
-          lt: "Neo-traditional",
-          en: "Neo-traditional",
-        }),
-        description: t({
-          lt: "Šis stilius derina ryškias linijas su modernia iliustracija, kurdamas išraiškingus ir sodrius dizainus.",
-          en: "This style pairs bold linework with modern illustration, creating expressive and richly saturated designs.",
-    })
-  },
+  //     {
+  //       styleKey: "Neo-traditional" as ArtistStyle,
+  //       heading: t({
+  //         lt: "Neo-traditional",
+  //         en: "Neo-traditional",
+  //       }),
+  //       description: t({
+  //         lt: "Šis stilius derina ryškias linijas su modernia iliustracija, kurdamas išraiškingus ir sodrius dizainus.",
+  //         en: "This style pairs bold linework with modern illustration, creating expressive and richly saturated designs.",
+  //   })
+  // },
       {
         styleKey: "Fine line" as ArtistStyle,
         heading: t({
@@ -145,17 +145,17 @@ const tattoostylesContent = {
           en: "Illustrative tattoos look like drawings or artwork brought to life on skin.",
         }),
       },
-      {
-        styleKey: "Japanese" as ArtistStyle,
-        heading: t({
-          lt: "Japanese (Irezumi)",
-          en: "Japanese (Irezumi)",
-        }),
-        description: t({
-          lt: "Šios tatuiruotės pritaikomos prie kūno formos ir pasakoja istoriją per tradicinius simbolius.",
-          en: "Designed to follow the body’s shape, these tattoos tell a story through traditional imagery.",
-        }),
-      },
+      // {
+      //   styleKey: "Japanese" as ArtistStyle,
+      //   heading: t({
+      //     lt: "Japanese (Irezumi)",
+      //     en: "Japanese (Irezumi)",
+      //   }),
+      //   description: t({
+      //     lt: "Šios tatuiruotės pritaikomos prie kūno formos ir pasakoja istoriją per tradicinius simbolius.",
+      //     en: "Designed to follow the body’s shape, these tattoos tell a story through traditional imagery.",
+      //   }),
+      // },
       {
         styleKey: "Surrealism" as ArtistStyle,
         heading: t({

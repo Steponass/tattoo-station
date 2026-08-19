@@ -14,7 +14,6 @@
 export const ARTIST_STYLES = [
   "Realism",
   "Traditional",
-  "Neo-traditional",
   "Fine line",
   "Watercolor",
   "Black & grey",
@@ -25,7 +24,6 @@ export const ARTIST_STYLES = [
   "Dotwork",
   "Illustrative",
   "New School",
-  "Japanese",
   "Surrealism",
   "Piercing"
 ] as const;

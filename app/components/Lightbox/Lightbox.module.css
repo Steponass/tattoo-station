@@ -1,15 +1,14 @@
 .dialog {
   width: 100vw;
   height: 100vh;
-  max-width: 100dvw;
-  max-height: 100dvh;
+  max-width: 100vw;
+  max-height: 100vh;
   margin-inline: auto;
-  padding-block: var(--space-16px);
   border: 0;
   background: var(--color-bg-base);
   color: var(--color-text-strong);
   overflow: hidden;
-  overscroll-behavior: contain
+  overscroll-behavior: contain;
 }
 
 .dialog::backdrop {
@@ -22,14 +21,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  touch-action: pan-y pinch-zoom;
+  touch-action: pinch-zoom;
   position: relative;
 }
 
 .closeButton {
   position: absolute;
   right: var(--space-xs-s);
-  top: var(--space-3xs-2xs);
+  top: var(--space-s-m);
   z-index: 1;
   padding: var(--space-8px);
   background: transparent;
@@ -39,7 +38,7 @@
 
 .hero {
   max-width: 100%;
-  max-height: 82dvh;
+  max-height: 80vh;
   object-fit: contain;
   min-height: 0;
   min-width: 0;
@@ -92,7 +91,7 @@
 if agreed to use 1 button only */
 .footer {
   position: absolute;
-  bottom: var(--space-8px);
+  bottom: var(--space-16px);
   left: 50%;
   transform: translateX(-50%);
   width: min(80%, 480px);

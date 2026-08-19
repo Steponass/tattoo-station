@@ -1,3 +1,7 @@
+.landing_gallery_container {
+  margin-block: var(--space-xl-2xl);
+}
+
 .landing_gallery_top,
 .landing_gallery_bottom {
   display: flex;

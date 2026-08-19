@@ -6,7 +6,7 @@ import { useIntlayer } from "react-intlayer";
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
-const RECEDE_Y = 8;
+const RECEDE_Y = 14;
 const RECEDE_SCALE = 0.05;
 const RECEDE_BRIGHTNESS = 0.35;
 
@@ -42,7 +42,7 @@ export default function Process() {
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: processContainer,
-            start: "20% 20%",
+            start: "10% 10%",
             end: `+=${cards.length * 100}%`,
             scrub: 1,
             pin: true,

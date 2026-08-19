@@ -8,7 +8,7 @@
 }
 
 .section_heading {
-  font-size: var(--fontsize-h3);
+  font-size: var(--fontsize-h2);
   text-align: center;
   margin-block-start: var(--space-l-xl);
   margin-block-end: var(--space-s-m);
