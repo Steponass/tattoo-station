@@ -5,7 +5,6 @@
   max-height: 100dvh;
   margin-inline: auto;
   padding-block: var(--space-16px);
-  /* padding-inline: var(--space-s-m); */
   border: 0;
   background: var(--color-bg-base);
   color: var(--color-text-strong);
@@ -29,8 +28,8 @@
 
 .closeButton {
   position: absolute;
-  right: var(--space-s-m);
-  top: var(--space-s-m);
+  right: var(--space-xs-s);
+  top: var(--space-3xs-2xs);
   z-index: 1;
   padding: var(--space-8px);
   background: transparent;
@@ -40,7 +39,7 @@
 
 .hero {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 82dvh;
   object-fit: contain;
   min-height: 0;
   min-width: 0;
@@ -57,12 +56,12 @@
 }
 
 .previousButton {
-  left: var(--space-s-m);
+  left: var(--space-xs-s);
   view-transition-name: lightbox-previous;
 }
 
 .nextButton {
-  right: var(--space-s-m);
+  right: var(--space-xs-s);
   view-transition-name: lightbox-next;
 }
 
@@ -93,7 +92,7 @@
 if agreed to use 1 button only */
 .footer {
   position: absolute;
-  bottom: var(--space-24px);
+  bottom: var(--space-8px);
   left: 50%;
   transform: translateX(-50%);
   width: min(80%, 480px);
