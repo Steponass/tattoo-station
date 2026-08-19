@@ -11,7 +11,7 @@ import { buildCustomerConfirmationEmail } from "~/lib/email/templates/customerCo
 import { buildAdminNotificationEmail } from "~/lib/email/templates/adminNotification";
 import { buildArtistNotificationEmail } from "~/lib/email/templates/artistNotification";
 
-const FROM_ADDRESS = "booking@tattoostation.lt";
+const FROM_ADDRESS = "Tattoo Station <booking@tattoostation.lt>";
 const REPLY_TO_ADDRESS = "info@tattoostation.lt";
 const ADMIN_ADDRESS = "info@tattoostation.lt";
 

@@ -149,6 +149,7 @@ a, button {
   padding: var(--space-12px) var(--space-24px);
   transition: var(--transition-regular);
   transform-origin: center center;
+  font-size: var(--fontsize-body);
   @media (hover: hover) {
     &:hover {
     transform: perspective(300px) rotateX(20deg);

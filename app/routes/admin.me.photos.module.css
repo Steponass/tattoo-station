@@ -39,17 +39,11 @@
   flex-shrink: 0;
   padding: 0.75rem 1.25rem;
   border: 1px solid currentColor;
-  color: inherit;
   text-decoration: none;
   font-size: 0.875rem;
   text-transform: uppercase;
 }
 
-.backLink:hover,
-.backLink:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
 
 .grid {
   display: grid;

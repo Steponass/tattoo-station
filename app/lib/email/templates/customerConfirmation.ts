@@ -90,8 +90,8 @@ const STRINGS: Record<SupportedLocale, LocalizedStrings> = {
     signature:           "Tattoo Station",
   },
   lt: {
-    subject:             "Gavome jūsų rezervacijos užklausą",
-    intro:               "Ačiū, kad kreipėtės. Žemiau pateikiame jūsų užklausos santrauką; netrukus susisieksime ir patvirtinsime detales.",
+    subject:             "Gavome jūsų užklausą",
+    intro:               "Ačiū, kad kreipėtės! Žemiau pateikiame jūsų užklausos santrauką; netrukus susisieksime ir patvirtinsime detales.",
     referenceLabel:      "Numeris",
     serviceLabel:        "Paslauga",
     typeLabel:           "Tipas",
