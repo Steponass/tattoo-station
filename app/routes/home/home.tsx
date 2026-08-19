@@ -47,7 +47,7 @@ export const handle = {
   titleBoard: { 
     show: true, 
     labelKey: "home",
-      timing: { characterStaggerSeconds: 0.03, minimumFlapCount: 5 }, },
+      timing: { characterStaggerSeconds: 0.4, minimumFlapCount: 20 }, },
 };
 
 export default function Home({ loaderData }: Route.ComponentProps) {
