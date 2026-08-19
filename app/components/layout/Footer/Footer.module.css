@@ -1,5 +1,8 @@
 .footer {
   background-color: var(--color-bg2);
+  /* background-image: url(/Paper_texture_1.webp);
+  background-repeat: repeat;
+  background-blend-mode: soft-light; */
 }
 
 .footer_container {
@@ -27,11 +30,7 @@
 }
 
 .footer_logo_and_descript img {
-  max-width: 200px;
-}
-
-.footer_info {
-
+  max-width: 156px;
 }
 
 .social_container {
@@ -42,7 +41,8 @@
 }
 
 .footer_policy_container {
-  padding-block: var(--space-xs-s);
+  padding-block-start: calc(var(--space-xs-s) + var(--space-8px));
+  padding-block-end: var(--space-xs-s);
   padding-inline: var(--space-s-m);
   display: flex;
   justify-content: space-between;
@@ -51,7 +51,7 @@
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
-  padding-block: var(--space-m-l);
+    padding-block: var(--space-m-l);
   }
 
   background-image: radial-gradient(circle, #000000 4px, transparent 4px);
@@ -59,8 +59,6 @@
   background-repeat: repeat-x;
   background-size: 9.5px 8px;
 }
-
-/* View Transition block */
 
 .footer {
   view-transition-name: site-footer;
@@ -72,14 +70,16 @@
 
 .social_container a {
   display: block;
-  transition: color 0.3s ease-in-out;
+  transition: var(--transition-fast);
   @media (hover: hover) {
   &:hover {
-    color: yellow;
+    color: var(--color-focus);
+    scale: 1.05;
+    transform: perspective(100px) rotateX(23deg);
   }
   }
   &:active {
-    color: yellow;
+    color: var(--color-focus);
   } 
 }
 

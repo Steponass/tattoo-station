@@ -23,10 +23,6 @@
   align-items: center;
 }
 
-/* NavLink sets aria-current="page" on the link matching the current URL, so the
-   active state needs no extra class plumbing in the JSX.
-   Direct children only: LocaleSwitcher sits inside .mobile_nav and marks its
-   own current-language link with aria-current, which is not a page link. */
 .nav>a[aria-current="page"],
 .mobile_nav>a[aria-current="page"] {
   text-decoration: underline;
@@ -40,12 +36,6 @@
   display: none;
 }
 
-/* `color` is deliberately NOT transitioned. While hovered the glyphs are filled
-   by the gradient via -webkit-text-fill-color, which overrides `color` — so a
-   colour transition is invisible on the way in, and on the way out it leaves
-   the text transparent for its whole duration while the (always-on, from
-   :where(a) in global.css) underline is still secondary. That reads as a
-   secondary flash. Snapping `color` back means the glyphs are just there. */
 .nav>a,
 .mobile_nav>a {
   transition: text-decoration-color 0.1s ease-in;
@@ -105,8 +95,6 @@
   }
 }
 
-/* ease-out on the sweep: the pack arrives at speed and decelerates into the
-   settled colour. Swap to linear if you want a flatter, more mechanical pass. */
 @keyframes nav-carriages {
   from {
     background-position: 0% 0;
@@ -118,20 +106,6 @@
 }
 
 
-/* -------------------------------------------------------------------------- */
-/* View Transitions — keep the header out of the page wipe                     */
-/* -------------------------------------------------------------------------- */
-
-/* Naming an element pulls it out of the root snapshot into its own
-   ::view-transition-group, which is positioned from its own old/new box
-   rather than being dragged along by the root translate. That is what
-   makes the header read as persistent while the page wipes beneath it.
-
-   Two names, not one: both headers are always in the DOM, but each is
-   display:none at the other's breakpoint, and an unrendered element's
-   view-transition-name is ignored. Sharing a single name would make the
-   two collide the moment a resize left both rendered, which aborts the
-   whole transition. */
 .header {
   view-transition-name: site-header;
 }
@@ -140,11 +114,7 @@
   view-transition-name: site-header-mobile;
 }
 
-/* In-page transitions (the Lightbox — see page-transitions.css for the
-   marker) must NOT lift the header out. Named groups paint above the root
-   group, and the open dialog lives inside root, so a named header would
-   float on top of the lightbox for the length of the morph. Dropping the
-   name puts the header back in the root snapshot, where it belongs. */
+
 :root[data-view-transition] .header,
 :root[data-view-transition] .header_mobile {
   view-transition-name: none;
@@ -166,7 +136,7 @@
 }
 
 
-@media (max-width: 800px) {
+@media (max-width: 880px) {
   .header {
     display: none;
   }
@@ -194,7 +164,7 @@
     background-image: url(/Grey-Grid-Edited.svg);
     background-blend-mode: soft-light;
     transform: scaleX(0);
-    transition: transform 0.35s ease;
+    transition: var(--transition-regular);
     z-index: 0;
 
     @media (width < 400px) {
@@ -244,8 +214,6 @@
 
   .burger_wrapper {
     position: relative;
-    z-index: 1;
-    /* pointer-events: auto; */
     display: flex;
     justify-content: flex-end;
     padding-inline-end: 12px;
@@ -253,7 +221,7 @@
     height: 100px;
     border: none;
     cursor: pointer;
-    transition: 0.3s all ease-in;
+    transition: var(--transition-regular);
   }
 
   .header_mobile.open {
@@ -274,7 +242,7 @@
     pointer-events: auto;
     overflow: visible;
     /* closing target: rotate waits for the rects to finish scaling down */
-    transition: all 0.3s ease-in-out;
+    transition: var(--transition-regular);
 
     @media (hover: hover) {
       &:hover {
@@ -284,21 +252,16 @@
     }
   }
 
-  /* Bars scale along their own local x-axis (the long edge of each rect).
-     The icon itself rotates 90deg on open, which swaps local x for screen-y,
-     so growing x here is what reads as the bars growing taller on screen. */
   .burger_icon rect {
     transform-box: fill-box;
     transform-origin: center;
-    /* closing target: scale down starts immediately */
-    transition: transform 0.3s ease-in-out;
+    transition: var(--transition-regular);
   }
 
   .header_mobile.open .burger_icon {
     transform-origin: center;
     transform: translateX(-12px) rotateZ(90deg);
-    /* opening target: rotate starts immediately */
-    transition: color 0.3s ease-in, transform 0.3s ease-in;
+    transition: var(--transition-regular);
   }
 
   /* Scale factors are tuned so the grown bar length roughly matches the
@@ -314,11 +277,6 @@
     transform: translateX(-30px) scaleX(13);
   }
 
-  /* The wrapper's diagonal clip-path is sized to its own 100px box, so
-     bars growing past it would otherwise be cut off mid-animation.
-     .burger_group carries the same kind of diagonal clip (for its idle
-     shape) and must be released too, or it cuts off the bottom of the
-     growing bars even after the wrapper's own clip is gone. */
   .header_mobile.open .burger_wrapper,
   .header_mobile.open .burger_group {
     clip-path: none;
@@ -337,10 +295,10 @@
     padding-inline: var(--space-xl-2xl);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease-in;
+    transition: var(--transition-fast);
     font-size: var(--fontsize-h6);
 
-    @media (400px <=width <=780px) {
+    @media (400px <=width <=880px) {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto;
     }
@@ -351,14 +309,6 @@
     transition-delay: 0.2s;
   }
 
-  /* pointer-events stays off on the .mobile_nav box itself: its inset:0 box
-     overlaps .burger_group's corner (.header_mobile has no explicit height,
-     so both sit in the same ~100px strip), and the grid's gaps/padding are
-     empty space between the links. Auto on the whole box would let that
-     empty space swallow clicks meant for the burger button underneath —
-     visible but unclickable, since nothing opaque paints there. Scoping
-     auto to the actual children keeps the links clickable without blocking
-     what's behind the gaps. */
   .header_mobile.open .mobile_nav>* {
     pointer-events: auto;
   }

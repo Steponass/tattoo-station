@@ -1,7 +1,6 @@
-// app/routes/api.curate-gallery.ts
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
 import {
   isGalleryName,
   type GalleryName,
@@ -13,16 +12,9 @@ import {
 } from "~/lib/gallery/curateGallery.server";
 import type { Route } from "./+types/admin.api.curate-gallery";
 
-/**
+/*
  * Admin-only. One endpoint covers all three curation operations (add, remove,
- * reorder) via a discriminated JSON envelope. The alternative — three
- * endpoints — would duplicate the actor gate and the envelope parsing
- * three times for no gain, since all three operations share the same
- * admin-only shape.
- *
- * The route action is envelope parsing plus a delegation to the service.
- * Field-level validation lives in the service; the route only enforces
- * envelope shape.
+ * reorder)
  */
 
 const FAILURE_STATUS: Record<CurateGalleryFailureCode, number> = {
@@ -39,29 +31,12 @@ const FAILURE_STATUS: Record<CurateGalleryFailureCode, number> = {
   persist_failed: 500,
 };
 
-function reject(
-  failureCode: string,
-  detail: string,
-  status: number,
-): Response {
-  return Response.json({ ok: false, failureCode, detail }, { status });
-}
-
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   if (actor.kind !== "admin") {
-    return reject(
-      "wrong_actor",
-      "Only admins curate galleries.",
-      403,
-    );
+    return reject("wrong_actor", "Only admins curate galleries.", 403);
   }
 
   let parsedBody: unknown;
@@ -97,11 +72,8 @@ type OperationParseResult =
   | { ok: true; operation: CurateGalleryOperation }
   | { ok: false; failureCode: string; detail: string };
 
-/**
- * Parses the JSON envelope into a typed operation. The envelope's `kind`
- * discriminant drives which fields the parser requires — `add`/`remove`
- * need `photoId`; `reorder` needs `orderedPhotoIds`. Missing or wrong-typed
- * fields are envelope-layer rejections.
+/*
+ * Parses the JSON envelope into a typed operation.
  */
 function parseCurateOperation(body: unknown): OperationParseResult {
   if (typeof body !== "object" || body === null) {

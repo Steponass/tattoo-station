@@ -3,12 +3,11 @@
   padding-block: var(--space-m-l);
   view-transition-name: splitflap;
   overflow-x: hidden;
-  @media (max-width: 800px) {
+  @media (max-width: 880px) {
     margin-block-start: -12px;
     margin-block-end: var(--space-m-l);
   }
 }
-
 
 :root[data-view-transition] .splitflap_heading {
   view-transition-name: none;

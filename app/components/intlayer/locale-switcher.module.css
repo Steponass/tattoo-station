@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-4px);
-  transition: transform 0.25s ease-in-out;
+  transition: var(--transition-fast);
   text-transform: uppercase;
     transform-origin: center center;
 }
@@ -19,7 +19,7 @@
 .locale_switcher div.active {
   background-color: var(--color-accent);
   & span {
-    font-weight: 600;
+    font-weight: 650;
   }
 }
 
@@ -28,14 +28,13 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
-  transition: transform 0.25s ease-in-out;
+  transition: var(--transition-fast);
   font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
 }
 
 
 @media (hover: hover) {
   .locale_switcher div:hover {
-    /* transform: rotateX(180deg); */
-        transform: perspective(60px) rotateX(25deg);
+    transform: perspective(60px) rotateX(25deg);
   }
 }

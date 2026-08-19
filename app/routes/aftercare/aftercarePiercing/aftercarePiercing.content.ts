@@ -31,6 +31,10 @@ const aftercarePiercingContent = {
       lt: "Jei teisingai prižiūrėsite auskaro įvėrimo vietą, auskaro vieta apgis per 2-4 savaites, (t. y. jau nebebus jautru, neskaudės švelniai prilietus, atslūgs tinimas ir sumažės išskyrų kiekis). Tačiau galutinai pradurta vieta sugyja daug vėliau, todėl sugijus žaizdai pradūrimo vietoje auskaru vis tiek reikia rūpintis – be reikalo neišvėrinėkite auskaro, vėrimo metu žiūrėkite, kad auskaro galas netraumuotų kanalo, plaukite auskarą, kaip nurodyta.",
       en: "With correct care the site will heal in 2–4 weeks — meaning it will no longer be tender, will not hurt on light touch, swelling will subside and discharge will reduce. However, the pierced channel itself heals much later, so even once the wound has closed the piercing still needs care: do not take the jewellery in and out unnecessarily, make sure the end of the jewellery does not injure the channel when reinserting, and keep cleaning it as instructed.",
     }),
+    heading1: t({
+      lt: "Įprasta priežiūra",
+      en: "Regular aftercare",
+    }),
     heading2: t({
       lt: "Burnos ertmės vėrimų priežiūra",
       en: "Oral piercing aftercare",

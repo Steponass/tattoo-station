@@ -22,7 +22,6 @@
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   margin: 0;
   opacity: 0.7;
 }
@@ -41,8 +40,8 @@
 
 .formLevelError {
   padding: 0.75rem 1rem;
-  border: 1px solid #b01e28;
-  color: #b01e28;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -70,7 +69,6 @@
   font: inherit;
   font-size: 0.875rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   cursor: pointer;
 }
 
@@ -113,7 +111,6 @@
 .thumbnailPlaceholder {
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   opacity: 0.5;
   text-align: center;
   padding: 0.5rem;
@@ -134,7 +131,6 @@
   font: inherit;
   font-size: 0.875rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   cursor: pointer;
   background: transparent;
   position: relative;
@@ -145,17 +141,13 @@
   cursor: not-allowed;
 }
 
-.uploadButton:focus-within {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
 /**
  * The <input type="file"> is functionally reachable but visually gone. Wrapping
  * it in a <label> gives us the styling we want while keeping keyboard access
  * and native file-picker semantics — clicking anywhere on the label opens the
  * picker, tab focuses the input.
  */
+ 
 .fileInput {
   position: absolute;
   width: 1px;
@@ -176,7 +168,7 @@
 
 .error {
   font-size: 0.8125rem;
-  color: #b01e28;
+  color: var(--color-error);
   margin: 0;
 }
 
@@ -192,7 +184,6 @@
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .roleFieldSelect {
@@ -203,13 +194,8 @@
   cursor: pointer;
 }
 
-.roleFieldSelect:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
 .roleFieldError {
   font-size: 0.8125rem;
-  color: #b01e28;
+  color: var(--color-error);
   margin: 0;
 }

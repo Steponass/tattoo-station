@@ -1,9 +1,8 @@
-// app/routes/admin.me.flash.tsx
-
 import { useState } from "react";
-import { data, redirect } from "react-router";
+import { data, Link, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireArtist } from "~/lib/admin/server/routeGuards.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import {
   findArtistPhotosByCategory,
@@ -15,29 +14,9 @@ import PhotoUploader from "~/components/admin/profile/PhotoUploader";
 import type { Route } from "./+types/admin.me.flash";
 import styles from "./admin.me.photos.module.css";
 
-/**
- * The artist's flash-designs grid. Structurally identical to
- * /admin/me/photos: same SortableGrid, PhotoTile, and PhotoUploader
- * components; same optimistic reorder, pessimistic delete, sequential
- * upload flow. What differs is the category the loader reads and the
- * `surface` value the uploader passes.
- *
- * Piercer role cannot reach this page: §6 of the handoff hides the flash
- * tab for role=piercing. The loader redirects them to /admin/me rather
- * than 404-ing, because a 404 for a page that never existed for them is
- * misleading; a redirect is honest.
- */
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind === "admin") {
-    throw redirect("/admin");
-  }
+  const actor = requireArtist(context.get(adminActorContext), "/admin");
 
   const artistProfile = await findArtistProfileForEditing({
     database: env.DB,
@@ -203,8 +182,13 @@ export default function AdminMeFlashPage({
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1 className={styles.heading}>Your flash</h1>
-        <p className={styles.subheading}>{displayName}</p>
+        <div className={styles.headerText}>
+          <h1 className={styles.heading}>Your flash</h1>
+          <p className={styles.subheading}>{displayName}</p>
+        </div>
+        <Link to="/admin/me" className={styles.backLink}>
+          Back to profile
+        </Link>
       </header>
 
       <PhotoUploader

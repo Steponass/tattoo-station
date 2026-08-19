@@ -1,20 +1,12 @@
-// app/components/admin/curation/CurationFilters.tsx
-
 import type { ArtistFilterOption } from "~/lib/gallery/galleryCurationRepository.server";
 import type { PhotoCategoryFilter } from "./photoCategoryFilter";
 import styles from "./CurationFilters.module.css";
 
-/**
+/*
  * Filter panel for the curation pool. Two filters — artist and category —
  * because the pool can be large enough (400+ photos) that scroll alone is
- * unusable. The category filter names the photo's classification, not the
- * artist's role or the target gallery.
+ * unusable. 
  *
- * Filters are uncontrolled from the outside: consumer passes current values
- * and a change handler; the component renders <select> elements that call
- * back on change. No internal state — the parent (the curation page) owns
- * the filter values so it can apply them to its already-in-memory photo
- * list.
  */
 
 const CATEGORY_LABELS: Record<PhotoCategoryFilter, string> = {

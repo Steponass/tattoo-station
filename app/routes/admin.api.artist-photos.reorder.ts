@@ -1,7 +1,7 @@
-// app/routes/api.artist-photos.reorder.ts
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
+import type { ResolvedActor } from "~/lib/admin/server/resolveActor.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import { isArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import {
@@ -11,15 +11,12 @@ import {
 } from "~/lib/artists/reorderArtistPhotos.server";
 import type { Route } from "./+types/admin.api.artist-photos.reorder";
 
-/**
+/*
  * Rewrites the order of an artist's photos in one category.
  *
  * Reachable by both admins (targeting any artist via the body) and artists
  * (pinned to themselves) — same actor-pinning invariant as
- * api.artist-photos.ts's upload endpoint. The body carries the category being
- * reordered, the id list, and, for admin callers only, the target artistId.
- * The service performs the exact-set-match validation and the atomic batch
- * rewrite; this action is envelope parsing plus a delegation.
+ * api.artist-photos.ts's upload endpoint.
  */
 
 const FAILURE_STATUS: Record<ReorderArtistPhotosFailureCode, number> = {
@@ -33,24 +30,15 @@ const FAILURE_STATUS: Record<ReorderArtistPhotosFailureCode, number> = {
   persist_failed: 500,
 };
 
-function reject(failureCode: string, detail: string, status: number): Response {
-  return Response.json({ ok: false, failureCode, detail }, { status });
-}
-
 type ResolveTargetArtistIdResult =
   | { ok: true; artistId: number }
   | { ok: false; failureCode: "invalid_artist_id" };
 
-/**
- * Resolves which artist's photos are being reordered, given the resolved
- * caller. Artist: always their own id, ignoring any body-supplied value.
- * Admin: the id comes from the body, since the admin UI acts on any artist.
- */
 function resolveTargetArtistId({
   actor,
   body,
 }: {
-  actor: Exclude<Actor, { kind: "unknown" }>;
+  actor: ResolvedActor;
   body: Record<string, unknown>;
 }): ResolveTargetArtistIdResult {
   if (actor.kind === "artist") {
@@ -72,12 +60,7 @@ function resolveTargetArtistId({
 
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   let parsedBody: unknown;
 
@@ -115,9 +98,6 @@ export async function action({ request, context }: Route.ActionArgs) {
     });
 
     if (artistProfile === null) {
-      // The actor resolved as an artist (email matched a D1 row) but the row
-      // has since disappeared. Same race guard as /admin/me's loader; fail
-      // closed rather than reorder against a stale identity.
       return reject("artist_not_found", "Your account could not be found.", 404);
     }
 
@@ -152,11 +132,6 @@ type EnvelopeParseResult =
     }
   | { ok: false; failureCode: string; detail: string };
 
-/**
- * Parses and shape-validates the JSON envelope. Field-level validation (the
- * set-exact-match rules) is the service's job; this function only ensures
- * the shape is what the service expects.
- */
 function parseReorderEnvelope(body: unknown): EnvelopeParseResult {
   if (typeof body !== "object" || body === null) {
     return {

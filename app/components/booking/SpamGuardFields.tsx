@@ -7,16 +7,6 @@ import {
   RENDERED_AT_FIELD_NAME,
 } from "~/lib/booking/spamGuardConstants";
 
-
-/**
- * Passive anti-spam inputs: a honeypot, a render timestamp, and the draft id
- * scoping this submission's uploaded photos.
- *
- * The honeypot is hidden with CSS rather than `display: none` or a hidden input
- * type, both of which are trivially detected. `autocomplete="one-time-code"`
- * prevents password managers and browser autofill from populating it, which is
- * the most common source of false positives.
- */
 export function SpamGuardFields({
   draftId,
 }: {

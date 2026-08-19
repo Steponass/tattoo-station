@@ -1,5 +1,3 @@
-// app/components/LandingGallery/useHorizontalDragScroll.ts
-
 import { useRef, type PointerEvent as ReactPointerEvent } from "react";
 
 /**
@@ -23,24 +21,14 @@ interface HorizontalDragScrollHandlers {
   onPointerCancel: (event: ReactPointerEvent<HTMLElement>) => void;
 }
 
-/**
+/*
  * Drag-to-scroll for a horizontally-overflowing row, driven by JS rather
  * than native touch panning.
  *
  * The row's CSS declares `touch-action: pan-y`, not `pan-x` — on iOS
  * Safari, a scrollable element with both axes enabled (`pan-x pan-y`, or
  * `auto`) hits a WebKit bug where a touch drag detaches the image and
- * moves it around instead of scrolling the row. Declaring only `pan-y`
- * avoids that combination: vertical gestures are left to the browser so
- * the page can still scroll past a full-height gallery, and horizontal
- * gestures are left undeclared, so the browser hands them to us instead
- * of trying to pan the row natively. Same split as Lightbox's
- * useSwipeNavigation, just driving a live scroll position instead of a
- * single prev/next decision.
- *
- * Direction locks on the first ~10px of movement: more vertical, and we
- * back off so the page scrolls; more horizontal, and we take over
- * `scrollLeft` for the rest of the gesture.
+ * moves it around instead of scrolling the row.
  */
 export function useHorizontalDragScroll(): HorizontalDragScrollHandlers {
   const dragRef = useRef<DragState | null>(null);

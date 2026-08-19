@@ -1,5 +1,3 @@
-// app/lib/gallery/shuffleStyleGalleryOrder.server.ts
-
 import {
   findStyleGalleryPhotos,
   rewriteStyleGallerySortOrder,

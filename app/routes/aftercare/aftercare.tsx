@@ -1,11 +1,9 @@
 import styles from "./aftercare.module.css";
 import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
-
-// Intlayer start
 import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
-import type { Route } from "./+types/page";
+import type { Route } from "./+types/aftercare";
 
 // Intlayer Start
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -41,7 +39,7 @@ export default function aftercare() {
 
   return (
     <main id={styles.aftercare_main}>
-      {/* <section className={styles.section_aftercare_links}>
+      <section className={styles.section_aftercare_links}>
       <LocalizedLink to="aftercare/aftercareTattoo" viewTransition>
         <div className={styles.tattoo_aftercare_card}>
           <div className={styles.tattoo_aftercare_backdrop} />
@@ -54,24 +52,6 @@ export default function aftercare() {
           <div className={styles.piercing_aftercare_card}>
             <div className={styles.piercing_aftercare_backdrop} />
             <div className={styles.piercing_aftercare_wrapper}>
-              <p>{piercingAftercare}</p>
-            </div>
-          </div>
-        </LocalizedLink>
-      </section> */}
-      <section className={styles.section_aftercare_links_1}>
-      <LocalizedLink to="aftercare/aftercareTattoo" viewTransition>
-        <div className={styles.tattoo_aftercare_card_1}>
-          <div className={styles.tattoo_aftercare_backdrop_1} />
-          <div className={styles.tattoo_aftercare_wrapper_1}>
-            <p>{tattooAftercare}</p>
-          </div>
-        </div>
-      </LocalizedLink>
-        <LocalizedLink to="aftercare/aftercarePiercing" viewTransition>
-          <div className={styles.piercing_aftercare_card_1}>
-            <div className={styles.piercing_aftercare_backdrop_1} />
-            <div className={styles.piercing_aftercare_wrapper_1}>
               <p>{piercingAftercare}</p>
             </div>
           </div>

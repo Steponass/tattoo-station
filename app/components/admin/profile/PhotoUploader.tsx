@@ -1,5 +1,3 @@
-// app/components/admin/profile/PhotoUploader.tsx
-
 import { useRef, useState } from "react";
 import { uploadArtistPhoto } from "~/lib/artists/uploadArtistPhoto";
 import styles from "./PhotoUploader.module.css";

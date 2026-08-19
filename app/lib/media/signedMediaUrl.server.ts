@@ -1,5 +1,3 @@
-// app/lib/media/signedMediaUrl.server.ts
-
 const SIGNATURE_ALGORITHM = { name: "HMAC", hash: "SHA-256" } as const;
 
 /** Booking reference photos expire alongside the booking row itself. */

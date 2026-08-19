@@ -1,19 +1,7 @@
-// app/components/Lightbox/useSwipeNavigation.ts
-
 import { useRef, type PointerEvent as ReactPointerEvent } from "react";
 
-/**
- * A horizontal drag shorter than this (in CSS px) is treated as a tap or
- * an imprecise touch, not a swipe.
- */
 const SWIPE_MIN_DISTANCE_PX = 40;
-
-/**
- * A drag whose vertical travel exceeds this is treated as a vertical
- * scroll/pan gesture rather than a prev/next swipe, even if it also moved
- * far enough horizontally.
- */
-const SWIPE_MAX_OFF_AXIS_PX = 90;
+const SWIPE_MAX_OFF_AXIS_PX = 80;
 
 interface UseSwipeNavigationInput {
   onPrevious: () => void;
@@ -34,23 +22,6 @@ interface SwipeStart {
   y: number;
 }
 
-/**
- * Swipe-to-navigate for the Lightbox, built on the Pointer Events API —
- * the browser-native, unified way to handle touch (and pen/mouse) input
- * without reaching for a gesture library. Touch events fold into pointer
- * events, so this one listener set covers every pointer type; only
- * `pointerType === "touch"` triggers navigation, so mouse dragging/text
- * selection on desktop is untouched.
- *
- * Direction is resolved on `pointerup` from the recorded start point,
- * rather than tracked live on `pointermove` — the Lightbox only needs a
- * final decision (prev/next/neither), not a live-dragging visual, so
- * there's nothing for a move handler to do.
- *
- * Pairs with `touch-action: pan-y` on the swipeable element (see
- * Lightbox.module.css) so the browser leaves horizontal gestures to us
- * while still allowing vertical scrolling.
- */
 export function useSwipeNavigation(
   input: UseSwipeNavigationInput,
 ): SwipeNavigationHandlers {
@@ -66,8 +37,7 @@ export function useSwipeNavigation(
       x: event.clientX,
       y: event.clientY,
     };
-    // Guarantees pointerup/cancel land on this element even if the
-    // finger drifts outside its bounds mid-swipe.
+
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 

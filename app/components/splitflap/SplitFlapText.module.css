@@ -40,7 +40,6 @@
   position: relative;
   width: var(--split-flap-cell-width);
   height: var(--split-flap-cell-height);
-  /* perspective: 1260px; */
   color: var(--split-flap-ink);
   clip-path: polygon(
     var(--split-flap-chamfer) 0,

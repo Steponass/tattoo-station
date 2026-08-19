@@ -1,5 +1,3 @@
-// app/lib/images/calculateScaleDownDimensions.ts
-
 export type ImageDimensions = {
   width: number;
   height: number;

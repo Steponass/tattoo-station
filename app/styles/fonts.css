@@ -20,7 +20,6 @@
   font-style: normal;
   font-display: swap;
   src: url('/app/fonts/AtkinsonHyperlegibleNextVF-Variable.woff2') format('woff2-variations');
-  /* font's em-box is weird. Might decide to change completely */
 }
 
 @font-face {
@@ -34,7 +33,7 @@
 
 :root {
 
-  /* https://www.fluid-type-scale.com/calculate?minFontSize=16&minWidth=360&minRatio=1.2&maxFontSize=18&maxWidth=1440&maxRatio=1.333&steps=body-s%2C+body%2C+h6%2C+h5%2C+h4%2C+h3%2C+h2%2C+h1&baseStep=body&prefix=fontsize&useContainerWidth=false&includeFallbacks=false&useRems=true&remValue=16&decimals=2&previewFont=Hepta+Slab&previewText=Almost+before+we+knew+it%2C+we+had+left+the+ground&previewWidth=1280 */
+/* https://www.fluid-type-scale.com/calculate?minFontSize=16&minWidth=360&minRatio=1.2&maxFontSize=18&maxWidth=1440&maxRatio=1.333&steps=body-s%2C+body%2C+h6%2C+h5%2C+h4%2C+h3%2C+h2%2C+h1&baseStep=body&prefix=fontsize&useContainerWidth=false&includeFallbacks=false&useRems=true&remValue=16&decimals=2&previewFont=Hepta+Slab&previewText=Almost+before+we+knew+it%2C+we+had+left+the+ground&previewWidth=1280 */
 --fontsize-body-s: clamp(0.83rem, 0.02vi + 0.83rem, 0.84rem);
 --fontsize-body: clamp(1rem, 0.19vi + 0.96rem, 1.13rem);
 --fontsize-h6: clamp(1.2rem, 0.44vi + 1.1rem, 1.5rem);
@@ -62,16 +61,16 @@
 }
 
 :where(p, ul, ol, li, a, th, td, summary, details,
-button, label, legend, input, textarea, option, address) {
+button, label, legend, input, select, textarea, option, address) {
   font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
-  font-weight: 450;
-  letter-spacing: 0.25px;
+  font-weight: 425;
+  letter-spacing: 0.5px;
   color: var(--color-text-strong);
 
 }
 
 :where(h6, h5, h4, h3, h2, h1) {
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 :where(p, li) {

@@ -1,5 +1,3 @@
-// app/components/admin/profile/ArtistProfileForm.tsx
-
 import { useState } from "react";
 import { useFetcher } from "react-router";
 import type { ArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
@@ -41,11 +39,8 @@ import styles from "./ArtistProfileForm.module.css";
  * StylesPicker owns its own selection state; the character counters in
  * TextAreaField do the same.
  *
- * Bio and excerpt maxLengths come from the service constants. If those change
- * server-side, this file needs the same update — a real coupling worth
- * calling out. The alternative (loader returns the limits) is worth doing
- * once a second form needs them; for two callers of the same limits, still
- * importing is fine.
+ * Bio and excerpt maxLengths come from the service constants, so must be aligned
+ * on both sides
  */
 
 const MAX_BIO_LENGTH = 3000;
@@ -58,22 +53,11 @@ type ArtistProfileFormProps = {
 };
 
 type PatchResponse =
-  | { ok: true }
-  | { ok: false; failureCode: string; detail: string };
+  { ok: true } | { ok: false; failureCode: string; detail: string };
 
-/**
- * Server failure codes mapped to the field they concern. The form renders
- * the failure's detail string beneath the offending field. Failures that
- * don't map to a specific field (persist_failed, forbidden, etc.) render
- * in the form-level banner.
- *
- * The admin-only field codes route to their respective fields when
- * actorKind === "admin". When actorKind === "artist" those inputs aren't
- * rendered, so a mapped error would be invisible — but the artist branch
- * of the API never emits those codes because the service refuses admin-
- * only writes for artist actors.
- */
-const FIELD_FOR_FAILURE_CODE: Partial<Record<ArtistProfilePatchFailureCode, string>> = {
+const FIELD_FOR_FAILURE_CODE: Partial<
+  Record<ArtistProfilePatchFailureCode, string>
+> = {
   bio_too_long: "bio",
   bio_excerpt_too_long: "bioExcerpt",
   instagram_handle_invalid: "instagramHandle",
@@ -191,8 +175,7 @@ export default function ArtistProfileForm(props: ArtistProfileFormProps) {
             width: artistProfile.profileImageWidth,
             height: artistProfile.profileImageHeight,
           }}
-              targetArtistIdForAdmin={targetArtistIdForAdmin}
-
+          targetArtistIdForAdmin={targetArtistIdForAdmin}
         />
       </section>
 
@@ -297,9 +280,9 @@ export default function ArtistProfileForm(props: ArtistProfileFormProps) {
   );
 }
 
-// ---------------------------------------------------------------------------
+// -------------------------------------------
 // Identity sections — one per actor kind
-// ---------------------------------------------------------------------------
+// -------------------------------------------
 
 type ArtistIdentityFieldsProps = {
   artistProfile: ArtistProfileForEditing;
@@ -345,10 +328,7 @@ function AdminIdentityFields(props: AdminIdentityFieldsProps) {
         hint="Your page address. Lowercase, no spaces. Used in /artists/<slug>."
         error={errorFor("slug")}
       />
-      <RoleField
-        defaultValue={artistProfile.role}
-        error={errorFor("role")}
-      />
+      <RoleField defaultValue={artistProfile.role} error={errorFor("role")} />
       <TextField
         name="email"
         label="Email"
@@ -361,13 +341,11 @@ function AdminIdentityFields(props: AdminIdentityFieldsProps) {
   );
 }
 
+
 /**
- * Role selector — a labeled <select> over the three role values. Inline
- * rather than a promoted SelectField primitive because this is the only
- * <select> in the admin surface right now. The booking form's dropdowns
- * are still hardcoded HTML; when they migrate to primitives, a real
- * SelectField gets extracted from this shape.
+ * Role selector — a labeled <select> over the three role values
  */
+
 type RoleFieldProps = {
   defaultValue: "tattoo" | "piercing" | "both";
   error: string | undefined;
@@ -427,6 +405,7 @@ function RoleField(props: RoleFieldProps) {
  * moves this logic behind an HTTP boundary but doesn't remove it. Doing it
  * here keeps the API endpoint's contract clean (JSON in, JSON out).
  */
+
 function buildPatchBodyFromForm({
   formElement,
   dirtyFieldNames,

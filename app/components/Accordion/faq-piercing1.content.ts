@@ -16,8 +16,8 @@ const faqPiercing1Content = {
           en: "How do I take care of it?",
         }),
         answer: t({
-          lt: "Pilną priežiūros instrukciją rasite ",
-          en: "You'll find the full aftercare instructions ",
+          lt: "Priežiūros instrukcijas rasite ",
+          en: "You'll find the aftercare instructions ",
         }),
       },
       {

@@ -1,5 +1,3 @@
-// app/lib/email/resendClient.server.ts
-
 const RESEND_API_URL = "https://api.resend.com/emails";
 
 export type EmailPayload = {

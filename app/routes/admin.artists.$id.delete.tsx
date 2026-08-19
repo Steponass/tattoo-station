@@ -1,18 +1,16 @@
-// app/routes/admin.artists.$id.delete.tsx
-
 import { redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
+import { parsePositiveIntParam } from "~/lib/admin/server/parseIdParam.server";
 import {
   deleteArtist,
   type DeleteArtistFailureCode,
 } from "~/lib/artists/deleteArtist.server";
 import type { Route } from "./+types/admin.artists.$id.delete";
 
-/**
- * Admin-only delete for a single artist. Action-only route: no default
- * export, no UI at this URL. The typed-confirmation UI lives on the edit
- * page (/admin/artists/:id); this route just performs the delete.
+/*
+ * Admin-only delete for a single artist.
  *
  * On success, redirects to /admin?deleted=<displayName> so the dashboard
  * can render a confirmation. On failure, returns JSON — the client shows
@@ -24,27 +22,15 @@ const FAILURE_STATUS: Record<DeleteArtistFailureCode, number> = {
   d1_delete_failed: 500,
 };
 
-function reject(
-  failureCode: string,
-  detail: string,
-  status: number,
-): Response {
-  return Response.json({ ok: false, failureCode, detail }, { status });
-}
-
-export async function action({ request, params, context }: Route.ActionArgs) {
+export async function action({ params, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   if (actor.kind !== "admin") {
     return reject("wrong_actor", "Only admins can delete artists.", 403);
   }
 
-  const targetArtistId = parseArtistIdFromParam(params.id);
+  const targetArtistId = parsePositiveIntParam(params.id);
 
   if (targetArtistId === null) {
     return reject("invalid_artist_id", "Invalid artist id in URL.", 400);
@@ -71,18 +57,4 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
   const encodedDisplayName = encodeURIComponent(deleteResult.displayName);
   return redirect(`/admin?deleted=${encodedDisplayName}`);
-}
-
-function parseArtistIdFromParam(rawParam: string | undefined): number | null {
-  if (rawParam === undefined) {
-    return null;
-  }
-
-  const parsed = Number(rawParam);
-
-  if (!Number.isInteger(parsed) || parsed <= 0) {
-    return null;
-  }
-
-  return parsed;
 }

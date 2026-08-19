@@ -304,6 +304,10 @@ const bookingformContent = {
       lt: "Patikrink telefono numerį",
       en: "Please check your phone number",
     }),
+    errorReferenceLinkInvalid: t({
+      lt: "Patikrink nuorodos formatą",
+      en: "Please check your link format",
+    }),
     errorServiceCategoryRequired: t({
       lt: "Pasirink, ko atvyksti",
       en: "Please choose what you're booking for",

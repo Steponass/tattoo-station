@@ -20,9 +20,9 @@ import './styles/page-transitions.css'
 import { getLocaleFromPath } from "intlayer";
 import { IntlayerProvider } from "react-intlayer";
 import { useI18nHTMLAttributes } from "./hooks/intlayer/usei18nHTMLAttributes";
-import Header from "./layout/Header/Header";
-import Footer from "./layout/Footer/Footer";
-import { PageTitleBoard } from "./components/layout/PageTitleBoard";
+import Header from "./components/layout/Header/Header";
+import Footer from "./components/layout/Footer/Footer";
+import { PageTitleBoard } from "./components/layout/PageTitleBoard/PageTitleBoard";
 import ScrollToTop from "./components/layout/ScrollToTop/ScrollToTop";
 
 export function links() {
@@ -102,7 +102,7 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oopsie!";
-  let details = "An unexpected error occurred.";
+  let details = "There ain't no page like that.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {

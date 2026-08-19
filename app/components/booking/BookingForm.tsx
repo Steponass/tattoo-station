@@ -1,5 +1,3 @@
-// app/components/booking/BookingForm.tsx
-
 import { useCallback, useReducer, useState } from "react";
 import { useIntlayer } from "react-intlayer";
 import type { FetcherWithComponents } from "react-router";
@@ -107,11 +105,9 @@ const GENERIC_ERROR_CONTENT_KEYS = {
   too_many_photos: "errorPhotosTooMany",
 } as const satisfies Record<FieldErrorCode, keyof BookingFormContent>;
 
-/**
+/*
  * Field-specific wording, preferred over the generic message for a code.
  *
- * Mostly covers 'required', which on its own ("This field is required") says
- * less than naming what is missing.
  */
 const FIELD_ERROR_CONTENT_KEYS: Partial<
   Record<string, Partial<Record<FieldErrorCode, keyof BookingFormContent>>>
@@ -146,7 +142,7 @@ const BODY_PLACEMENT_CONTENT_KEYS = [
   "placementNeck",
 ] as const satisfies readonly (keyof BookingFormContent)[];
 
-/**
+/*
  * True once a service type is chosen, or immediately for categories (like
  * 'other') that have no service types to choose from.
  */
@@ -160,12 +156,9 @@ function hasSelectedServiceType(formState: BookingFormState): boolean {
   return options.length === 0 || formState.serviceType !== null;
 }
 
-/**
+/*
  * Turns validation codes into display text.
  *
- * Codes stay codes until here, which is the first point that has a translation
- * context — the validator runs in both the browser and the action, and the
- * action has no way to pick a language.
  */
 function resolveFieldErrorMessages(
   fieldErrorCodes: BookingFieldErrorCodes,
@@ -188,12 +181,9 @@ function resolveFieldErrorMessages(
   return messages;
 }
 
-/**
+/*
  * The message under the submit button.
  *
- * A 'form' code means the submission was rejected as a whole rather than any
- * one field being wrong, so pointing at the fields would send the customer
- * looking for something that isn't there.
  */
 function resolveFormErrorMessage(
   fieldErrorCodes: BookingFieldErrorCodes,
@@ -210,7 +200,7 @@ function resolveFormErrorMessage(
   return content.errorFormIncomplete.value;
 }
 
-/**
+/*
  * Ties a control to its own error message, so the relationship is spelled out
  * once here rather than at all fourteen fields.
  */
@@ -223,7 +213,7 @@ function invalidFieldProps(fieldName: string, message: string | undefined) {
       };
 }
 
-/**
+/*
  * The photo components take plain strings, so localized nodes are unwrapped
  * with `.value` at this boundary.
  */
@@ -246,8 +236,8 @@ function resolvePhotoMessages(
   };
 }
 
-/**
- * Absent until a category is chosen, and absent entirely for 'other', which
+/*
+ * Absent until a category is chosen, and absent entirely for 'other' which
  * has no subtypes.
  */
 function ServiceTypeField({
@@ -426,7 +416,7 @@ function FirstTimeCheckbox({
   );
 }
 
-/**
+/*
  * Restores the artist selection from a saved draft, dropping it if it no
  * longer names an eligible artist for the (also restored) category — e.g. the
  * category's roster changed, or the sentinel is no longer permitted.

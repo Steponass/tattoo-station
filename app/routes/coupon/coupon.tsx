@@ -1,4 +1,3 @@
-
 import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
@@ -8,7 +7,7 @@ import NavButton from "~/components/Button/NavButton";
 
 const COUPON_URL = "https://gift.korta.app/tattoo-station";
 
-// Intlayer start
+
 export const loader = ({ params }: Route.LoaderArgs) => {
   const { lang: locale } = params;
 
@@ -27,7 +26,6 @@ export const meta: Route.MetaFunction = ({ params }) => {
     { content: content.description, name: "description" },
   ];
 };
-// Intlayer end
 
 // SPLITFLAP BOARD
 export const handle = {
@@ -45,7 +43,6 @@ export default function coupon() {
     <main>
       <section className={styles.coupon_section}>
         <p className={styles.lead}>{leadText}</p>
-
         <div className={`${styles.ticket} chamfer chamfer-l punch`}>
           <div className={styles.ticket_stub}>
             <h6 className={styles.stub_text}>Tattoo Station</h6>

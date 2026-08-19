@@ -4,7 +4,6 @@ import { data } from "react-router";
 import type { Route } from "./+types/privacypolicy";
 import styles from './privacypolicy.module.css'
 
-// Intlayer start
 export const loader = ({ params }: Route.LoaderArgs) => {
   const { lang: locale } = params;
 
@@ -23,7 +22,6 @@ export const meta: Route.MetaFunction = ({ params }) => {
     { content: content.description, name: "description" },
   ];
 };
-// Intlayer end
 
 export const handle = {
   titleBoard: {
@@ -33,7 +31,6 @@ export const handle = {
   },
 };
 
-/** The <h1> comes from PageTitleBoard, so the sections here start at <h2>. */
 export default function privacypolicy() {
   const content = useIntlayer("privacypolicy");
 

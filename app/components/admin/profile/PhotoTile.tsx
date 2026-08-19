@@ -1,12 +1,10 @@
-// app/components/admin/profile/PhotoTile.tsx
-
 import { useEffect, useState } from "react";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { SortableGridItem } from "~/components/admin/sortable/SortableGrid";
 import { ARTIST_STYLES } from "~/lib/artists/artistStyles";
 import styles from "./PhotoTile.module.css";
 
-/**
+/*
  * One photo cell in the grid. Wraps the image in a SortableGridItem (dnd-kit
  * wiring) and overlays a delete button that flips to "Confirm?" on first
  * click.
@@ -23,10 +21,9 @@ import styles from "./PhotoTile.module.css";
  * further defends against click-becomes-drag confusion.
  */
 
-/**
+/*
  * How long the "confirm?" state stays visible before reverting to the
- * default delete affordance. Long enough that a slow user has time to
- * decide, short enough that a leftover confirm state doesn't linger.
+ * default delete affordance.
  */
 const CONFIRM_TIMEOUT_MS = 3000;
 

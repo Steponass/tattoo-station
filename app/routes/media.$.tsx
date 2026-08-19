@@ -1,14 +1,7 @@
-// app/routes/media.$.tsx
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { verifyMediaSignature } from "~/lib/media/signedMediaUrl.server";
 import type { Route } from "./+types/media.$";
 
-/**
- * Object key prefixes this route is permitted to serve. Defence in depth: the
- * signature already covers the key, but this bounds the blast radius if the
- * signing secret is ever leaked.
- */
 const SERVABLE_KEY_PREFIXES = ["bookings/"];
 
 function isServableKey(objectKey: string): boolean {

@@ -1,9 +1,10 @@
 // app/routes/admin.me.photos.tsx
 
 import { useState } from "react";
-import { data, redirect } from "react-router";
+import { data, Link } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireArtist } from "~/lib/admin/server/routeGuards.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import {
   findArtistPhotosByCategory,
@@ -17,17 +18,9 @@ import PhotoUploader from "~/components/admin/profile/PhotoUploader";
 import type { Route } from "./+types/admin.me.photos";
 import styles from "./admin.me.photos.module.css";
 
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind === "admin") {
-    throw redirect("/admin");
-  }
+  const actor = requireArtist(context.get(adminActorContext), "/admin");
 
   const artistProfile = await findArtistProfileForEditing({
     database: env.DB,
@@ -195,8 +188,13 @@ export default function AdminMePhotosPage({
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1 className={styles.heading}>Your photos</h1>
-        <p className={styles.subheading}>{displayName}</p>
+        <div className={styles.headerText}>
+          <h1 className={styles.heading}>Your photos</h1>
+          <p className={styles.subheading}>{displayName}</p>
+        </div>
+        <Link to="/admin/me" className={styles.backLink}>
+          Back to profile
+        </Link>
       </header>
 
       <PhotoUploader

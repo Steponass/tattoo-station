@@ -1,5 +1,3 @@
-// app/lib/gallery/curateGallery.server.ts
-
 import type { Actor } from "~/lib/admin/server/resolveActor.server";
 import {
   deleteGalleryPlacement,
@@ -10,23 +8,6 @@ import {
   type GalleryName,
 } from "./galleryPlacementRepository.server";
 
-/**
- * The one place gallery curation happens. Three operations — add a photo,
- * remove a photo, reorder the gallery — share this service, keyed by a
- * discriminated union on `operation.kind`.
- *
- * Admin-only. The service does not accept an actor union member other than
- * `{ kind: "admin" }`. The endpoint rejects non-admin actors before ever
- * reaching this function; the type on the service parameter enforces the
- * same rule at compile time.
- *
- * Not wrapped in a transaction. The three operations each affect at most
- * two rows; D1's batch() covers the multi-row reorder. Add and remove are
- * single-statement writes. If either fails midway (network drop), the
- * operation is idempotent-with-retry: the client sees the failure and
- * retries the same operation, which either finds the same state or
- * finishes what half-completed. Acceptable at this scale.
- */
 
 /** Spacing convention shared with artist_photos.sort_order. */
 const SORT_ORDER_INCREMENT = 10;

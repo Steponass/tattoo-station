@@ -35,11 +35,11 @@
   color: white;
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
   margin: 0;
   text-align: center;
   pointer-events: none;
 }
+
 
 /* Placed tile */
 
@@ -61,12 +61,11 @@
   line-height: 1;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
 .removeButton[data-confirming="true"] {
-  background: #b01e28;
-  border-color: #b01e28;
+  background: var(--color-error);
+  border-color: var(--color-error);
   min-width: auto;
   padding: 0 0.75rem;
 }
@@ -74,11 +73,6 @@
 .removeButton:disabled {
   opacity: 0.5;
   cursor: wait;
-}
-
-.removeButton:focus-visible {
-  outline: 2px solid white;
-  outline-offset: 2px;
 }
 
 /* Placeable tile */
@@ -96,13 +90,7 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  font: inherit;
   color: inherit;
-}
-
-.placeableButton:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
 }
 
 .placeableButton:disabled {
@@ -119,7 +107,6 @@
   color: white;
   font-size: 0.875rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 /* Blocked tile */
@@ -134,7 +121,6 @@
   color: white;
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   text-align: center;
   padding: 0 0.5rem;
 }

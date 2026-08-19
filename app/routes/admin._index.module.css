@@ -1,7 +1,7 @@
 .main {
   padding: 2rem 1.5rem;
   max-width: 60rem;
-  margin: 0 auto;
+  margin-inline: auto;
 }
 
 .header {
@@ -14,10 +14,8 @@
 }
 
 .heading {
-  font-size: 1.5rem;
-  margin: 0;
+  font-size: var(--fontsize-h2);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .sectionNav {
@@ -36,8 +34,7 @@
   text-transform: uppercase;
 }
 
-.sectionLink:hover,
-.sectionLink:focus-visible {
+.sectionLink:hover {
   outline: 2px solid var(--color-text-strong);
   outline-offset: 2px;
 }
@@ -64,7 +61,6 @@ ul.rosterGrid {
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   margin: 0;
 }
 
@@ -97,7 +93,6 @@ ul.rosterGrid {
   gap: 1rem;
   padding: var(--space-12px) var(--space-12px);
   border: 1px solid currentColor;
-  color: inherit;
   text-decoration: none;
 }
 
@@ -105,10 +100,8 @@ ul.rosterGrid {
   opacity: 0.5;
 }
 
-.rosterEntry:hover,
-.rosterEntry:focus-visible {
+.rosterEntry:hover {
   outline: 2px solid currentColor;
-  outline-offset: 2px;
 }
 
 .rosterEntryPrimary {
@@ -122,7 +115,6 @@ ul.rosterGrid {
 .rosterEntryName {
   font-size: 1rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
 .inactiveBadge {
@@ -130,7 +122,6 @@ ul.rosterGrid {
   border: 1px solid currentColor;
   font-size: 0.6875rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   opacity: 0.7;
 }
 
@@ -145,11 +136,6 @@ ul.rosterGrid {
 
 .rosterEntryRole {
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.rosterEntryPhotoCount {
-  font-variant-numeric: tabular-nums;
 }
 
 .emptyState {
@@ -163,23 +149,19 @@ ul.rosterGrid {
 
 .emptyStateHeading {
   font-size: 1rem;
-  margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .emptyStateHint {
   font-size: 0.875rem;
   opacity: 0.7;
-  margin: 0;
 }
 
 .errorBanner {
   padding: 0.75rem 1rem;
-  border: 1px solid #b01e28;
-  color: #b01e28;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
   font-size: 0.875rem;
-  margin: 0;
 }
 
 .dragHandle {
@@ -202,9 +184,4 @@ ul.rosterGrid {
   color: inherit;
   text-decoration: none;
   min-width: 0;
-}
-
-.rosterEntryLink:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: -2px;
 }

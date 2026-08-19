@@ -1,9 +1,8 @@
-// app/routes/admin.artists.new.tsx
-
-import { useState } from "react";
-import { data, redirect, useFetcher } from "react-router";
+import { redirect, useFetcher } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireAdmin } from "~/lib/admin/server/routeGuards.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
 import {
   createArtist,
   type CreateArtistFailureCode,
@@ -37,37 +36,17 @@ const FAILURE_STATUS: Record<CreateArtistFailureCode, number> = {
   persist_failed: 500,
 };
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind === "artist") {
-    throw redirect("/admin/me");
-  }
-
+export async function loader({ context }: Route.LoaderArgs) {
+  requireAdmin(context.get(adminActorContext), "/admin/me");
   return null;
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return Response.json(
-      { ok: false, failureCode: "forbidden", detail: "Authentication required." },
-      { status: 403 },
-    );
-  }
+  const actor = context.get(adminActorContext);
 
   if (actor.kind !== "admin") {
-    return Response.json(
-      { ok: false, failureCode: "wrong_actor", detail: "Only admins can create artists." },
-      { status: 403 },
-    );
+    return reject("wrong_actor", "Only admins can create artists.", 403);
   }
 
   let parsedBody: unknown;
@@ -75,19 +54,13 @@ export async function action({ request, context }: Route.ActionArgs) {
   try {
     parsedBody = await request.json();
   } catch {
-    return Response.json(
-      { ok: false, failureCode: "invalid_body", detail: "Request body was not valid JSON." },
-      { status: 400 },
-    );
+    return reject("invalid_body", "Request body was not valid JSON.", 400);
   }
 
   const envelopeResult = parseCreateEnvelope(parsedBody);
 
   if (!envelopeResult.ok) {
-    return Response.json(
-      { ok: false, failureCode: envelopeResult.failureCode, detail: envelopeResult.detail },
-      { status: 400 },
-    );
+    return reject(envelopeResult.failureCode, envelopeResult.detail, 400);
   }
 
   const createResult = await createArtist({

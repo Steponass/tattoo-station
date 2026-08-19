@@ -189,19 +189,19 @@ const privacypolicyContent = {
     sharingItems: [
       {
         item: t({
-          lt: "Resend — el. laiškų siuntimas: užklausos patvirtinimas jums ir pranešimas studijai.",
+          lt: "Resend: el. laiškų siuntimas: užklausos patvirtinimas jums ir pranešimas studijai.",
           en: "Resend — email delivery: your request confirmation and the notification to the studio.",
         }),
       },
       {
         item: t({
-          lt: "Google Analytics 4 — apibendrinta svetainės lankomumo statistika.",
+          lt: "Google Analytics 4: apibendrinta svetainės lankomumo statistika.",
           en: "Google Analytics 4 — aggregated website usage statistics.",
         }),
       },
       {
         item: t({
-          lt: "Cloudflare — svetainės talpinimas, failų saugojimas ir apsauga nuo šiukšlinių užklausų.",
+          lt: "Cloudflare: svetainės talpinimas, failų saugojimas ir apsauga nuo šiukšlinių užklausų.",
           en: "Cloudflare — website hosting, file storage and spam protection.",
         }),
       },
@@ -267,7 +267,7 @@ const privacypolicyContent = {
       },
     ],
     rightsOutro: t({
-      lt: "Kreipkitės el. paštu info@tattoostation.lt — atsakysime ne vėliau kaip per 30 dienų. Jei atsakymas jūsų netenkina, turite teisę pateikti skundą Valstybinei duomenų apsaugos inspekcijai (vdai.lrv.lt).",
+      lt: "Kreipkitės el. paštu info@tattoostation.lt; atsakysime ne vėliau kaip per 30 dienų. Jei atsakymas jūsų netenkina, turite teisę pateikti skundą Valstybinei duomenų apsaugos inspekcijai (vdai.lrv.lt).",
       en: "Write to info@tattoostation.lt and we will respond within 30 days. If you are not satisfied with our response, you may lodge a complaint with the Lithuanian State Data Protection Inspectorate (vdai.lrv.lt).",
     }),
 

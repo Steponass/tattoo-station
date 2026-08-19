@@ -1,5 +1,3 @@
-// app/components/LandingGallery/LandingGallery.tsx
-
 import { useMemo, useRef } from "react";
 import { Lightbox, LightboxTrigger } from "~/components/Lightbox/Lightbox";
 import type {
@@ -98,10 +96,10 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
       className={`${styles.landing_gallery_tile} gallery-image-wrapper`}
       ariaLabel={`Work by ${photo.artistDisplayName}`}
     >
-      {/* No <img> here on purpose — iOS Safari offers its native
-          long-press "lift this photo" drag/share gesture on <img>
-          elements no matter what draggable/-webkit-* properties are
-          set, so the tile is painted as a background-image instead. */}
+      {/* No <img> on purpose — iOS Safari offers its native
+          long-press drag/share gesture on <img> elements no matter 
+          what draggable/-webkit-* properties are set, 
+          so the tile is painted as a background-image instead. */}
       <span
         aria-hidden="true"
         className={styles.landing_gallery_tile_image}
@@ -111,13 +109,6 @@ function LandingGalleryTile(props: LandingGalleryTileProps) {
   );
 }
 
-/**
- * Splits the placement list into halves. Even counts split evenly; odd
- * counts put the extra photo in the top row (arbitrary but stable).
- * The split is on placement order, not by artist or category — the
- * curator's chosen sequence is what determines which row a photo lands
- * on.
- */
 function splitPhotosIntoRows(photos: readonly LandingGalleryPhoto[]): {
   topRowPhotos: LandingGalleryPhoto[];
   bottomRowPhotos: LandingGalleryPhoto[];

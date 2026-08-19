@@ -1,5 +1,3 @@
-// app/lib/gallery/styleGalleryRepository.server.ts
-
 /**
  * D1 access for the /tattoostyles page. Unlike gallery_placements, there is
  * no curation step here — every artist_photos row that carries a `style`

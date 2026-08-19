@@ -13,7 +13,7 @@ const bookingContent = {
     }),
     confirmationHeading: t({
       lt: "Užklausa gauta",
-      en: "Request received",
+      en: "We got you",
     }),
     confirmationBody: t({
       lt: "Ačiū, netrukus susisieksime! Taip pat gausi patvirtinimo el. laišką.",

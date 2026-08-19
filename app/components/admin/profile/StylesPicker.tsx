@@ -1,5 +1,3 @@
-// app/components/admin/profile/StylesPicker.tsx
-
 import { useState } from "react";
 import { ARTIST_STYLES } from "~/lib/artists/artistStyles";
 import styles from "./StylesPicker.module.css";

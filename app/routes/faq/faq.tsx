@@ -6,7 +6,6 @@ import styles from "./faq.module.css";
 import Accordion from "~/components/Accordion/Accordion";
 import { LocalizedLink } from "~/components/intlayer/LocalizedLink";
 
-// Intlayer start
 export const loader = ({ params }: Route.LoaderArgs) => {
   const { lang: locale } = params;
 
@@ -51,19 +50,19 @@ export default function faq() {
     <main className={styles.faq_main}>
       <div className={styles.directions_container}>
         <div className={styles.directions_wrapper}>
-          <LocalizedLink 
-          to={"/aftercare"}
-          className="button_a chamfer chamfer-xs punch"
+          <LocalizedLink
+            to={"/aftercare"}
+            className="button_a chamfer chamfer-xs punch"
           >
-          {buttonTextAftercare}
+            {buttonTextAftercare}
           </LocalizedLink>
         </div>
         <div className={styles.directions_wrapper}>
-          <LocalizedLink 
-          to={"/aftercare"}
-          className="button_b chamfer chamfer-xs punch"
+          <LocalizedLink
+            to={"/aftercare"}
+            className="button_b chamfer chamfer-xs punch"
           >
-          {buttonTextPiercing}
+            {buttonTextPiercing}
           </LocalizedLink>
         </div>
       </div>
@@ -73,12 +72,12 @@ export default function faq() {
           <Accordion items={design} />
         </div>
         <div className={styles.accordion_wrapper}>
-          <h2>{beforeHeading}</h2>
-          <Accordion items={before} />
-        </div>
-        <div className={styles.accordion_wrapper}>
           <h2>{bookingHeading}</h2>
           <Accordion items={booking} />
+        </div>
+        <div className={styles.accordion_wrapper}>
+          <h2>{beforeHeading}</h2>
+          <Accordion items={before} />
         </div>
       </section>
     </main>

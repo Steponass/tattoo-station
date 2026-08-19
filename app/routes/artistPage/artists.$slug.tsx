@@ -16,7 +16,7 @@ import {
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import ArtistGallery, {
   type PortfolioImage,
-} from "~/components/ArtistProfile/ArtistGallery";
+} from "~/components/ArtistGallery/ArtistGallery";
 import { useLightboxLabels } from "~/components/Lightbox/useLightboxLabels";
 import styles from "./artist.page.module.css";
 
@@ -34,11 +34,7 @@ function toPortfolioImage(record: ArtistPhotoRecord): PortfolioImage {
   };
 }
 
-/**
- * Splits an artist's photos into the two tabs the profile shows. Piercing-
- * category photos are excluded here — they belong on the piercing page, and
- * this gallery has no piercing tab.
- */
+
 function buildGalleryGroups(records: ArtistPhotoRecord[]): GalleryGroups {
   return {
     tattooPhotos: records
@@ -56,13 +52,7 @@ type ArtistAvatarView = {
   height: number;
 };
 
-/**
- * Builds the avatar view only when the key and both dimensions are present
- * (they travel together by invariant).
- *
- * Assumes avatars are served by the portfolio delivery route; revisit that
- * assumption when avatar upload lands and confirm the key prefix matches.
- */
+
 function buildAvatarView(artist: ArtistProfile): ArtistAvatarView | null {
   const { profileImageKey, profileImageWidth, profileImageHeight } = artist;
 
@@ -167,8 +157,7 @@ export default function ArtistProfileRoute({
   const lightboxLabels = useLightboxLabels();
   const content = useIntlayer("artistsPage");
 
-  // Memoised so the gallery's photo mapping doesn't rebuild on every
-  // render — it takes this object as a useMemo dependency.
+  // Memoised so the gallery's photo mapping doesn't rebuild on every render
   const lightboxArtist = useMemo(
     () => ({ slug: artist.slug, displayName: artist.displayName }),
     [artist.slug, artist.displayName],
@@ -190,6 +179,7 @@ export default function ArtistProfileRoute({
                   to={`https://instagram.com/${artist.instagramHandle}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className={styles.insta_icon}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

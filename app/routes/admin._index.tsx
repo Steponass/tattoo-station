@@ -1,9 +1,7 @@
-// app/routes/admin._index.tsx
-
 import { useState } from "react";
-import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireAdmin } from "~/lib/admin/server/routeGuards.server";
 import {
   findAdminRoster,
   type AdminRosterEntry,
@@ -18,15 +16,7 @@ import styles from "./admin._index.module.css";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind === "artist") {
-    throw redirect("/admin/me");
-  }
+  requireAdmin(context.get(adminActorContext), "/admin/me");
 
   const rosterEntries = await findAdminRoster({ database: env.DB });
 
@@ -51,11 +41,8 @@ export default function AdminDashboardPage({
   const orderedArtistIds = rosterEntries.map((entry) => entry.id);
 
   async function handleReorder(nextOrderedIds: number[]) {
-    // Snapshot the previous order so we can roll back if the server rejects
-    // the new one. Optimistic UI: the list updates immediately; the server
-    // catches up in the background; on failure we revert.
     const previousRosterEntries = rosterEntries;
-
+    
     const nextRosterEntries = nextOrderedIds
       .map((artistId) => rosterEntries.find((entry) => entry.id === artistId))
       .filter((entry): entry is AdminRosterEntry => entry !== undefined);

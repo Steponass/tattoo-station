@@ -1,7 +1,7 @@
-// app/routes/api.artist-avatar.ts
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
+import type { ResolvedActor } from "~/lib/admin/server/resolveActor.server";
 import {
   storeArtistAvatar,
   type StoreArtistAvatarFailureCode,
@@ -24,12 +24,6 @@ type ArtistIdParseResult =
   | { ok: true; artistId: number }
   | { ok: false };
 
-function reject(failureCode: string, detail: string, status: number): Response {
-  const outcome: ArtistAvatarUploadOutcome = { ok: false, failureCode, detail };
-
-  return Response.json(outcome, { status });
-}
-
 function parseArtistId(rawValue: FormDataEntryValue | null): ArtistIdParseResult {
   if (typeof rawValue !== "string") {
     return { ok: false };
@@ -44,12 +38,9 @@ function parseArtistId(rawValue: FormDataEntryValue | null): ArtistIdParseResult
   return { ok: true, artistId: parsed };
 }
 
-/**
+/*
  * Same actor-pinning invariant as the portfolio upload — see the extended
- * comment on `resolveTargetArtistId` in api.artist-photos.ts. Duplicated here
- * rather than shared because the two endpoints are the only current callers
- * and premature extraction would ossify a shape that step 2's new endpoints
- * (reorder-photos, delete-photo, patch-artist-profile) will refine.
+ * comment on `resolveTargetArtistId` in api.artist-photos.ts.
  */
 type ResolveTargetArtistIdResult =
   | { ok: true; artistId: number }
@@ -59,7 +50,7 @@ function resolveTargetArtistId({
   actor,
   formData,
 }: {
-  actor: Exclude<Actor, { kind: "unknown" }>;
+  actor: ResolvedActor;
   formData: FormData;
 }): ResolveTargetArtistIdResult {
   if (actor.kind === "artist") {
@@ -82,12 +73,7 @@ function resolveTargetArtistId({
  */
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   const formData = await request.formData();
 

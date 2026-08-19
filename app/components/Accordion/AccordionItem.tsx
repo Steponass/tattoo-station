@@ -20,7 +20,7 @@ export default function AccordionItem({
   });
 
   function handleSummaryClick(event: MouseEvent<HTMLElement>) {
-    // Suppress the native toggle so the WAAPI animation owns the open state.
+    // Suppress native toggle so the WAAPI animation owns the open state.
     event.preventDefault();
     toggleAccordion();
   }
@@ -32,7 +32,7 @@ export default function AccordionItem({
         onClick={handleSummaryClick}
       >
         <span className={styles.accordion_marker} aria-hidden="true" />
-        <p>{question}</p>
+        <p className={styles.accordion_question}>{question}</p>
       </summary>
       <div className={styles.accordion_answer_wrapper} ref={contentRef}>
         <div className={styles.accordion_answer}><p>{answer}</p></div>

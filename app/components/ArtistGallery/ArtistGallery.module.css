@@ -1,10 +1,15 @@
 .artist_gallery_section {
-    margin-block: var(--space-xl-2xl);
+  margin-block: var(--space-xl-2xl);
+  margin-inline: auto;
+  width: min(1280px, 100%);
+  @media (max-width: 860px) {
+    width: min(512px, 100%);
+  }
 }
 
 .artist_gallery_section h2 {
   font-size: var(--fontsize-h3);
-  margin-block-end: 0.5em;
+  margin-block-end: var(--space-s-m);
 }
 
 .tab_input {
@@ -12,13 +17,13 @@
   clip: rect(0, 0, 0, 0);
 }
 
-/* ---- Tab labels ---- */
 .tabs {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-s-m);
+  column-gap: var(--space-s-m);
+  row-gap: var(--space-2xs-xs);
 }
 
 .tab_label {
@@ -27,14 +32,21 @@
   font-size: var(--fontsize-h6);
   padding: var(--space-16px);
   min-width: 220px;
-  background-color: var(--color-bg-raised);
-  transition: all 0.4s ease-in-out;
+  margin-block-end: var(--space-xs-s);
+  @media (358px < width < 498px) {
+    min-width: 136px;
+  }
+  background-color: var(--color-bg-overlay);
+  transition: var(--transition-slow);
   text-align: center;
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--color-accent-hover);
+    }
+  }
 }
 
-/* ---- Active tab label ---- */
 .tab_input:checked + .tab_label {
-  /* color: var(--color-text); */
   background-color: var(--color-accent);
 }
 
@@ -51,10 +63,8 @@
 /* inactive by default */
   visibility: hidden;
   opacity: 0;
-  transition: all 0.4s ease-in-out;
+  transition: var(--transition-slow);
 }
-
-/* ---- Active panel ---- */
 
 #tattoos_tab:checked ~ .tab_panels #tattoo_panel,
 #flashdesigns_tab:checked ~ .tab_panels #flashdesign_panel {
@@ -66,7 +76,12 @@
   height: min-content;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  /* grid-auto-rows: auto; */
+  @media (max-width: 860px) {
+    width: min(512px, 100%);
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  
+  /* 'member that iOS ain't gonna see them, tough titty */
   column-gap: var(--space-xs-s);
   row-gap: var(--space-xs-s);
   row-rule: 4px double var(--color-stroke-weak);

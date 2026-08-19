@@ -12,7 +12,7 @@ export default function Footer() {
           <img src="/TEMP-Logo-from-photo.webp" alt="Logo of Tatoo Station" />
           <p>{tagline}</p>
         </div>
-        <div className={styles.footer_info}>
+        <div>
           <a
             className="sweep-hover"
             href="https://maps.app.goo.gl/kmjisJWycYQpTSkz8"

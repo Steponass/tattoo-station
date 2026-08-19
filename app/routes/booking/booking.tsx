@@ -96,13 +96,10 @@ function readAttribution(formData: FormData): BookingAttribution {
   };
 }
 
-/**
+/*
  * Confirms that a specifically requested artist exists, is active, and performs
  * the requested service.
  *
- * The role check guards against a tampered submission routing a piercing
- * enquiry to a tattoo artist, which the client-side dropdown filter prevents
- * but cannot enforce.
  */
 async function resolveArtistContact({
   database,
@@ -214,9 +211,7 @@ export async function action({
       locale,
     }).catch((error) => {
       // sendBookingNotifications already catches everything internally and
-      // records notification_status = 'failed' on any exception. This is
-      // belt-and-suspenders in case that guarantee is ever broken by a
-      // future edit — ctx.waitUntil must never carry an unhandled rejection.
+      // records notification_status = 'failed' on any exception.
       console.error(
         "[booking] sendBookingNotifications rejected unexpectedly:",
         error,
@@ -233,7 +228,6 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
   const {
     confirmationHeading,
     confirmationBody,
-    confirmationReferenceLabel,
     confirmationStampText,
     confirmationCloseLabel,
   } = useIntlayer("booking");
@@ -264,12 +258,6 @@ export default function BookingRoute({ loaderData }: Route.ComponentProps) {
 
   return (
     <main id={styles.booking_main}>
-      {/*
-        The form stays mounted underneath the confirmation, so the stamp lands
-        on the request it confirms rather than on an empty page. It is inert
-        while confirmed: there is nothing left to edit, and nothing behind an
-        overlay should stay reachable by keyboard.
-      */}
       <div inert={showConfirmation}>
         <BookingForm
           key={artistPreselection?.artistSelection ?? "none"}

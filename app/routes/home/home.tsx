@@ -10,7 +10,6 @@ import Testimonials from "~/components/Testimonials/Testimonials";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { findPlacedPhotos } from "~/lib/gallery/galleryPlacementRepository.server";
 import styles from './home.module.css';
-import ProcessNew from "~/components/ProcessNew/ProcessNew";
 
 export const loader = async ({ params, context }: Route.LoaderArgs) => {
   const { lang: locale } = params;
@@ -68,8 +67,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
       <LandingGallery photos={landingGalleryPhotos} labels={lightboxLabels} />
 
-      {/* <Process /> */}
-      <ProcessNew />
+      <Process />
       <Testimonials />
     </>
   );

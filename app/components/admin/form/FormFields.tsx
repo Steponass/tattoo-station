@@ -1,29 +1,16 @@
-// app/components/admin/form/FormFields.tsx
-
-/**
+/*
  * The form primitives for the admin area. Colocated in one file because
  * they share the same shape (label + control + hint + error slots wired
- * through useField) and the same stylesheet, and reading them side by side
- * makes their consistency easier to enforce than four small files would.
- *
- * If a primitive here grows substantially — say, TextAreaField gains
- * autosize + toolbar + inline-formatting logic — split that one out. The
- * bar for splitting is "this primitive stopped fitting alongside its
- * siblings," not "we have four things in one file."
- *
- * All primitives are uncontrolled. The parent form reads submitted values
- * off FormData. Live behaviors (character counter, dirty tracking) are
- * added at the caller with onInput handlers or scoped state — the
- * primitives stay simple.
+ * through useField) and the same stylesheet.
  */
 
 import { useState } from "react";
 import { useField } from "~/hooks/useField";
 import styles from "./FormFields.module.css";
 
-// ---------------------------------------------------------------------------
+// -----------------------
 // TextField
-// ---------------------------------------------------------------------------
+// -----------------------
 
 type TextFieldProps = {
   name: string;
@@ -32,7 +19,7 @@ type TextFieldProps = {
   hint?: string;
   error?: string;
   autoComplete?: string;
-  onInput?: (event: React.FormEvent<HTMLInputElement>) => void;
+  onInput?: (event: React.InputEvent<HTMLInputElement>) => void;
 };
 
 export function TextField(props: TextFieldProps) {

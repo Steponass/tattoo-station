@@ -1,8 +1,8 @@
 import { Turnstile } from "@marsidev/react-turnstile";
 
-/**
- * Renders the Turnstile widget, which injects a hidden `cf-turnstile-response`
- * input into the enclosing form.
+/*
+ * The widget injects a hidden `cf-turnstile-response`
+ * input into the form.
  */
 export function TurnstileWidget({
   siteKey,

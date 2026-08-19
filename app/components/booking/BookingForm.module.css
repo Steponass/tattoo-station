@@ -1,7 +1,6 @@
 .booking_form {
   width: min(768px, 98%);
   margin-inline: auto;
-  margin-block: var(--space-xl-2xl);
   padding-block: var(--space-s-m);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -48,7 +47,10 @@ input, textarea, select, option {
 }
 
 .section * {
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition-fast);
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
+  }
 }
 
 .heading {
@@ -58,10 +60,6 @@ input, textarea, select, option {
 
 .section:not(:first-of-type) .heading {
   margin-block-start: var(--space-s-m);
-}
-
-.style_guide_link {
-  grid-column: 1 / -1;
 }
 
 /* Field primitives (formerly app/components/form/*.module.css) */
@@ -107,10 +105,6 @@ input, textarea, select, option {
   display: flex;
   align-items: center;
   gap: var(--space-8px);
-}
-
-.section[data-booking-section="consent"] {
-  background-color: green;
 }
 
 .consent_container {
@@ -210,14 +204,19 @@ div[data-photo-thumbnail-fallback] {
 
 .guide_link {
   color: var(--color-text-weak);
-  font-size: var(--fontsize-body);
+  font-size: var(--fontsize-body-s);
   text-decoration: underline;
-  margin-inline-start: var(--space-8px);
+  margin-inline-start: var(--space-12px);
+  @media (hover: hover) {
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 input[id=bodyPlacement],
 input[id=referenceLink],
-input[id=preferredTimes]
+input[id=preferredTimes],
 select[id=preferredStyle], 
 input[id=approxSizeCm],
 select[id=budgetRange],
@@ -226,10 +225,6 @@ input[type=email],
 input[id=customerName],
 input[type=tel],
 input[type=file] {
-  min-height: 40px;
-}
-
-select[id=preferredStyle] {
   min-height: 40px;
 }
 
@@ -245,13 +240,18 @@ input::selection {
   text-decoration: underline;
 }
 
+.submit_button[data-submitting] {
+  opacity: 0.6;
+}
+
+
 /* Fixed so it covers the viewport regardless of scroll position, above the
    sticky header (z-index 10), and swallows pointer events aimed at the form
    it is confirming. */
 .booking_confirmation_overlay {
   position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: 12;
   display: grid;
   place-items: center;
   overflow-y: auto;
@@ -275,7 +275,7 @@ input::selection {
 .stamp_ring {
   --stamp-ink: var(--color-accent-light);
   position: relative;
-  width: clamp(220px, 45vw, 300px);
+  width: clamp(240px, 45vw, 300px);
   aspect-ratio: 1;
   padding: var(--space-16px);
   display: flex;
@@ -284,7 +284,7 @@ input::selection {
   justify-content: center;
   gap: var(--space-8px);
   border-radius: 50%;
-  border: 3px solid var(--stamp-ink);
+  /* border: 3px solid var(--stamp-ink); */
   rotate: -10deg;
 }
 
@@ -293,8 +293,8 @@ input::selection {
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  border: 2px solid var(--stamp-ink);
-  opacity: 0.45;
+  border: 4px solid var(--stamp-ink);
+  opacity: 0.75;
   filter: url(#stamp-grain);
   pointer-events: none;
 }
@@ -303,51 +303,25 @@ input::selection {
   font-family: 'Hepta Slab', 'Adjusted Heading Fallback', serif;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.7px;
   line-height: 1;
-  color: var(--color-secondary);
-  font-size: clamp(1.6rem, 1rem + 3vw, 2.4rem);
+  font-size: var(--fontsize-h4);
   color: var(--stamp-ink);
   /* Slightly offset duplicate in the darker ink shade, mimicking a
      double-struck stamp impression. */
-  text-shadow: 2px 2px 0 var(--color-stroke-weak);
-}
-
-.stamp_reference {
-  font-size: var(--fontsize-body-s);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--stamp-ink);
-  opacity: 0.85;
-  padding-block-start: var(--space-8px);
-  border-block-start: 1px solid color-mix(in hsl, var(--stamp-ink) 50%, transparent);
+  text-shadow: 2px 2px 1px var(--color-stroke-weak);
 }
 
 .confirmation_heading {
+  margin-block-start: var(--space-24px);
+  margin-block-end: var(--space-16px);
   color: var(--color-text-strong);
-  margin-block-end: 0.5em;
 }
 
 .confirmation_body {
   color: var(--color-text-weak);
-  max-width: 40ch;
+  max-width: 30ch;
   margin-inline: auto;
-}
-
-.confirmation_close_button {
-  margin-block-start: var(--space-m-l);
-  padding-block: var(--space-8px);
-  padding-inline: var(--space-16px);
-  color: var(--color-text-strong);
-  background-color: transparent;
-  border: 2px solid var(--color-stroke-strong);
-  border-radius: var(--space-4px);
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  &:hover,
-  &:focus-visible {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
+  margin-block-end: var(--space-16px);
 }
 

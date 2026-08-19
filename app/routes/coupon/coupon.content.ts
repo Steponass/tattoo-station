@@ -13,7 +13,7 @@ const couponContent = {
     }),
     leadText: t({
       lt: "Vienas bilietas, be nustatytos paskirties vietos: žmogus pats išsirenka meistrą, dizainą ir dieną. Kuponą įsigyti ir tinkinti galima mūsų partnerio Korta platformoje.",
-      en: "One ticket, no fixed destination — the recipient picks the artist, the design, and the day. Purchase and customise the gift card through our partner platform, Korta.",
+      en: "One ticket, no fixed destination! The recipient picks the artist and the design. Purchase and customise the gift card through our partner platform, Korta.",
     }),
     ticketEyebrow: t({
       lt: "Dovanų bilietas",

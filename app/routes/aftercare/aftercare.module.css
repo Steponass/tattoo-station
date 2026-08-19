@@ -16,11 +16,11 @@
   url("/StudioPhoto004_webp.webp") center center/cover no-repeat;
   @media (max-width: 800px) {
       background:   linear-gradient(hsla(143, 25%, 9%, 0.95), hsla(143, 25%, 9%, 0.95)),
-  url("/StudioPhoto004_webp.webp") center bottom/cover no-repeat;
+      url("/StudioPhoto004_webp.webp") center bottom/cover no-repeat;
   }
 }
 
-.section_aftercare_links_1 {
+.section_aftercare_links {
   width: 100dvw;
   min-height: 65dvh;
   display: flex;
@@ -28,13 +28,13 @@
   column-gap: var(--space-3xs-2xs);
 }
 
-.section_aftercare_links_1 a {
+.section_aftercare_links a {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition-fast);
   @media( hover: hover ) {
   &:hover {
     backdrop-filter: saturate(1) hue-rotate(80deg);

@@ -3,20 +3,6 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import styles from "./SplitFlapText.module.css";
 
-/* ============================================================
- * The character drum
- * ============================================================ */
-
-/**
- * The character drum, in physical order, exactly like the printed
- * flaps on a real Solari board. Every cell steps through this
- * order — it never jumps to arbitrary characters.
- *
- * Lithuanian diacritics are appended after Z and before the digits,
- * rather than interleaved next to their base letter (Č after C, etc.),
- * to keep the drum a simple, linearly-indexed extension of the
- * authentic space/A–Z/0–9 order.
- */
 const FLAP_DRUM = " ABCDEFGHIJKLMNOPQRSTUVWXYZĖČŠŽŲŪĄĮ0123456789";
 const BLANK_CHARACTER = " ";
 
@@ -57,9 +43,6 @@ const buildFlapSequence = (
   }));
 };
 
-/* ============================================================
- * Timing budget
- * ============================================================ */
 
 interface SplitFlapTiming {
   flapDurationSeconds: number;
@@ -67,11 +50,6 @@ interface SplitFlapTiming {
   minimumFlapCount: number;
 }
 
-/**
- * Per-call timing overrides. Every field is optional: a caller that
- * only wants a slower stagger says so and inherits the rest of the
- * defaults.
- */
 export type SplitFlapTimingOverrides = Partial<SplitFlapTiming>;
 
 const DEFAULT_TIMING: SplitFlapTiming = {
@@ -80,29 +58,9 @@ const DEFAULT_TIMING: SplitFlapTiming = {
   minimumFlapCount: 25,
 };
 
-/**
- * The word length the default `minimumFlapCount` is tuned for. Longer
- * targets get proportionally more flaps (see below); this is the
- * baseline they are measured against.
- */
+
 const BASELINE_WORD_LENGTH = 7;
 
-/**
- * Timing budget (per word), worst case at the last character (index = i):
- *   finish(i) = i * characterStaggerSeconds
- *             + (minimumFlapCount + i) * flapDurationSeconds
- *
- * Longer target strings (e.g. Lithuanian "TATUIRUOTĖS" vs. English
- * "ARTISTS") need more characters to settle, so the flap count grows
- * with the longest word rather than staying fixed — this keeps the
- * per-character cadence constant while the overall settle time scales
- * with how much text is actually on the board.
- *
- * `overrides` replace the tuned defaults per call site, so a page can
- * dial in its own cadence without every other board changing. The
- * length-based growth still applies on top of whatever
- * `minimumFlapCount` ends up being.
- */
 const getSplitFlapTiming = (
   longestWordLength: number,
   overrides: SplitFlapTimingOverrides = {},
@@ -116,10 +74,6 @@ const getSplitFlapTiming = (
       Math.max(0, longestWordLength - BASELINE_WORD_LENGTH),
   };
 };
-
-/* ============================================================
- * Types
- * ============================================================ */
 
 interface CellDescriptor {
   cellKey: string;
@@ -149,14 +103,7 @@ export interface SplitFlapTextProps {
   onSettled?: () => void;
 }
 
-/* ============================================================
- * Business logic — pure, testable, no DOM, no React.
- * ============================================================ */
 
-/**
- * "TATTOO STATION" → word/cell descriptors. Spaces become gaps
- * between word groups, not cells.
- */
 const buildWordDescriptors = (text: string): WordDescriptor[] =>
   text
     .toUpperCase()
@@ -177,16 +124,7 @@ const getLongestWordLength = (text: string): number =>
     .filter((word) => word.length > 0)
     .reduce((longest, word) => Math.max(longest, word.length), 0);
 
-/* ============================================================
- * GSAP orchestration — imperative on purpose.
- *
- * Hundreds of character flips at 80ms cadence would mean hundreds
- * of React state updates in under a second. Instead, one GSAP
- * timeline mutates textContent + rotationX directly.
- *
- * All GSAP hooks are data attributes, so CSS-module class name
- * hashing never touches the animation layer.
- * ============================================================ */
+
 
 const queryCellParts = (cellElement: HTMLElement): CellParts | null => {
   const topStaticGlyph = cellElement.querySelector<HTMLElement>(
@@ -268,9 +206,6 @@ const setCellToFinalState = (cellElement: HTMLElement): void => {
     backFace,
   } = cellParts;
 
-  // The rotor's front face sits flush over the top-static glyph at
-  // rotationX 0, so it must be painted with the target character too —
-  // otherwise its blank initial render masks the top half of the letter.
   topStaticGlyph.textContent = targetCharacter;
   bottomStaticGlyph.textContent = targetCharacter;
   frontGlyph.textContent = targetCharacter;
@@ -313,7 +248,6 @@ const buildCellTimeline = (
       },
     });
 
-    // At -90° the flap is edge-on: swap which face is painted.
     cellTimeline.set(cellParts.frontFace, { autoAlpha: 0 });
     cellTimeline.set(cellParts.backFace, { autoAlpha: 1 });
 
@@ -334,10 +268,7 @@ const buildCellTimeline = (
   return cellTimeline;
 };
 
-/**
- * Flips every cell from blank to `target`, staggered by the
- * character's index within its word.
- */
+
 const playFlipToTarget = (
   scopeElement: HTMLElement,
   timing: SplitFlapTiming,
@@ -369,19 +300,6 @@ const playFlipToTarget = (
   return masterTimeline;
 };
 
-/* ============================================================
- * UI components
- * ============================================================ */
-
-/**
- * One flap cell's DOM skeleton. Every glyph renders blank — the
- * target letter travels in `data-target-character` and is painted
- * imperatively by GSAP, so this markup is identical on the server
- * and on first client render (no hydration mismatch).
- *
- * The `data-flap-*` attributes are the animation layer's only
- * contract with this markup; `queryCellParts` selects on them.
- */
 function SplitFlapCell({ cell }: { cell: CellDescriptor }) {
   const { targetCharacter, characterIndexInWord } = cell;
 
@@ -436,22 +354,7 @@ function SplitFlapWord({ word }: { word: WordDescriptor }) {
   );
 }
 
-/**
- * Presentational split-flap primitive: renders `target` and flips to
- * it on every mount and on every `target` change. Holds no
- * router/i18n knowledge — the caller decides what string to show and
- * when it changes.
- *
- * The board is markup-blank until GSAP paints it, so a hard refresh
- * and a client-side navigation look the same: cells arrive empty and
- * flip in. The real string is always exposed to assistive tech and to
- * the raw SSR HTML through the visually-hidden label, independent of
- * animation state — which is why the board itself is `aria-hidden`
- * (otherwise each cell would be announced as a loose character).
- *
- * Under `prefers-reduced-motion: reduce` the cells snap straight to
- * their final state with no flip.
- */
+
 export function SplitFlapText({
   target,
   timing: timingOverrides,
@@ -488,11 +391,6 @@ export function SplitFlapText({
     // `target` starts its own: without it @gsap/react defers cleanup
     // to unmount, and two timelines would write textContent into the
     // same cells at once (e.g. a locale switch mid-flip).
-    //
-    // The resolved timing is spread into primitive dependencies rather
-    // than passed as an object: callers hand in fresh `timing` literals
-    // every render, so a reference dependency would restart the flip on
-    // each parent render.
     {
       scope: containerRef,
       dependencies: [

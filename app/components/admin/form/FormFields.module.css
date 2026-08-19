@@ -1,7 +1,3 @@
-/* -------------------------------------------------------------------------- */
-/* Shared                                                                     */
-/* -------------------------------------------------------------------------- */
-
 .root {
   display: flex;
   flex-direction: column;
@@ -12,7 +8,6 @@
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .hint {
@@ -27,26 +22,16 @@
   margin: 0;
 }
 
-/* -------------------------------------------------------------------------- */
-/* TextField control                                                          */
-/* -------------------------------------------------------------------------- */
+/* TextField control */
 
 .control {
   padding: 0.5rem 0.75rem;
   border: 1px solid currentColor;
   border-radius: 0;
   background: transparent;
-  font: inherit;
 }
 
-.control:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-/* -------------------------------------------------------------------------- */
-/* TextAreaField                                                              */
-/* -------------------------------------------------------------------------- */
+/* TextAreaField */
 
 .labelRow {
   display: flex;
@@ -70,14 +55,8 @@
   min-height: 8lh;
 }
 
-.textAreaControl:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
 
-/* -------------------------------------------------------------------------- */
-/* CheckboxField                                                              */
-/* -------------------------------------------------------------------------- */
+/* CheckboxField */
 
 .checkboxRow {
   display: flex;
@@ -91,9 +70,7 @@
   margin: 0;
 }
 
-/* -------------------------------------------------------------------------- */
-/* ReadOnlyField                                                              */
-/* -------------------------------------------------------------------------- */
+/* ReadOnlyField */
 
 .readOnlyLabel {
   font-size: 0.75rem;

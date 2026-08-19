@@ -1,11 +1,3 @@
-// app/components/booking/FieldError.tsx
-
-/**
- * The error message belonging to one field.
- *
- * The id is derived from the field name so a control can point at its own
- * message with `aria-describedby` without either side inventing an id.
- */
 export function fieldErrorElementId(fieldName: string): string {
   return `${fieldName}-error`;
 }

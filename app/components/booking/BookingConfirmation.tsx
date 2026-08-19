@@ -88,8 +88,8 @@ export function BookingConfirmation({
           text, which stays crisp for legibility. */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
         <filter id="stamp-grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" />
         </filter>
       </svg>
       <div className={styles.booking_confirmation_container}>
@@ -103,7 +103,7 @@ export function BookingConfirmation({
           <p className={styles.confirmation_body}>{content.body}</p>
           <button
             type="button"
-            className={styles.confirmation_close_button}
+            className="button_a chamfer chamfer-xs punch"
             onClick={onClose}
           >
             {content.closeLabel}

@@ -13,10 +13,6 @@ interface TitleBoardHandle {
   show?: boolean;
   labelKey?: PageTitleBoardLabelKey;
   label?: string;
-  /**
-   * Per-page flip cadence. Omit to inherit `SplitFlapText`'s tuned
-   * defaults; set only the fields this page wants to differ.
-   */
   timing?: SplitFlapTimingOverrides;
 }
 
@@ -32,16 +28,14 @@ interface BoardLabel {
 
 const NO_LABEL: BoardLabel = { shouldShow: false, label: "" };
 
-/**
+/*
  * Resolves what the page-title board should display for the
- * currently active route: whether it should render at all, the label
- * text to flip to, and how fast it should flip.
+ * currently active route
  *
  * Reads `handle.titleBoard` off the deepest matching route. A route
  * can either name a static `labelKey` (resolved through Intlayer, so
  * it renders per-locale) or supply an already-resolved `label`
- * directly (for dynamic, non-Intlayer content such as artist names) —
- * `PageTitleBoard` stays agnostic to which one was used.
+ * directly (for dynamic, non-Intlayer content such as artist names)
  */
 const useBoardLabel = (): BoardLabel => {
   const matches = useMatches();
@@ -78,16 +72,15 @@ const useBoardLabel = (): BoardLabel => {
   return NO_LABEL;
 };
 
-/**
+/*
  * Page-title band, rendered once in the app shell above `<Outlet/>`.
- * On the routes that opt in via `handle.titleBoard` this is the
- * page's real <h1>.
+ * This is the page's real <h1>.
  *
  * `PageTitleBoard` itself never unmounts; only the `<h1>`/
  * `SplitFlapText` subtree toggles as `shouldShow` changes. So
  * `SplitFlapText` mounts fresh every time the band becomes visible
  * and flips in — a hard refresh and a home → piercing navigation
- * look the same, which is intended.
+ * look the same.
  */
 export function PageTitleBoard() {
   const { shouldShow, label, timing } = useBoardLabel();

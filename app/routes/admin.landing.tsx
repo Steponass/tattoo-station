@@ -1,9 +1,7 @@
-// app/routes/admin.landing.tsx
-
 import { Fragment, useMemo, useState } from "react";
-import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireAdmin } from "~/lib/admin/server/routeGuards.server";
 import {
   findArtistFilterOptions,
   findPhotosForCuration,
@@ -23,30 +21,12 @@ import styles from "./admin.landing.module.css";
 const CURRENT_GALLERY = "landing" as const;
 const OTHER_GALLERY_LABEL = "In flash gallery";
 
-/**
- * Landing-gallery curation. Two-pane split view:
- *
- *   Left  — photos placed in landing, in display order, drag to reorder,
- *           click to remove (two-step confirm).
- *   Right — the pool. Photos placed in the flash gallery appear here dimmed
- *           with a hint; photos not placed anywhere are the actual add-
- *           candidates. Two filters (artist, category) narrow the pool.
- *
- * Admin-only. The route's loader rejects non-admin actors. The endpoint at
- * /api/curate-gallery is the sole write path; this component holds local
- * state, mutations flow through fetch() calls with optimistic UI.
+/*
+ * Landing-gallery curation. Admin-only.
  */
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind !== "admin") {
-    throw redirect("/admin/me");
-  }
+  requireAdmin(context.get(adminActorContext), "/admin/me");
 
   const [photos, artistOptions] = await Promise.all([
     findPhotosForCuration({ database: env.DB }),
@@ -298,11 +278,6 @@ export default function AdminLandingPage({ loaderData }: Route.ComponentProps) {
   );
 }
 
-/**
- * Non-draggable marker dropped into the placed grid between the two row
- * halves. It isn't wrapped in SortableGridItem, so it doesn't register with
- * dnd-kit and can't be picked up — it's purely a label for the admin.
- */
 function RowDivider({ label }: { label: string }) {
   return (
     <li className={styles.rowDivider} role="presentation">
@@ -333,17 +308,10 @@ function EmptyPoolState() {
   );
 }
 
-// ---------------------------------------------------------------------------
+// ------------------------------
 // Local reducers
-// ---------------------------------------------------------------------------
+// ------------------------------
 
-/**
- * Splits the photos list into (a) photos placed in the current gallery, in
- * placement sort_order, and (b) the pool, in the loader's default order
- * (roster then portfolio order). Photos placed in the other gallery live
- * in the pool with `placement` still set — the tile renderer branches on
- * that to render the blocked variant.
- */
 function partitionPhotos({
   photos,
   currentGallery,
@@ -453,9 +421,9 @@ function computeNextSortOrder(
   return maxSortOrder + 10;
 }
 
-// ---------------------------------------------------------------------------
+// ----------------------------
 // Endpoint call
-// ---------------------------------------------------------------------------
+// ----------------------------
 
 type CurateOperationBody =
   | { kind: "add"; gallery: "landing" | "flash"; photoId: number }

@@ -1,9 +1,9 @@
-// app/routes/admin.artists.$id.flash.tsx
-
 import { useState } from "react";
-import { data, redirect } from "react-router";
+import { data, Link, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireAdmin } from "~/lib/admin/server/routeGuards.server";
+import { parsePositiveIntParam } from "~/lib/admin/server/parseIdParam.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import {
   findArtistPhotosByCategory,
@@ -15,28 +15,16 @@ import PhotoUploader from "~/components/admin/profile/PhotoUploader";
 import type { Route } from "./+types/admin.artists.$id.flash";
 import styles from "./admin.me.photos.module.css";
 
-/**
+/*
  * The admin's editor for a single artist's flash-designs grid. Structurally
  * identical to /admin/artists/:id/photos and to the artist-facing
  * /admin/me/flash; only the category and mutation target differ.
- *
- * Piercer role has no flash grid (same rule as /admin/me/flash) — the loader
- * redirects to the artist's profile editor rather than 404-ing, since the
- * page legitimately doesn't apply to that artist.
  */
-export async function loader({ request, params, context }: Route.LoaderArgs) {
+export async function loader({ params, context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
+  requireAdmin(context.get(adminActorContext), "/admin/me/flash");
 
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind === "artist") {
-    throw redirect("/admin/me/flash");
-  }
-
-  const targetArtistId = parseArtistIdFromParam(params.id);
+  const targetArtistId = parsePositiveIntParam(params.id);
 
   if (targetArtistId === null) {
     throw data("Not Found", { status: 404 });
@@ -75,20 +63,6 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     photos,
     totalPhotoCount: summary.count,
   };
-}
-
-function parseArtistIdFromParam(rawParam: string | undefined): number | null {
-  if (rawParam === undefined) {
-    return null;
-  }
-
-  const parsed = Number(rawParam);
-
-  if (!Number.isInteger(parsed) || parsed <= 0) {
-    return null;
-  }
-
-  return parsed;
 }
 
 type Photo = {
@@ -228,8 +202,13 @@ export default function AdminArtistFlashPage({
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1 className={styles.heading}>Editing {displayName}'s flash</h1>
-        <p className={styles.subheading}>Admin editor.</p>
+        <div className={styles.headerText}>
+          <h1 className={styles.heading}>Editing {displayName}'s flash</h1>
+          <p className={styles.subheading}>Admin editor.</p>
+        </div>
+        <Link to={`/admin/artists/${targetArtistId}`} className={styles.backLink}>
+          Back to profile
+        </Link>
       </header>
 
       <PhotoUploader
@@ -292,9 +271,9 @@ function EmptyState() {
   );
 }
 
-// ---------------------------------------------------------------------------
+// ---------------------
 // Mutation helpers
-// ---------------------------------------------------------------------------
+// ---------------------
 
 type PersistResult = { ok: true } | { ok: false; errorMessage: string };
 

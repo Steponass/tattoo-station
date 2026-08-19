@@ -1,5 +1,3 @@
-// app/routes/api.booking-photos.ts
-
 import { storeBookingPhoto } from "~/lib/booking/server/bookingPhotos.server";
 import {
   MAX_PHOTO_BYTES,

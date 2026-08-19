@@ -21,10 +21,6 @@ import {
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 
-/**
- * A gallery photo as this page renders it — a delivery URL plus the stored
- * dimensions, so each tile reserves layout space before the image loads.
- */
 interface GalleryPhoto {
   id: number;
   objectKey: string;
@@ -57,8 +53,6 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     role: "piercing",
   });
 
-  // No active piercing artist yet: the page still renders (price list, bio,
-  // FAQ are all hand-authored copy) with an empty gallery rather than 404ing.
   const photoRecords =
     piercingArtist === null
       ? []
@@ -91,9 +85,6 @@ export const handle = {
  },
 };
 
-
-/** Intrinsic size of the piercer's logo in /public — a fixed asset, not an
- *  uploaded avatar, so the dimensions are known at build time. */
 const ARTIST_LOGO_SIZE = 96;
 
 function toLightboxPhoto(
@@ -117,9 +108,6 @@ export default function piercing({ loaderData }: Route.ComponentProps) {
   const lightboxLabels = useLightboxLabels();
   const bioParagraphs = content.artistBio.value.split("\n\n");
 
-  // Undefined (not null) when there's no active piercing artist row yet, so
-  // the spread in toLightboxPhoto omits `artist` entirely rather than
-  // carrying a null — matching LightboxPhoto's optional-field contract.
   const lightboxArtist: LightboxArtistLink | undefined = useMemo(() => {
     if (piercingArtistSlug === null) {
       return undefined;
@@ -127,10 +115,6 @@ export default function piercing({ loaderData }: Route.ComponentProps) {
     return { slug: piercingArtistSlug, displayName: content.artistName.value };
   }, [piercingArtistSlug, content.artistName.value]);
 
-  // The visitor is already on the piercer's own page, so the lightbox's
-  // "visit artist" button would be a no-op — showArtistLink stays off here.
-  // `artist` is still attached to each photo purely to prefill book-now
-  // with `?artist=<slug>`.
   const piercingLightboxPhotos = useMemo(
     () => photos.map((photo) => toLightboxPhoto(photo, lightboxArtist)),
     [photos, lightboxArtist],
@@ -149,8 +133,8 @@ export default function piercing({ loaderData }: Route.ComponentProps) {
 const { items: first_accordion, aftercareLinkLabel } = useIntlayer("faq-piercing1");
 const { items: second_accordion } = useIntlayer("faq-piercing2");
 
-// The first item's answer ends mid-sentence, pointing readers to the
-// dedicated piercing aftercare page rather than repeating that copy here.
+// The first item's answer ends mid-sentence, pointing user to 
+// dedicated piercing aftercare page.
 const first_accordion_items = first_accordion.map((item, index) =>
   index === 0
     ? {

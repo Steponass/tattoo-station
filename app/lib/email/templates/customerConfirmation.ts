@@ -1,5 +1,3 @@
-// app/lib/email/templates/customerConfirmation.ts
-
 import { BUDGET_RANGES, TATTOO_STYLES } from "~/lib/booking/bookingConstants";
 import type { BookingSubmission } from "~/lib/booking/bookingSubmissionTypes";
 

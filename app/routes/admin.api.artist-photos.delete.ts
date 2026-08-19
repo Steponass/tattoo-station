@@ -1,23 +1,17 @@
-// app/routes/api.artist-photos.delete.ts
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
+import type { ResolvedActor } from "~/lib/admin/server/resolveActor.server";
 import {
   deleteArtistPhoto,
   type DeleteArtistPhotoFailureCode,
 } from "~/lib/artists/deleteArtistPhoto.server";
 import type { Route } from "./+types/admin.api.artist-photos.delete";
 
-/**
+/*
  * Deletes a photo. Reachable by both admins (targeting any artist via the
  * body) and artists (pinned to themselves) — same actor-pinning invariant as
  * api.artist-photos.ts's upload endpoint.
- *
- * The body carries `photoId` and, for admin callers only, `artistId`.
- * Ownership (photo belongs to the target artist) is enforced by the
- * service's D1 read, which is scoped by both photo id and artist id; the
- * same "photo_not_found" code covers both "doesn't exist" and "not yours" so
- * callers can't enumerate photo ids.
  */
 
 const FAILURE_STATUS: Record<DeleteArtistPhotoFailureCode, number> = {
@@ -25,15 +19,11 @@ const FAILURE_STATUS: Record<DeleteArtistPhotoFailureCode, number> = {
   d1_delete_failed: 500,
 };
 
-function reject(failureCode: string, detail: string, status: number): Response {
-  return Response.json({ ok: false, failureCode, detail }, { status });
-}
-
 type ResolveTargetArtistIdResult =
   | { ok: true; artistId: number }
   | { ok: false; failureCode: "invalid_artist_id" };
 
-/**
+/*
  * Resolves which artist's photo is being deleted, given the resolved caller.
  * Artist: always their own id, ignoring any body-supplied value. Admin: the
  * id comes from the body, since the admin UI acts on any artist.
@@ -42,7 +32,7 @@ function resolveTargetArtistId({
   actor,
   body,
 }: {
-  actor: Exclude<Actor, { kind: "unknown" }>;
+  actor: ResolvedActor;
   body: Record<string, unknown>;
 }): ResolveTargetArtistIdResult {
   if (actor.kind === "artist") {
@@ -64,12 +54,7 @@ function resolveTargetArtistId({
 
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   let parsedBody: unknown;
 

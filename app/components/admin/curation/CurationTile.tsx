@@ -1,11 +1,9 @@
-// app/components/admin/curation/CurationTile.tsx
-
 import { useEffect, useState } from "react";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
 import { SortableGridItem } from "~/components/admin/sortable/SortableGrid";
 import styles from "./CurationTile.module.css";
 
-/**
+/*
  * Curation tiles come in three visual variants, each represented by its own
  * component with its own interaction shape. They share the image + artist
  * label markup but diverge on affordance:
@@ -16,18 +14,15 @@ import styles from "./CurationTile.module.css";
  *
  * Kept as three components rather than one prop-driven component because
  * the interaction shapes differ enough that a single variant-switching
- * component would collapse into per-variant branches everywhere. Three
- * focused components read cleaner than one that says "if placed, wrap in
- * SortableGridItem; if blocked, disable clicks; if placeable, whole thing
- * is clickable."
+ * component would collapse into per-variant branches everywhere.
  */
 
 /** Two-step confirm timeout, matching PhotoTile from Step 2. */
 const CONFIRM_TIMEOUT_MS = 3000;
 
-// ---------------------------------------------------------------------------
+// --------------------
 // Shared shape
-// ---------------------------------------------------------------------------
+// --------------------
 
 export type CurationTilePhoto = {
   photoId: number;
@@ -37,17 +32,6 @@ export type CurationTilePhoto = {
   artistDisplayName: string;
 };
 
-/**
- * All three curation variants share the same visual tile — a filled square
- * with an image and an artist label. Only the affordance differs (draggable,
- * clickable, blocked). Extracting the image markup keeps each variant
- * component focused on its own interaction shape and avoids repeating the
- * responsive-attributes wiring three times.
- *
- * The curation grid is `auto-fill, minmax(9rem, 1fr)` inside the admin's
- * split-view pane — same layout as PhotoTile, so the sizes value follows
- * the same reasoning.
- */
 const CURATION_TILE_SIZES = "(max-width: 60rem) 33vw, 200px";
 
 type CurationImageProps = {
@@ -75,9 +59,9 @@ function CurationImage({ photo }: CurationImageProps) {
   );
 }
 
-// ---------------------------------------------------------------------------
+// --------------------------
 // PlacedCurationTile
-// ---------------------------------------------------------------------------
+// --------------------------
 
 type PlacedCurationTileProps = {
   photo: CurationTilePhoto;
@@ -145,9 +129,9 @@ export function PlacedCurationTile(props: PlacedCurationTileProps) {
   );
 }
 
-// ---------------------------------------------------------------------------
+// -------------------------
 // PlaceableCurationTile
-// ---------------------------------------------------------------------------
+// -------------------------
 
 type PlaceableCurationTileProps = {
   photo: CurationTilePhoto;
@@ -187,9 +171,9 @@ export function PlaceableCurationTile(props: PlaceableCurationTileProps) {
   );
 }
 
-// ---------------------------------------------------------------------------
+// ----------------------------
 // BlockedCurationTile
-// ---------------------------------------------------------------------------
+// ----------------------------
 
 type BlockedCurationTileProps = {
   photo: CurationTilePhoto;

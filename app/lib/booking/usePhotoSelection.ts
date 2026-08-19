@@ -1,5 +1,3 @@
-// app/lib/booking/usePhotoSelection.ts
-
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {

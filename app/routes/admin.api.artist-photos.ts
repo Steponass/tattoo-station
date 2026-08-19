@@ -1,6 +1,8 @@
 
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
+import type { ResolvedActor } from "~/lib/admin/server/resolveActor.server";
 import {
   storeArtistPhoto,
   type StoreArtistPhotoFailureCode,
@@ -12,14 +14,8 @@ import { isArtistPhotoCategory } from "~/lib/artists/artistPhotoCategories";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import { mainPhotoCategoryForRole } from "~/lib/artists/artistPhotoCategories";
 
-/**
- * A generous ceiling on the raw upload before normalization. An unbounded
- * arrayBuffer read is a memory-exhaustion vector; a phone HEIC sits well under
- * this.
- */
 const MAX_PORTFOLIO_UPLOAD_BYTES = 25 * 1024 * 1024;
 
-/** Maps a service-level failure to the HTTP status the client should see. */
 const FAILURE_STATUS: Record<StoreArtistPhotoFailureCode, number> = {
   artist_not_found: 404,
   portfolio_full: 409,
@@ -38,12 +34,6 @@ type ArtistIdParseResult =
   | { ok: true; artistId: number }
   | { ok: false };
 
-function reject(failureCode: string, detail: string, status: number): Response {
-  const outcome: ArtistPhotoUploadOutcome = { ok: false, failureCode, detail };
-
-  return Response.json(outcome, { status });
-}
-
 function parseArtistId(rawValue: FormDataEntryValue | null): ArtistIdParseResult {
   if (typeof rawValue !== "string") {
     return { ok: false };
@@ -58,11 +48,7 @@ function parseArtistId(rawValue: FormDataEntryValue | null): ArtistIdParseResult
   return { ok: true, artistId: parsed };
 }
 
-/**
- * Reads and validates the optional style tag. Absent is valid (photos need not
- * be tagged); present-but-unknown is rejected, so the value can never drift
- * from the canonical vocabulary the gallery groups by.
- */
+
 function parseStyle(rawValue: FormDataEntryValue | null): StyleParseResult {
   if (rawValue === null || rawValue === "") {
     return { ok: true, style: null };
@@ -75,22 +61,9 @@ function parseStyle(rawValue: FormDataEntryValue | null): StyleParseResult {
   return { ok: true, style: rawValue };
 }
 
-/**
+/*
  * Resolves which artist this upload targets, given the resolved caller.
  *
- * The invariant from §3 of the build handoff: every artist-scoped write derives
- * `artistId` from `actor`, never from the form.
- *
- *   - `artist`: the target is always `actor.artistId`. Any form-supplied id is
- *     ignored — an artist cannot upload to another artist's portfolio by
- *     forging the form field.
- *   - `admin`:  the target comes from the form. The admin UI acts on any
- *     artist and must pass a target explicitly.
- *   - `unknown`: never reaches this function; the caller has already rejected
- *     with 403.
- *
- * Returning a discriminated result rather than throwing keeps the action
- * handler's error mapping in one place.
  */
 type ResolveTargetArtistIdResult =
   | { ok: true; artistId: number }
@@ -100,7 +73,7 @@ function resolveTargetArtistId({
   actor,
   formData,
 }: {
-  actor: Exclude<Actor, { kind: "unknown" }>;
+  actor: ResolvedActor;
   formData: FormData;
 }): ResolveTargetArtistIdResult {
   if (actor.kind === "artist") {
@@ -128,23 +101,9 @@ type ResolveTargetCategoryResult =
       status: number;
     };
 
-/**
+/*
  * Resolves which category the upload targets, given the resolved caller.
  *
- * Artist: category is derived server-side from the artist's role AND the
- *   `surface` field the UI passes ("main" or "flash"). The artist UI never
- *   sends a category; §6 of the handoff: "The upload UI never asks for
- *   category." Missing surface defaults to "main" for backwards compatibility
- *   with the /admin/me/photos page written before this endpoint knew about
- *   surfaces.
- *
- *   - surface=main → mainPhotoCategoryForRole(role) → "tattoo" or "piercing"
- *   - surface=flash → literal "flash", allowed only for tattoo/both roles.
- *     Piercer trying to upload flash is a UI bug or an attack; either way,
- *     rejected here.
- *
- * Admin: category comes from the form as before. Admins may upload to any of
- *   the three categories for any artist; the surface concept doesn't apply.
  */
 async function resolveTargetCategory({
   actor,
@@ -152,7 +111,7 @@ async function resolveTargetCategory({
   database,
   targetArtistId,
 }: {
-  actor: Exclude<Actor, { kind: "unknown" }>;
+  actor: ResolvedActor;
   formData: FormData;
   database: D1Database;
   targetArtistId: number;
@@ -217,22 +176,14 @@ async function resolveTargetCategory({
   return { ok: true, category: categoryValue };
 }
 
-/**
+/*
  * Creates one portfolio photo: authenticate, validate, normalize, store in R2,
  * record in D1.
  *
- * The endpoint is reachable to both admins (targeting any artist via the form)
- * and artists (pinned to themselves). The actor kind is the only thing that
- * decides which; the rest of the pipeline is identical.
  */
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   const formData = await request.formData();
 

@@ -86,7 +86,7 @@ const aftercaretattooContent = {
     }),
     section5Para2: t({
       lt: "Nelupk odos ir nekasyk tatuiruotės, net jei labai norisi. Leisk viskam pasišalinti natūraliai. Per anksti nulupus besigydančią odą galima ją pažeisti ir kartu prarasti dalį pigmento.",
-      en: "Do not pick, scratch, or peel the skin — even if it’s tempting. Let everything come off naturally. Removing healing skin too early can damage the tattoo and cause pigment loss.",
+      en: "Do not pick, scratch, or peel the skin, even if it’s tempting. Let everything come off naturally. Removing healing skin too early can damage the tattoo and cause pigment loss.",
     }),
 
     section6Heading: t({
@@ -112,7 +112,7 @@ const aftercaretattooContent = {
     }),
     section7Para1: t({
       lt: "Praustis duše galima, tačiau tatuiruotės nereikia ilgai mirkyti. Vanduo turėtų būti maloniai šiltas, ne labai karštas.",
-      en: "You can shower, but avoid soaking the tattoo. Use comfortably warm water — not hot.",
+      en: "You can shower, but avoid soaking the tattoo. Use comfortably warm water, not hot.",
     }),
     section7Para2: t({
       lt: "Kol tatuiruotė gyja, venk vonios, baseino, ežero, jūros ir kitų vietų, kur tatuiruotė būtų ilgai mirkoma vandenyje.",

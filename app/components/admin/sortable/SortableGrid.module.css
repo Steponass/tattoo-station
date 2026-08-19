@@ -26,6 +26,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .gridItem {
-    transition: none !important;
+    transition: none;
   }
 }

@@ -1,5 +1,3 @@
-// app/lib/images/normalizeImage.server.ts
-
 import {
   NORMALIZED_JPEG_QUALITY,
   NORMALIZED_OUTPUT_FORMAT,

@@ -8,10 +8,7 @@ import type {
 import { buildPortfolioImageAttributes } from '~/lib/media/portfolioImageAttributes'
 import styles from './ArtistGallery.module.css'
 
-/**
- * A single portfolio image ready to render: a delivery URL plus the stored
- * dimensions, so each tile reserves layout space before the image loads.
- */
+
 export interface PortfolioImage {
   id: number
   objectKey: string
@@ -23,12 +20,6 @@ interface ArtistGalleryProps {
   tattooPhotos: PortfolioImage[]
   flashPhotos: PortfolioImage[]
   labels: LightboxLabels
-  /**
-   * Whose gallery this is. Not used for a "visit artist" button — the
-   * visitor is already here — but it prefills the lightbox's book-now link
-   * with `?artist=<slug>`, which is the whole point of showing a photo
-   * full-screen on an artist's page.
-   */
   artist: LightboxArtistLink
   worksHeading: string
   tattoosTabLabel: string
@@ -41,8 +32,11 @@ interface PortfolioTileProps {
 
 const PORTFOLIO_TILE_SIZES = '(max-width: 720px) 100vw, 400px'
 
-/** Gallery images are decorative (no per-image alt, by decision), so alt is
- * intentionally empty. */
+/*
+ * Gallery images are decorative (no per-image alt, by decision), so alt is
+ * intentionally empty. It´s not very realistic to expect
+ * artist to name all their photos
+*/
 function PortfolioTile({ photo }: PortfolioTileProps) {
   const { src, srcSet, sizes } = buildPortfolioImageAttributes({
     objectKey: photo.objectKey,
@@ -64,12 +58,10 @@ function PortfolioTile({ photo }: PortfolioTileProps) {
   )
 }
 
-/** The tabs hold two independent photo sets, so each panel gets its own
- * <Lightbox> rather than one shared across both. Prev/next then stays inside
- * the tab the visitor opened from — walking from the last tattoo into the
- * first flash design would be a jump they never asked for. Photo ids are
- * unique across the whole artist_photos table, so a `#photo-<id>` deep link
- * still resolves in exactly one of the two. */
+/*
+ * The tabs hold two independent photo sets, so each panel gets its own
+ * <Lightbox> rather than one shared across both.
+ */
 function toLightboxPhoto(
   photo: PortfolioImage,
   artist: LightboxArtistLink,

@@ -1,7 +1,6 @@
-// app/routes/api.reorder-roster.ts
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
 import {
   reorderRoster,
   type ReorderRosterFailureCode,
@@ -25,22 +24,9 @@ const FAILURE_STATUS: Record<ReorderRosterFailureCode, number> = {
   persist_failed: 500,
 };
 
-function reject(
-  failureCode: string,
-  detail: string,
-  status: number,
-): Response {
-  return Response.json({ ok: false, failureCode, detail }, { status });
-}
-
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   if (actor.kind !== "admin") {
     return reject("wrong_actor", "Only admins reorder the roster.", 403);

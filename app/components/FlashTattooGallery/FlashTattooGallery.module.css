@@ -8,20 +8,3 @@
   row-rule: 4px double var(--color-stroke-weak);
   column-rule: 4px double var(--color-stroke-weak);
 }
-
-.flash_tattoo_gallery img {
-  /* max-height: 400px; */
-}
-
-.empty_state {
-  padding: 4rem 1.5rem;
-  text-align: center;
-}
-
-.empty_state_message {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.6;
-  margin: 0;
-}

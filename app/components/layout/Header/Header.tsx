@@ -136,7 +136,6 @@ export default function Header() {
               fill="currentColor"
               aria-hidden="true"
             >
-              {/* <rect x="0" y="0" width="66" height="20" /> */}
               <rect x="20" y="-10" width="76" height="22" />
               <rect x="50" y="30" width="76" height="22" />
             </svg>

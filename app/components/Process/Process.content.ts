@@ -22,7 +22,7 @@ const processContent = {
       {
         number: "02",
         title: t({
-          en: "We'll discuss your idea",
+          en: "Discuss your idea",
           lt: "Aptarsime idėją",
         }),
         text: t({
@@ -33,7 +33,7 @@ const processContent = {
       {
         number: "03",
         title: t({
-          en: "Book your appointment",
+          en: "Book your session",
           lt: "Rezervuok laiką",
         }),
         text: t({

@@ -1,14 +1,6 @@
-// app/routes/portfolio-image.$.tsx
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import type { Route } from "./+types/portfolio-image.$";
 
-/**
- * Only the portfolio master prefix is servable here. Unlike the signed /media
- * route, these images are public by design, so there is no signature — but the
- * prefix check still bounds this route to portfolio objects and nothing else in
- * the bucket.
- */
 const SERVABLE_KEY_PREFIX = "masters/";
 
 /**

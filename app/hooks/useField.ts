@@ -1,30 +1,12 @@
-// app/hooks/useField.ts
-
 import { useId } from "react";
 
-/**
+/*
  * Field-plumbing hook. Consolidates the id-linking, ARIA wiring, and
  * hint/error slot conventions that every labeled input in the admin area
  * needs, so field primitives are markup plus the return of this hook —
  * no per-primitive re-implementation of "which id goes on which element."
  *
  * The hook returns four prop bundles, meant to be spread onto flat markup:
- *
- *   const { labelProps, controlProps, hintProps, errorProps } = useField(...)
- *   return (
- *     <>
- *       <label {...labelProps}>...</label>
- *       <input {...controlProps} />
- *       <p {...hintProps}>...</p>
- *       <p {...errorProps}>...</p>
- *     </>
- *   )
- *
- * This is Option A from the project notes: props-per-slot returned by a
- * hook, not a wrapper component. The primitives own their markup shape,
- * which means unusual layouts (a hint above the input, a counter beside
- * the label) don't require touching the hook. A wrapper component would
- * force a canonical order, which we don't want.
  *
  * ARIA:
  *   - the label's `htmlFor` points at the control's id

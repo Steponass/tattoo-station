@@ -1,5 +1,3 @@
-// app/lib/media/mediaKeys.ts
-
 import { NORMALIZED_FILE_EXTENSION } from "~/lib/images/imageConstants";
 
 const BOOKING_PHOTO_PREFIX = "bookings";

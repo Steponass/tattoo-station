@@ -1,9 +1,7 @@
-// app/routes/admin.flash.tsx
-
 import { useMemo, useState } from "react";
-import { data, redirect } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireAdmin } from "~/lib/admin/server/routeGuards.server";
 import {
   findArtistFilterOptions,
   findPhotosForCuration,
@@ -23,32 +21,12 @@ import styles from "./admin.landing.module.css";
 const CURRENT_GALLERY = "flash" as const;
 const OTHER_GALLERY_LABEL = "In landing gallery";
 
-/**
- * Flash-page curation. Structurally identical to admin.landing.tsx: same
- * split view, same SortableGrid, same tile variants, same filter panel.
- * The only page-level differences are the gallery it targets, the
- * blocked-tile hint copy, and header copy.
- *
- * The two curation routes stay as separate files even though they share
- * almost everything — same reasoning as admin.me.photos vs admin.me.flash:
- * the divergence is more likely than the convergence. If a future
- * substep proves they'll stay identical, we extract; not now.
- *
- * CSS module is shared (imported from admin.landing.module.css) because the
- * layout truly is the same. If either page's layout diverges, the CSS
- * splits at that time.
+/*
+ * Flash-page curation. Structurally identical to admin.landing.tsx
  */
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind !== "admin") {
-    throw redirect("/admin/me");
-  }
+  requireAdmin(context.get(adminActorContext), "/admin/me");
 
   const [photos, artistOptions] = await Promise.all([
     findPhotosForCuration({ database: env.DB }),
@@ -306,9 +284,9 @@ function EmptyPoolState() {
   );
 }
 
-// ---------------------------------------------------------------------------
+// -------------------------
 // Local reducers
-// ---------------------------------------------------------------------------
+// -------------------------
 
 function partitionPhotos({
   photos,

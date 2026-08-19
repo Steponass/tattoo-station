@@ -1,7 +1,7 @@
 .scrollToTop {
   opacity: 0;
   pointer-events: none;
-  transition: 0.2s all ease-in;
+  transition: var(--transition-fast);
   transform: translateY(var(--space-8px));
   position: fixed;
   right: calc(env(safe-area-inset-right) + var(--space-s-m));
@@ -16,15 +16,19 @@
   pointer-events: auto;
   cursor: pointer;
   transform: translateY(0);
+  z-index: 10;
   @media (hover: hover) {
     &:hover {
       transform: translateY(-2px);
-      color: var(--color-secondary);
+      scale: 1.02;
       color: var(--color-focus);
     }
   }
   &:active {
     color: var(--color-focus);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-focus);
   }
 }
 

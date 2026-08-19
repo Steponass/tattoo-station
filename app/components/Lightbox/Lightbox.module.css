@@ -1,30 +1,3 @@
-/* Reset the <button> so the gallery tile inside it keeps controlling its
-   own layout, background, and clip-path. `display: contents` would drop
-   the button from the box tree entirely and break focus outlines, so we
-   keep the button as a normal box but strip its cosmetic defaults. */
-/* .trigger {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  display: block;
-  width: 100%;
-  text-align: inherit;
-}
-
-.trigger:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-} */
-
-/* -------------------------------------------------------------------------- */
-/* Dialog                                                                     */
-/* -------------------------------------------------------------------------- */
-
-/* Native <dialog> comes with default max-width, max-height, margins, and
-   a border. We strip all of that so the dialog occupies the viewport. */
 .dialog {
   width: 100vw;
   height: 100vh;
@@ -41,17 +14,9 @@
 }
 
 .dialog::backdrop {
-  background: hsl(0 0% 0% / 0.85);
+  background: hsla(0 0% 0% / 0.85);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Contents grid                                                              */
-/* -------------------------------------------------------------------------- */
-
-/* A three-row grid: close button at top, hero + prev/next in the middle,
-   footer at bottom. Prev/next overlay the hero row via absolute
-   positioning inside their grid cell so they don't steal horizontal
-   space from the image. */
 .contents {
   width: 100%;
   height: 100%;
@@ -123,16 +88,15 @@
   rotate: 180deg;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Footer                                                                     */
-/* -------------------------------------------------------------------------- */
 
+/* Styling left to accomodate 2 footer buttons. Can be trimmed 
+if agreed to use 1 button only */
 .footer {
   position: absolute;
   bottom: var(--space-24px);
   left: 50%;
   transform: translateX(-50%);
-  width: min(80%, 640px);
+  width: min(80%, 480px);
   margin-inline: auto;
   display: flex;
   justify-content: center;
@@ -141,7 +105,7 @@
 }
 
 .footer:has(a:nth-child(2)) {
-    justify-content: space-between;
+  justify-content: space-between;
 }
 
 .artist_link,
@@ -149,9 +113,8 @@
   min-width: 128px;
   text-align: center;
   padding: var(--space-8px) var(--space-16px);
-  margin-top: var(--space-xs-s);
   opacity: 1;
-  transition: opacity 0.8s 5s ease-in-out;
+  transition: opacity 0.8s 4s ease-in-out;
   @starting-style {
     opacity: 0;
   }
@@ -166,61 +129,12 @@
   view-transition-name: lightbox-booknow-link;
 }
 
-/* -------------------------------------------------------------------------- */
-/* View Transitions — reduced motion                                          */
-/* -------------------------------------------------------------------------- */
-
-/* The morph is enabled by JS assigning view-transition-name to the
-   trigger and by the hero rendering with one. `prefers-reduced-motion`
-   is checked in JS too (see `canUseViewTransitions`), so the transition
-   is not started at all. This rule is belt-and-braces: even if some
-   code path assigns the name, the browser cannot animate what it
-   doesn't recognise as transitionable. */
-@media (prefers-reduced-motion: reduce) {
-  .hero {
-    view-transition-name: none;
-  }
-}
-
-/* Group (position/size) and old/new (crossfade) must share a duration —
-   otherwise the box keeps resizing after the crossfade has already
-   finished, which reads as a stutter on top of the crossfade itself. */
 ::view-transition-group(*),
 ::view-transition-old(*),
 ::view-transition-new(*) {
-  animation-duration: 300ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-duration: 400ms;
+  animation-timing-function: ease;
 }
-
-/* The root group holds everything without its own view-transition-name —
-   the close/prev/next buttons and footer, none of which visually change
-   between photos. Chrome still cross-fades it by default, and swapping
-   two near-identical snapshots of drop-shadowed SVGs produces a visible
-   flash. Nothing in that group needs to animate, so disable it and let
-   the live DOM show through instantly; only the named .hero group (see
-   below) should actually animate. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-/* -------------------------------------------------------------------------- */
-/* View Transition — prev/next slide+fade                                     */
-/* -------------------------------------------------------------------------- */
-
-/* Direction is signaled from JS by setting `--lightbox-nav-direction` on
-   :root before starting the transition:
-     +1  → next (old slides left, new arrives from right)
-     -1  → prev (old slides right, new arrives from left)
-      0  → not a prev/next transition (e.g. the open morph); the
-           keyframes still run but translate by 0, so they collapse to
-           a plain fade. Which is fine — the open morph's group
-           animation dominates visually, and the image opacity dip is
-           within tolerance.
-
-   Only the hero's named group gets these overrides, so the root group
-   (background, chrome) keeps Chrome's default cross-fade. */
 
 @keyframes lightbox-hero-slide-out {
   from {
@@ -247,20 +161,20 @@
 }
 
 ::view-transition-old(lightbox-hero) {
-  animation: lightbox-hero-slide-out 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: lightbox-hero-slide-out 350ms ease forwards;
 }
 
 ::view-transition-new(lightbox-hero) {
-  animation: lightbox-hero-slide-in 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: lightbox-hero-slide-in 350ms ease forwards;
 }
 
 .contents button {
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition-fast);
 }
 
 @media (hover: hover) {
   .contents button:hover {
     color: var(--color-focus);
-    scale: 1.3;
+    scale: 1.25;
   }
 }

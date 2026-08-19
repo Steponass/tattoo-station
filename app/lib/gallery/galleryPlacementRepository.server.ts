@@ -1,5 +1,3 @@
-// app/lib/gallery/galleryPlacementRepository.server.ts
-
 /**
  * D1 access for the gallery_placements table. Category-agnostic curation —
  * both the landing-page gallery and the /flash page are backed here, keyed

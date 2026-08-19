@@ -2,13 +2,12 @@
   display: flex;
   gap: var(--space-m-l);
   margin-inline: auto;
-  width: min(1024px, 100%);
+  width: min(1280px, 100%);
   @media (max-width: 860px) {
     flex-direction: column;
     align-items: center;
   }
 }
-
 
 .artist_photo {
   width: min(512px, 100%);
@@ -20,7 +19,7 @@
 }
 
 .artist_text {
-  /* max-width: 60ch; */
+  width: min(512px, 100%);
   & h1 {
     font-size: var(--fontsize-h3);
   }
@@ -30,6 +29,7 @@
   /* need block for a span */
   display: block; 
   font-size: var(--fontsize-body);
+  font-weight: 500;
   color: var(--color-text-weak);
   margin-block-end: 1em;
   font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
@@ -49,14 +49,29 @@
 }
 
 .insta_and_book_container {
+  margin-block-start: var(--space-m-l);
   display: flex;
   gap: var(--space-24px);
   align-items: center;
-  margin-block-start: var(--space-m-l);
+}
+
+.insta_icon {
+  display: block;
+  transition: var(--transition-fast);
+  @media (hover: hover) {
+    &:hover {
+    color: var(--color-focus);
+    scale: 1.05;
+    transform: perspective(150px) rotateX(22deg);
+    }
+  }
+  &:active {
+    color: var(--color-focus);
+  }
 }
 
 .bottom_nav {
-  margin-top: var(--space-m-l);
+  margin-block: var(--space-m-l);
   display: flex;
   gap: var(--space-16px);
   justify-content: center;

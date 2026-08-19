@@ -1,12 +1,19 @@
 #piercing_aftercare_main {
   display: flex;
-  column-gap: var(--space-l-xl);
+  justify-content: center;
+  column-gap: var(--space-xl-2xl);
   margin-block: var(--space-xl-2xl);
   margin-inline: auto;
-  @media (max-width: 870px) {
+  width: min(1280px, 90%);
+  @media (max-width: 854px) {
     flex-direction: column;
     row-gap: var(--space-l-xl)
   }
+}
+
+.aftercare_list_container {
+  max-width: 60ch;
+  margin-inline: auto;
 }
 
 .aftercare_heading {
@@ -17,12 +24,13 @@
 .aftercare_list {
   list-style: decimal;
   list-style-position: inside;
-  max-width: 60ch;
-  margin-inline: auto;
+
   flex: 1;
 }
 
-
+.aftercare_list:nth-child(2) {
+  color: red;
+}
 
 .aftercare_list svg {
     animation: rotateY linear 1s;
@@ -58,7 +66,7 @@
 }
 
 #cotton_swab {
-  transition: 0.35s all ease-in;
+  transition: var(--transition-slow);
   transform: rotateY(0deg);
   @starting-style {
   transform: rotateY(120deg);

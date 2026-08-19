@@ -1,5 +1,3 @@
-// app/components/admin/profile/AvatarField.tsx
-
 import { useEffect, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 import { buildPortfolioImageAttributes } from "~/lib/media/portfolioImageAttributes";
@@ -19,11 +17,7 @@ import styles from "./ArtistProfileForm.module.css";
  * form-supplied id — the actor-pinning invariant makes it safe to send or
  * not send.
  *
- * Unlike the rest of the profile form, avatar changes commit immediately —
- * there is no "Save changes" step. The mental model is "pick a photo, replace
- * it" rather than "collect edits, save them together." That's why avatar has
- * its own fetcher separate from the profile-patch fetcher, and why it isn't
- * batched into the form's dirty tracking.
+ * Unlike the rest of the profile form, avatar changes commit immediately
  *
  * The uploaded key comes back from the endpoint. The loader-provided key is
  * used only for the initial render; after any successful upload, the newer key
@@ -51,7 +45,7 @@ const FAILURE_MESSAGES: Record<string, string> = {
   persist_failed: "The upload didn't complete. Please try again.",
 };
 
-const GENERIC_FAILURE_MESSAGE = "Something went wrong with the upload.";
+const GENERIC_FAILURE_MESSAGE = "Something went wrong, try again!";
 
 type AvatarUploadSuccessResponse = {
   ok: true;
@@ -81,7 +75,7 @@ type AvatarFieldProps = {
   targetArtistIdForAdmin?: number;
 };
 
-const AVATAR_THUMBNAIL_SIZES = "128px";
+const AVATAR_THUMBNAIL_SIZES = "192px";
 
 type AvatarThumbnailProps = {
   objectKey: string;

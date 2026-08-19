@@ -15,7 +15,6 @@
 .uploadButton {
   padding: 0.5rem 1rem;
   border: 1px solid currentColor;
-  font: inherit;
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -27,11 +26,6 @@
 .uploadButton[data-disabled="true"] {
   opacity: 0.4;
   cursor: not-allowed;
-}
-
-.uploadButton:focus-within {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
 }
 
 .fileInput {
@@ -48,7 +42,6 @@
 
 .counter {
   font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
   margin: 0;
   opacity: 0.7;
 }
@@ -63,8 +56,8 @@
   list-style: none;
   padding: 0.75rem 1rem;
   margin: 0;
-  border: 1px solid #b01e28;
-  color: #b01e28;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -78,7 +71,6 @@
 }
 
 .failureFileName {
-  font-variant-numeric: tabular-nums;
   opacity: 0.8;
   flex-shrink: 0;
 }

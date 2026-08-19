@@ -1,8 +1,8 @@
-// app/routes/admin.me.tsx
-
-import { data, redirect } from "react-router";
+import { data } from "react-router";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { requireArtist } from "~/lib/admin/server/routeGuards.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
 import { findArtistProfileForEditing } from "~/lib/artists/artistRepository.server";
 import { handleArtistProfilePatchRequest } from "~/lib/artists/artistProfilePatch.server";
 import ArtistProfileForm from "~/components/admin/profile/ArtistProfileForm";
@@ -11,29 +11,17 @@ import type { Route } from "./+types/admin.me";
 import NavButton from "~/components/Button/NavButton";
 import styles from './admin.me.module.css'
 
-/**
- * The artist's self-service editor. Loads the caller's own profile — never
- * anyone else's — because the loader derives the target artist id from the
- * resolved actor, not from the URL. There is no `:id` segment on this route
- * for that reason: it would create the appearance of an addressable "edit
- * someone else" URL that the loader would then have to reject.
+/*
+ * The artist's self-service editor.
  *
  * Admins hitting /admin/me are redirected to /admin, which is where admin work
  * happens. This keeps /admin/me a single-purpose route (artist self-service)
  * rather than one that renders different UIs depending on who's looking. Admins
  * who need to edit a specific artist go through /admin/artists/:id (step 4).
  */
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    throw data("Forbidden", { status: 403 });
-  }
-
-  if (actor.kind === "admin") {
-    throw redirect("/admin");
-  }
+  const actor = requireArtist(context.get(adminActorContext), "/admin");
 
   const artistProfile = await findArtistProfileForEditing({
     database: env.DB,
@@ -61,23 +49,13 @@ export async function loader({ request, context }: Route.LoaderArgs) {
  */
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return Response.json(
-      { ok: false, failureCode: "forbidden", detail: "Authentication required." },
-      { status: 403 },
-    );
-  }
+  const actor = context.get(adminActorContext);
 
   if (actor.kind === "admin") {
-    return Response.json(
-      {
-        ok: false,
-        failureCode: "wrong_route",
-        detail: "Admins edit artists via /admin/artists/:id, not /admin/me.",
-      },
-      { status: 400 },
+    return reject(
+      "wrong_route",
+      "Admins edit artists via /admin/artists/:id, not /admin/me.",
+      400,
     );
   }
 

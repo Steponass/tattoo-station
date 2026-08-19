@@ -13,22 +13,12 @@ interface UseAccordionAnimationOptions {
 
 // As per https://ics.media/en/entry/220901/
 
-/**
- * Returns a toggle handler that animates a <details> panel open/closed
- * using the Web Animations API. Must be called directly from the
- * summary's click handler (not from an effect reacting to some React
- * state) so the `open` mutation, height measurement, and animation start
- * all happen synchronously within the click. Routing this through a
- * isOpen-prop -> useEffect indirection let the browser paint the
- * fully-open state before the animation got a chance to start from 0, so
- * opening would just snap instead of animate; closing looked fine since
- * it only ever measures the already-settled open height, no fresh
- * mutation beforehand.
- *
+/*
  * Necessary because Safari (iOS included) still does not support
  * ::details-content or interpolate-size, so CSS-only height animation
  * silently degrades to an instant snap on a large share of target traffic.
  */
+
 export function useAccordionAnimation({
   detailsRef,
   panelRef,

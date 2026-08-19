@@ -1,5 +1,3 @@
-// app/lib/admin/server/resolveActor.server.ts
-
 import { jwtVerify, createRemoteJWKSet, type JWTPayload } from "jose";
 import { findArtistAuthByEmail } from "~/lib/artists/artistRepository.server";
 
@@ -22,10 +20,18 @@ export type Actor =
   | { kind: "artist"; artistId: number; email: string }
   | { kind: "unknown" };
 
+/**
+ * An `Actor` that has already cleared the `unknown` gate — what every
+ * loader/action nested under /admin actually works with, since the admin
+ * layout's middleware (see `adminActorContext.server.ts`) throws a 403 before
+ * any of them run otherwise.
+ */
+export type ResolvedActor = Exclude<Actor, { kind: "unknown" }>;
+
 type ResolveActorEnv = {
   POLICY_AUD: string;
   TEAM_DOMAIN: string;
-  DEV_ACTOR: string;
+  DEV_ACTOR?: string;
   DB: D1Database;
 };
 
@@ -35,28 +41,6 @@ type ResolveActorEnv = {
  * navigation).
  */
 const ACCESS_JWT_HEADER = "cf-access-jwt-assertion";
-
-
-/**
- * In local development there is no Access layer in front of `wrangler dev`, so
- * no JWT and no meaningful email exist. The stub returns a synthesized actor so
- * the dev loop is unblocked; the whole branch is compiled out of the production
- * build because Vite statically replaces `import.meta.env.DEV` with `false`.
- *
- * The choice of actor is driven by the DEV_ACTOR variable in .dev.vars:
- *   DEV_ACTOR=admin          → { kind: "admin", email: "dev@localhost" }
- *   DEV_ACTOR=artist:3       → { kind: "artist", artistId: 3, email: "dev@localhost" }
- *   (unset or empty)         → admin (matches the previous unconditional stub)
- *
- * Anything malformed logs a warning and falls back to admin. The stub never
- * returns `unknown`: dev should not exercise the 403 path, since Access is what
- * puts you there and Access isn't running here. Testing the 403 path is a job
- * for the deployed preview, not the local loop.
- *
- * A future extension could read a header or cookie for mid-session switching,
- * but the security-critical shape of `resolveActor` benefits from one source
- * of truth per session. Restarting the dev server to change actors is cheap.
- */
 const DEV_ACTOR_EMAIL = "dev@localhost";
 
 function parseDevActor(rawDevActor: string | undefined): Actor {

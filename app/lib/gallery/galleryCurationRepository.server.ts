@@ -1,5 +1,3 @@
-// app/lib/gallery/galleryCurationRepository.server.ts
-
 import type { GalleryName } from "./galleryPlacementRepository.server";
 
 /**

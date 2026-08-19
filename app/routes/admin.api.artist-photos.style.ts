@@ -1,7 +1,7 @@
-// app/routes/api.artist-photos.style.ts
-
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
-import { resolveActor, type Actor } from "~/lib/admin/server/resolveActor.server";
+import { adminActorContext } from "~/lib/admin/server/adminActorContext.server";
+import { reject } from "~/lib/admin/server/actionResponses.server";
+import type { ResolvedActor } from "~/lib/admin/server/resolveActor.server";
 import { isArtistStyle, type ArtistStyle } from "~/lib/artists/artistStyles";
 import {
   updateArtistPhotoStyle,
@@ -9,15 +9,9 @@ import {
 } from "~/lib/artists/updateArtistPhotoStyle.server";
 import type { Route } from "./+types/admin.api.artist-photos.style";
 
-/**
+/*
  * Changes the style tag on a photo. Reachable by both admins (targeting any
- * artist via the body) and artists (pinned to themselves) — same
- * actor-pinning invariant as api.artist-photos.ts's upload endpoint.
- *
- * The body carries `photoId`, `style` (a recognized style string, or
- * null/"" to clear the tag back to "unsorted"), and, for admin callers only,
- * `artistId`. Ownership is enforced by the service's D1 write, which is
- * scoped by both photo id and artist id.
+ * artist via the body) and artists (pinned to themselves)
  */
 
 const FAILURE_STATUS: Record<UpdateArtistPhotoStyleFailureCode, number> = {
@@ -25,24 +19,15 @@ const FAILURE_STATUS: Record<UpdateArtistPhotoStyleFailureCode, number> = {
   d1_update_failed: 500,
 };
 
-function reject(failureCode: string, detail: string, status: number): Response {
-  return Response.json({ ok: false, failureCode, detail }, { status });
-}
-
 type ResolveTargetArtistIdResult =
   | { ok: true; artistId: number }
   | { ok: false; failureCode: "invalid_artist_id" };
 
-/**
- * Resolves which artist's photo is being updated, given the resolved caller.
- * Artist: always their own id, ignoring any body-supplied value. Admin: the
- * id comes from the body, since the admin UI acts on any artist.
- */
 function resolveTargetArtistId({
   actor,
   body,
 }: {
-  actor: Exclude<Actor, { kind: "unknown" }>;
+  actor: ResolvedActor;
   body: Record<string, unknown>;
 }): ResolveTargetArtistIdResult {
   if (actor.kind === "artist") {
@@ -64,12 +49,7 @@ function resolveTargetArtistId({
 
 export async function action({ request, context }: Route.ActionArgs) {
   const { env } = getCloudflareBindings(context);
-
-  const actor = await resolveActor(request, env);
-
-  if (actor.kind === "unknown") {
-    return reject("forbidden", "Authentication required.", 403);
-  }
+  const actor = context.get(adminActorContext);
 
   let parsedBody: unknown;
 
@@ -149,8 +129,8 @@ type StyleParseResult =
   | { ok: true; style: ArtistStyle | null }
   | { ok: false };
 
-/**
- * Absent, null, or empty string all mean "clear the tag" (unsorted).
+/*
+ * Absent, null, or empty string all mean "unsorted".
  * Anything else must match the canonical vocabulary.
  */
 function parseStyle(rawValue: unknown): StyleParseResult {

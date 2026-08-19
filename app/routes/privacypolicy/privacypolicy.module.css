@@ -6,6 +6,10 @@
   }
 }
 
+.privacy_article {
+  max-width: 70ch;
+}
+
 .privacy_section span {
   font-family: 'Atkinson Hyperlegible Next VF', 'Adjusted Body Fallback', sans-serif;
   color: var(--color-text-weak);
@@ -15,11 +19,12 @@
 .privacy_article h2 {
   margin-top: var(--space-s-m);
   font-size: var(--fontsize-h4);
-  margin-block-end: 0.25em;
+  margin-block-end: var(--space-2xs-xs);
 }
 
 .privacy_article h3 {
-  margin-block-start: var(--space-m-l);
+  margin-block-start: var(--space-s-m);
+  margin-block-end: var(--space-xs-s);
   font-size: var(--fontsize-h5)
 }
 
