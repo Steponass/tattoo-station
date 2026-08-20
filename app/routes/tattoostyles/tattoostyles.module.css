@@ -20,9 +20,10 @@
 
 .tattoostyle_heading_and_description h2 {
   font-size: var(--fontsize-h4);
+  min-width: max-content;
   float: left;
   @media (max-width: 600px) {
-    padding-block-start: var(--space-8px);
+    padding-block-start: 6px;
     padding-inline-end: var(--space-16px);
   }
 }

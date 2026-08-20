@@ -465,7 +465,7 @@ function LightboxContents(props: LightboxContentsProps) {
           <LocalizedLink
             key={`artist-${photo.id}`}
             to={`/artists/${photo.artist.slug}`}
-            className={`${styles.artist_link} shadow chamfer chamfer-xs punch`}
+            className={`${styles.artist_link} button_a chamfer chamfer-xs punch`}
           >
             {photo.artist.displayName}
           </LocalizedLink>

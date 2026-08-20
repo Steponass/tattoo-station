@@ -33,7 +33,7 @@
   padding: var(--space-16px);
   min-width: 220px;
   margin-block-end: var(--space-xs-s);
-  @media (358px < width < 498px) {
+  @media (362px < width < 498px) {
     min-width: 136px;
   }
   background-color: var(--color-bg-overlay);

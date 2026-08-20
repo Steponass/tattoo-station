@@ -59,7 +59,7 @@ export default function faq() {
         </div>
         <div className={styles.directions_wrapper}>
           <LocalizedLink
-            to={"/aftercare"}
+            to={"/piercing/#piercing_faq"}
             className="button_b chamfer chamfer-xs punch"
           >
             {buttonTextPiercing}
