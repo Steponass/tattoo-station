@@ -1,29 +1,34 @@
 #tattoostyles_main {
-  width: min(1440px, 96%);
+  width: min(1280px, 92%);
+  margin-inline: auto;
 }
 
 .tattoostyle_article {
-  width: min(1024px, 100%);
   margin-block-end: var(--space-xl-2xl);
-  padding-inline: var(--space-24px);
-  margin-inline: auto;
-  display: flex;
-  gap: var(--space-m-l);
-  & h2 {
-    font-size: var(--fontsize-h4);
-    margin-block-end: var(--space-2xs-xs);
-  };
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
 }
 
 .tattoostyle_heading_and_description {
-  max-width: 340px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: var(--space-s-m);
+  margin-block-end: var(--space-12px);
+  min-height: 2lh;
+  @media (max-width: 600px) {
+    display: block;
+  }
 }
+
+.tattoostyle_heading_and_description h2 {
+  font-size: var(--fontsize-h4);
+  float: left;
+  @media (max-width: 600px) {
+    padding-block-start: var(--space-8px);
+    padding-inline-end: var(--space-16px);
+  }
+}
+
+.tattoostyle_heading_and_description p {
+    /* max-width: 70ch; */
+    padding-block-start: var(--space-4px);
+}
+

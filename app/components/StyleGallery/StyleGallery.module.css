@@ -1,27 +1,30 @@
 .style_gallery_container {
-  flex: 1;
-  display: flex;
-  gap: var(--space-8px);
-  flex-wrap: wrap;
-  @media (max-width: 768px) {
-    justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-4px);
+  @media (max-width: 880px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 560px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.placeholder, .gallery-image {
-  background-color: orange;
+.placeholder {
+  background-color: var(--color-secondary);
+  color: var(--color-text-strong);
   width: 140px;
   max-height: 300px;
   aspect-ratio: 0.8;
   &::after {
     content: "coming soon";
     justify-self: center;
+    text-align: center;
   }
 }
 
-/* A real photo tile occupies the same box the placeholder does. The grid
-   column already sets the width; sizing/clipping comes from the
-   gallery-image-wrapper/gallery-image global classes (see global.css). */
+
 .style_gallery_tile {
-  width: min(50vw, 140px);
+
+
 }

@@ -52,7 +52,7 @@ export default function coupon() {
             <h5 className={styles.eyebrow}>{ticketEyebrow}</h5>
             <div className={styles.route}>
               <p>{routeFrom}</p>
-              <p className={styles.route_arrow} aria-hidden="true">&rarr;</p>
+              <p className={styles.route_arrow} aria-hidden="true">&#10233;</p>
               <p>{routeTo}</p>
             </div>
             <NavButton to={COUPON_URL} buttonText={ctaText} newTab />

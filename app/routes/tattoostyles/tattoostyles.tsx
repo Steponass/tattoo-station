@@ -1,6 +1,4 @@
 import styles from "./tattoostyles.module.css";
-
-// Intlayer start
 import { getIntlayer, validatePrefix } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { data } from "react-router";
@@ -11,7 +9,6 @@ import type { LightboxPhoto } from "~/components/Lightbox/lightboxPhoto";
 import { getCloudflareBindings } from "~/lib/cloudflare/cloudflareContext";
 import { findStyleGalleryPhotos } from "~/lib/gallery/styleGalleryRepository.server";
 
-// Intlayer Start
 export const loader = async ({ params, context }: Route.LoaderArgs) => {
   const { lang: locale } = params;
 

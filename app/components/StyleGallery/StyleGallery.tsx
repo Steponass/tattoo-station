@@ -6,18 +6,7 @@ import type {
 } from '~/components/Lightbox/lightboxPhoto'
 import styles from './StyleGallery.module.css'
 
-/**
- * The per-style photo grid on /tattoostyles. Photos come from D1
- * (artist_photos filtered by the `style` column, no curation) and arrive
- * already mapped to `LightboxPhoto` by the route loader — same convention
- * as FlashTattooGallery, except the mapping happens one level up here
- * since this component has no domain-specific photo shape of its own.
- *
- * A style with no tagged photos yet falls back to the coloured placeholder
- * tiles.
- */
-
-const PLACEHOLDER_TILE_COUNT = 3
+const PLACEHOLDER_TILE_COUNT = 4
 const STYLE_TILE_SIZES = '(max-width: 400px) 45vw, 164px'
 
 type StyleGalleryProps = {
@@ -41,7 +30,7 @@ export default function StyleGallery(props: StyleGalleryProps) {
   return (
     <Lightbox photos={photos} labels={labels}>
       <div className={styles.style_gallery_container}>
-        {photos.slice(0, 8).map((photo) => (
+        {photos.slice(0, 6).map((photo) => (
           <StyleGalleryTile key={photo.id} photo={photo} />
         ))}
       </div>
